@@ -1,0 +1,7 @@
+{
+  "dependencies": {
+    "adaptivecards": "^2.10.0",
+    "adaptivecards-designer": "^2.3.0",
+    "adaptivecards-templating": "^2.2.0"
+  }
+}

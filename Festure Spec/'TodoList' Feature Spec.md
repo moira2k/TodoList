@@ -12,7 +12,7 @@ In those scenarios, a 'TodoList' is really suitable for busy people.A to-do item
 
 ## Use Case Diagram
 
-<center><img src=".\images\UseCaseDiagram.svg" alt="Art" style="zoom:80%;" /></center>
+<center><img src=".\images\UseCaseDiagram.svg" alt="UseCaseDiagram" style="zoom:80%;" /></center>
 
 ## Scenario
 
@@ -23,7 +23,7 @@ In those scenarios, a 'TodoList' is really suitable for busy people.A to-do item
 1. Show all the to-do item in To-do List.
 2. If want to know more details about the item, click the textTab. Then to-do item adaptive card occurred.
 
-<img src=".\images\todoItem.PNG" alt="图像" style="zoom:67%;" />
+<img src=".\images\todoItem.PNG" alt="todoItem" style="zoom:67%;" />
 
 1. Show the details about the item.
 

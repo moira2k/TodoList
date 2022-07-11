@@ -12,36 +12,36 @@ In those scenarios, a 'TodoList' is really suitable for busy people.A to-do item
 
 ## Use Case Diagram
 
-![usecase](.\images\Use Case Diagram.svg)
+![usecase](.\images\UseCaseDiagram.svg)
 
 ## Scenario
 
 ### Baseline Scenario: Manage to-do item in Tab
 
-<img src=".\images\to-do-list.PNG" alt="to-do-list" style="zoom: 67%;" />
+<img src=".\images\todoList.PNG" alt="to-do-list" style="zoom: 67%;" />
 
 1. Show all the to-do item in To-do List.
 2. If want to know more details about the item, click the textTab. Then to-do item adaptive card occurred.
 
-<img src=".\images\to-do-item.PNG" alt="图像" style="zoom:67%;" />
+<img src=".\images\todoItem.PNG" alt="图像" style="zoom:67%;" />
 
 1. Show the details about the item.
 
 2. If want to update or delete the item, click the corresponding button.
 
-<img src=".\images\updateto-do-item.PNG" alt="img" style="zoom:67%;" />
+<img src=".\images\updateTodoItem.PNG" alt="img" style="zoom:67%;" />
 
 1. Confirm and then submit.
 
 ### Sub Scenario 1: create to-do item based on a Chat message
 
-<img src=".\images\new to do item" alt="图像" style="zoom:67%;" />
+<img src="D:\hk\project\Festure Spec\images\newTodoItem.PNG" alt="newTodoItem" style="zoom:67%;" />
 
 1. Right click on the mouse, select more options to fill the new request of to-do item
 
 ### Sub Scenario 2: show to-do item in Chat
 
-![图像](.\images\showto-do-item.PNG)
+<img src="D:\hk\project\Festure Spec\images\showTodoItem.PNG" alt="showTodoItem" style="zoom:67%;" />
 
 1. Send the to-do item card in Chat
 

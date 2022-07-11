@@ -1,0 +1,78 @@
+{
+    "type": "AdaptiveCard",
+    "body": [
+        {
+            "type": "TextBlock",
+            "weight": "Bolder",
+            "text": "${title}"
+        },
+        {
+            "type": "TextBlock",
+            "text": "${description}",
+            "wrap": true
+        },
+        {
+            "type": "Container",
+            "style": "emphasis",
+            "items": [
+                {
+                    "type": "TextBlock",
+                    "text": "${to1}"
+                }
+            ],
+            "selectAction": {
+                "type": "Action.OpenUrl",
+                "tooltip": "Go to a different url",
+                "url": "https://msn.com"
+            }
+        },
+        {
+            "type": "Container",
+            "style": "emphasis",
+            "items": [
+                {
+                    "type": "TextBlock",
+                    "text": "${to2}"
+                }
+            ],
+            "selectAction": {
+                "type": "Action.OpenUrl",
+                "tooltip": "Go to a different url",
+                "url": "https://msn.com"
+            }
+        }
+    ],
+    "actions": [
+        {
+            "type": "Action.ShowCard",
+            "title": "Add a to-do item",
+            "card": {
+                "type": "AdaptiveCard",
+                "actions": [
+                    {
+                        "type": "Action.Submit",
+                        "title": "OK"
+                    }
+                ],
+                "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+                "body": [
+                    {
+                        "type": "Input.Date",
+                        "id": "Update Date"
+                    },
+                    {
+                        "type": "Input.Time",
+                        "id": "Update Time"
+                    },
+                    {
+                        "type": "Input.Text",
+                        "placeholder": "Placeholder text",
+                        "id": "Update content"
+                    }
+                ]
+            }
+        }
+    ],
+    "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+    "version": "1.4"
+}

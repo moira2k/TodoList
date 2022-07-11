@@ -12,7 +12,7 @@ In those scenarios, a 'TodoList' is really suitable for busy people.A to-do item
 
 ## Use Case Diagram
 
-![usecase](.\images\UseCaseDiagram.svg)
+<center><img src=".\images\UseCaseDiagram.svg" alt="Art" style="zoom:80%;" /></center>
 
 ## Scenario
 
@@ -35,13 +35,13 @@ In those scenarios, a 'TodoList' is really suitable for busy people.A to-do item
 
 ### Sub Scenario 1: create to-do item based on a Chat message
 
-<img src="D:\hk\project\Festure Spec\images\newTodoItem.PNG" alt="newTodoItem" style="zoom:67%;" />
+<img src=".\images\newTodoItem.PNG" alt="newTodoItem" style="zoom:67%;" />
 
 1. Right click on the mouse, select more options to fill the new request of to-do item
 
 ### Sub Scenario 2: show to-do item in Chat
 
-<img src="D:\hk\project\Festure Spec\images\showTodoItem.PNG" alt="showTodoItem" style="zoom:67%;" />
+<img src=".\images\showTodoItem.PNG" alt="showTodoItem" style="zoom:67%;" />
 
 1. Send the to-do item card in Chat
 

@@ -2,30 +2,30 @@
     "$schema": "https://developer.microsoft.com/en-us/json-schemas/teams/v1.13/MicrosoftTeams.schema.json",
     "manifestVersion": "1.13",
     "version": "1.0.0",
-    "id": "{{state.fx-resource-appstudio.teamsAppId}}",
+    "id": "1d7fdae0-80f3-45b4-a251-ff114839176d",
     "packageName": "com.microsoft.teams.extension",
     "developer": {
         "name": "Teams App, Inc.",
-        "websiteUrl": "{{{state.fx-resource-frontend-hosting.endpoint}}}",
-        "privacyUrl": "{{{state.fx-resource-frontend-hosting.endpoint}}}{{{state.fx-resource-frontend-hosting.indexPath}}}/privacy",
-        "termsOfUseUrl": "{{{state.fx-resource-frontend-hosting.endpoint}}}{{{state.fx-resource-frontend-hosting.indexPath}}}/termsofuse"
+        "websiteUrl": "https://localhost:53000",
+        "privacyUrl": "https://localhost:53000/index.html#/privacy",
+        "termsOfUseUrl": "https://localhost:53000/index.html#/termsofuse"
     },
     "icons": {
         "color": "resources/color.png",
         "outline": "resources/outline.png"
     },
     "name": {
-        "short": "{{config.manifest.appName.short}}",
-        "full": "{{config.manifest.appName.full}}"
+        "short": "TodoListTab-local-debug",
+        "full": "Full name for TodoListTab-local-debug"
     },
     "description": {
-        "short": "Short description of {{config.manifest.appName.short}}",
-        "full": "Full description of {{config.manifest.appName.short}}"
+        "short": "Short description of TodoListTab-local-debug",
+        "full": "Full description of TodoListTab-local-debug"
     },
     "accentColor": "#FFFFFF",
     "bots": [
         {
-            "botId": "{{state.fx-resource-bot.botId}}",
+            "botId": "6e7600a1-81cc-47e3-88cd-a9a23fe28b79",
             "scopes": [
                 "personal",
                 "team",
@@ -57,7 +57,7 @@
     "composeExtensions": [],
     "configurableTabs": [
         {
-            "configurationUrl": "{{{state.fx-resource-frontend-hosting.endpoint}}}{{{state.fx-resource-frontend-hosting.indexPath}}}/config",
+            "configurationUrl": "https://localhost:53000/index.html#/config",
             "canUpdateConfiguration": true,
             "scopes": [
                 "team",
@@ -69,9 +69,9 @@
         {
             "entityId": "index",
             "name": "Personal Tab",
-            "contentUrl": "{{{state.fx-resource-frontend-hosting.endpoint}}}{{{state.fx-resource-frontend-hosting.indexPath}}}/tab",
-            "contentBotId": "{{state.fx-resource-bot.botId}}",
-            "websiteUrl": "{{{state.fx-resource-frontend-hosting.endpoint}}}{{{state.fx-resource-frontend-hosting.indexPath}}}/tab",
+            "contentUrl": "https://localhost:53000/index.html#/tab",
+            "contentBotId": "6e7600a1-81cc-47e3-88cd-a9a23fe28b79",
+            "websiteUrl": "https://localhost:53000/index.html#/tab",
             "scopes": [
                 "personal"
             ]
@@ -81,5 +81,9 @@
         "identity",
         "messageTeamMembers"
     ],
-    "validDomains": []
+    "validDomains": [
+        "localhost",
+        "localhost:53000",
+        "a074-2404-f801-9000-1a-d38-cb2a-8f24-a679.ngrok.io"
+    ]
 }

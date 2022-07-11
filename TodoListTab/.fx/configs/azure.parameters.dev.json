@@ -4,7 +4,9 @@
   "parameters": {
     "provisionParameters": {
       "value": {
-        "resourceBaseName": "todolisttadev15d655"
+        "resourceBaseName": "todolisttadev15d655",
+        "botAadAppClientId": "{{state.fx-resource-bot.botId}}",
+        "botAadAppClientSecret": "{{state.fx-resource-bot.botPassword}}"
       }
     }
   }

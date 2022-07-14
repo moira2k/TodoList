@@ -1,3 +1,5 @@
+[toc]
+
 # Some notes
 
 ## Todo List - Project流程&排期
@@ -22,10 +24,27 @@
 - show user photos (with SSO) Single Sign-on
 - P2: notification 添加时间提醒 (比如每天，定时推送)
 - integrate with Microsoft Graph todoTasks，往里面存储，不确定是否和notification冲突
-
 - 文档内容：
   - UI设计
   - 功能|功能定义
+
+####  7/14 reviewer comment
+
+**改进点：**
+
+1. Update overview
+2. Add technologies we use
+3. Add share with me tab and remove scenario 3
+
+**新的Feature Priority**
+
+1. manage(create, update, delete) to-do items, respond to submit actions in adaptive card
+2. add to do item based on chat message
+3. share to do item with others
+	3.1 Shared with me tab
+    3.2 People picker
+4. [P2]send notification
+5. Stretch goal: add source (chat name/meeting name) for to do item
 
 
 ### Presentation:
@@ -48,12 +67,9 @@ C:\Users\t-kunhuang\AppData\Local\Programs\oh-my-posh\
 
 ## Design the project
 
-### 
-
-踩坑：
+### 踩坑：
 
 1. 新add a feature后，删除不掉，没有内置命令，从外面删也删不干净。
 2. ![image-20220708143931500](D:\hk\Image\image-20220708143931500.png)
-
-
+3. adaptive card online designer莫名会死机，刷新后没有了之前的内容。Adaptive Card Studio显示不了''$data": "${xxx}". `$data` is a method to provide the data as **Inline within the template payload**. You can provide the data inline within the template payload. To do so, simply add a attribute to the root object.
 

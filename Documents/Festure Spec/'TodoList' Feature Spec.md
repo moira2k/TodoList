@@ -45,8 +45,8 @@ In those scenarios, a 'To-do List' is really suitable for busy people. A to-do i
 ### Features
 
 * (P0) manage(create, update, delete) to-do items, respond to submit actions in adaptive card
-* (P0) add to-do item based on chat message
-* (P1) send the To-do Item Card in Chat
+* (P0) add to-do items based on chat messages
+* (P1) send a To-do Item Card in Chat
 * (P1) show user photos (with SSO)
 * (P2) send notifications to users in bot chat
-* (P2) integrate with Microsoft Graph
+* (P2) integrate with Microsoft Graph, using To Do component in the Microsoft Graph Toolkit

@@ -49,3 +49,4 @@ In those scenarios, a 'To-do List' is really suitable for busy people. A to-do i
 * (P1) send the To-do Item Card in Chat
 * (P1) show user photos (with SSO)
 * (P2) send notifications to users in bot chat
+* (P2) integrate with Microsoft Graph

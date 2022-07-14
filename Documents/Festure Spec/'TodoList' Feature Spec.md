@@ -20,7 +20,7 @@ In those scenarios, a 'To-do List' is suitable for busy people. A to-do item wil
 
 <center><img src=".\images\scenario1.PNG" alt="scenario1" style="zoom: 20%;" /></center>
 
-1. Show all the to-do item in To-do List.
+1. Show all the to-do items in To-do List.
 2. If you want to edit the To-do Item, you can click the drop-down button. Modification options will be expanded. Complete the changes and send Confirm. If you want to delete the item, click the corresponding trash button.
 3. Add a new To-do Item.
 
@@ -42,7 +42,7 @@ In those scenarios, a 'To-do List' is suitable for busy people. A to-do item wil
 
 1. A to-do List notification bot will notify users of their Daily To-do List every morning.
 
-### Features
+## Features
 
 * (P0) manage(create, update, delete) to-do items, respond to submit actions in adaptive card
 * (P0) add to-do items based on chat messages

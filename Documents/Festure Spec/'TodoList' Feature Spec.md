@@ -1,54 +1,51 @@
-# ‘TodoList’ Feature Specification
+# ‘To-do List’ Feature Specification
 
 ## Overview 
 
 Today corporate employees deal with abundant tasks and usually these tasks are concurrent processing. People immersed in some task always forget what they should more appropriately be doing at this time. For example, they should attend a meeting or prepare a talk. They should turn to complete Task A, which was assigned earlier and the pre-task was completed right now.
 
-In those scenarios, a 'TodoList' is really suitable for busy people.A to-do item will be created from the app's tab or based on a message of chat or meeting. People can view their to-do items through the teams app, and turn to the other arranged thing in time.
+In those scenarios, a 'To-do List' is really suitable for busy people. A to-do item will be created from the app's tab or based on a message of chat or meeting. People can view their to-do items through the teams app, and turn to the other arranged thing in time.
 
 ## Architecture
 
-<center><img src=".\images\architecture.svg" alt="Art" style="zoom:20%;" /></center>
+<center><img src=".\images\architecture.png" alt="Art" style="zoom:20%;" /></center>
 
 ## Use Case Diagram
 
-<center><img src=".\images\UseCaseDiagram.svg" alt="UseCaseDiagram" style="zoom:80%;" /></center>
+<center><img src=".\images\UseCaseDiagram.png" alt="UseCaseDiagram" style="zoom:80%;" /></center>
 
 ## Scenario
 
 ### Baseline Scenario: Manage to-do item in Tab
 
-<img src=".\images\todoList.PNG" alt="to-do-list" style="zoom: 67%;" />
+<img src=".\images\scenario1.PNG" alt="to-do-list" style="zoom: 100%;" />
 
 1. Show all the to-do item in To-do List.
-2. If want to know more details about the item, click the textBlock. Then to-do item adaptive card occurred.
+2. If you want to edit the To-do Item, you can click the drop-down button. Modification options will be expanded. Complete the changes and send Confirm. If you want to delete the item, click the corresponding trash button.
+3. Add a new To-do Item.
 
-<img src=".\images\todoItem.PNG" alt="todoItem" style="zoom:67%;" />
+### Scenario 2 (Sub): create to-do item based on a Chat message
 
-1. Show the details about the item.
+<img src=".\images\scenario2.PNG" alt="to-do-list" style="zoom: 100%;" />
 
-2. If want to update or delete the item, click the corresponding button.
+1. Right click on the mouse, select "More actions" to create a request of a new To-do Item. And the message text will be filled with the initial content text.
 
-<img src=".\images\updateTodoItem.PNG" alt="img" style="zoom:67%;" />
+### Scenario 3 (Sub): create to-do item based on a Chat message
 
-1. Confirm and then submit.
+<img src=".\images\scenario3.PNG" alt="to-do-list" style="zoom: 67%;" />
 
-### Sub Scenario 1: create to-do item based on a Chat message
+1. A to-do List notification bot will notify users of their Daily To-do List every morning.
 
-<img src=".\images\newTodoItem.PNG" alt="newTodoItem" style="zoom:67%;" />
+### Scenario 4 (Sub): share to-do item with chat members / meeting members
 
-1. Right click on the mouse, select more options to fill the new request of to-do item
+<img src=".\images\scenario4.PNG" alt="to-do-list" style="zoom: 100%;" />
 
-### Sub Scenario 2: show to-do item in Chat
-
-<img src=".\images\showTodoItem.PNG" alt="showTodoItem" style="zoom:67%;" />
-
-1. Send the to-do item card in Chat
+1. Send the To-do Item Card in Chat
 
 ### Features
 
 * (P0) manage(create, update, delete) to-do items, respond to submit actions in adaptive card
 * (P0) add to-do item based on chat message
-* (P1) share to-do items with chat members / meeting members
+* (P1) send the To-do Item Card in Chat
 * (P1) show user photos (with SSO)
 * (P2) send notifications to users in bot chat

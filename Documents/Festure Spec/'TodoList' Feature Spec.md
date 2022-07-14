@@ -2,9 +2,9 @@
 
 ## Overview 
 
-Today corporate employees deal with abundant tasks and usually these tasks are concurrent processing. People immersed in some task always forget what they should more appropriately be doing at this time. For example, they should attend a meeting or prepare a talk. They should turn to complete Task A, which was assigned earlier and the pre-task was completed right now.
+Today corporate employees deal with abundant tasks and usually these tasks are concurrent processing. People immersed in some tasks always forget what they should more appropriately be doing at this time. For example, they should attend a meeting or prepare a talk. They should turn to complete Task A, which was assigned earlier, and the pre-task was completed right now.
 
-In those scenarios, a 'To-do List' is really suitable for busy people. A to-do item will be created from the app's tab or based on a message of chat or meeting. People can view their to-do items through the teams app, and turn to the other arranged thing in time.
+In those scenarios, a 'To-do List' is suitable for busy people. A to-do item will be created from the app's tab or based on a message of chat or meeting. People can view their to-do items through the teams app and turn to the other arranged thing in time.
 
 ## Architecture
 

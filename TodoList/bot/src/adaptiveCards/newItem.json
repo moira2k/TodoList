@@ -1,0 +1,76 @@
+{
+    "type": "AdaptiveCard",
+    "body": [
+        {
+            "type": "Container",
+            "style": "emphasis",
+            "items": [
+                {
+                    "type": "ColumnSet",
+                    "columns": [
+                        {
+                            "type": "Column",
+                            "items": [
+                                {
+                                    "type": "TextBlock",
+                                    "size": "ExtraLarge",
+                                    "color": "Accent",
+                                    "style": "heading",
+                                    "spacing": "ExtraLarge",
+                                    "height": "stretch",
+                                    "text": "**New To-do Item**",
+                                    "wrap": true,
+                                    "weight": "Bolder"
+                                }
+                            ],
+                            "width": "stretch"
+                        }
+                    ]
+                }
+            ],
+            "bleed": true
+        },
+        {
+            "type": "Container",
+            "spacing": "Large",
+            "items": [
+                {
+                    "type": "Input.Date",
+                    "label": "Date",
+                    "isRequired": true,
+                    "value": "${formatDateTime(createdDdate, 'YYYY-MM-DD')}",
+                    "id": "newTaskDate"
+                },
+                {
+                    "type": "Input.Text",
+                    "placeholder": "Placeholder text",
+                    "id": "newTaskContent",
+                    "label": "Content",
+                    "isMultiline": true,
+                    "isRequired": true,
+                    "maxLength": 10,
+                    "value": "${taskMessage}"
+                },
+                {
+                    "type": "Input.Text",
+                    "placeholder": "participants of the task",
+                    "label": "Participants"
+                }
+            ],
+            "bleed": true
+        },
+        {
+            "type": "Container",
+            "style": "emphasis",
+            "items": [
+                {
+                    "type": "ColumnSet"
+                }
+            ],
+            "bleed": true
+        }
+    ],
+    "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+    "version": "1.4",
+    "fallbackText": "This card requires Adaptive Cards v1.2 support to be rendered properly."
+}

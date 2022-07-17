@@ -78,10 +78,10 @@ References: https://docs.microsoft.com/en-us/graph/toolkit/overview
 
    ​    3.1 view and track items in "Shared With Me Tab"
 
-   ​    3.2 select the people to share with (People picker)
+   ​    3.2 select the people to share with (with People picker)
 
 4. [P1] show user photos (with SSO)
 
-5. [P2] Send notification
+5. [P2] Send notification (to verify the ease of adding functionality )
 
 6. Stretch goal: Add source (chat name/meeting name) for to-do item

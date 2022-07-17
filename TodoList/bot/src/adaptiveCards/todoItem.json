@@ -153,12 +153,31 @@
         {
             "type": "Container",
             "style": "emphasis",
+            "bleed": true,
             "items": [
                 {
-                    "type": "ColumnSet"
+                    "type": "TextBlock",
+                    "text": "Share with :",
+                    "wrap": true,
+                    "fontType": "Default",
+                    "weight": "Bolder",
+                    "height": "stretch"
+                },
+                {
+                    "type": "Input.Text",
+                    "id": "sharedUser",
+                    "placeholder": "People Pick"
+                },
+                {
+                    "type": "ActionSet",
+                    "actions": [
+                        {
+                            "type": "Action.Submit",
+                            "title": "Send"
+                        }
+                    ]
                 }
-            ],
-            "bleed": true
+            ]
         }
     ],
     "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",

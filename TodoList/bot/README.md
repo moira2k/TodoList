@@ -1,159 +1,119 @@
-# Responding to chat commands
+# How to use this Bots and Message Extensions HelloWorld app
 
-The Command and Response feature enables register simple commands and respond to them with [adaptive cards](https://docs.microsoft.com/microsoftteams/platform/task-modules-and-cards/cards/cards-reference). This enables your users to type in simple messages in Teams and your application can provide an appropriate response based on the contents of the message.
+A bot, chatbot, or conversational bot is an app that responds to simple commands sent in chat and replies in meaningful ways. Examples of bots in everyday use include: bots that notify about build failures, bots that provide information about the weather or bus schedules, or provide travel information. A bot interaction can be a quick question and answer, or it can be a complex conversation. Being a cloud application, a bot can provide valuable and secure access to cloud services and corporate resources.
 
-This application is built with the [Microsoft Bot Framework](https://dev.botframework.com/) running on a restify server running on App Service along with the [Azure Bot Service](https://azure.microsoft.com/services/bot-services/).
+A Message Extension allows users to interact with your web service while composing messages in the Microsoft Teams client. Users can invoke your web service to assist message composition, from the message compose box, or from the search bar.
 
-Here is a screen shot of the application running:
+Message Extensions are implemented on top of the Bot support architecture within Teams.
 
-![Command and Response in Teams](https://user-images.githubusercontent.com/11220663/165891754-16916b68-c1b5-499d-b6a8-bdfb195f1fd0.png)
+This is a simple hello world application with both Bot and Message extension capabilities.
 
-# Getting Started
+## Prerequisites
 
-Run your app with local debugging by pressing `F5` in VSCode. Select `Debug (Edge)` or `Debug (Chrome)`.
+- [NodeJS](https://nodejs.org/en/)
+- An M365 account. If you do not have M365 account, apply one from [M365 developer program](https://developer.microsoft.com/en-us/microsoft-365/dev-program)
+- [Teams Toolkit Visual Studio Code Extension](https://aka.ms/teams-toolkit) version after 1.55 or [TeamsFx CLI](https://aka.ms/teamsfx-cli)
 
-**Congratulations**! You are running an application that can now send respond to a chat command in Teams.
+## Debug
 
->
-> **Prerequisites**
->
-> To run locally, you will need:
->
-> - `Node.js` installed locally (recommended version: 14)
-> - An [M365 account for development](https://docs.microsoft.com/microsoftteams/platform/toolkit/accounts)
->
+- From Visual Studio Code: Start debugging the project by hitting the `F5` key in Visual Studio Code. 
+- Alternatively use the `Run and Debug Activity Panel` in Visual Studio Code and click the `Run and Debug` green arrow button.
+- From TeamsFx CLI: Start debugging the project by executing the command `teamsfx preview --local` in your project directory.
 
-# Understanding the code
+## Edit the manifest
 
-This section walks through the generated code. The project folder contains the following:
+You can find the Teams app manifest in `templates/appPackage` folder. The folder contains one manifest file:
+* `manifest.template.json`: Manifest file for Teams app running locally or running remotely (After deployed to Azure).
 
-| Folder | Contents |
-| - | - |
-| `.fx` | Project level settings, configurations, and environment information |
-| `.vscode` | VSCode files for local debug |
-| `bot` | The source code for the command and response Teams application |
-| `templates` | Templates for the Teams application manifest and for provisioning Azure resources |
+This file contains template arguments with `{...}` statements which will be replaced at build time. You may add any extra properties or permissions you require to this file. See the [schema reference](https://docs.microsoft.com/en-us/microsoftteams/platform/resources/schema/manifest-schema) for more information.
 
-The core command-response implementation is in `bot` folder.
+## Deploy to Azure
 
-The following files provide the business logic for command and response bot. These files can be updated to fit your business logic requirements. The default implementation provides a starting point to help you get started.
+Deploy your project to Azure by following these steps:
 
-| File | Contents |
-| - | - |
-| `src/index.js` | Application entry point and `restify` handlers for command and response |
-| `src/adaptiveCards/helloworldCommand.json` | A generated Adaptive Card that is sent to Teams |
-| `src/helloworldCommandHandler.js` | The business logic to handle a command |
-| `src/cardModels.js` | The default Adaptive Card data model |
+| From Visual Studio Code                                                                                                                                                                                                                                                                                                                                                  | From TeamsFx CLI                                                                                                                                                                                                                    |
+| :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| <ul><li>Open Teams Toolkit, and sign into Azure by clicking the `Sign in to Azure` under the `ACCOUNTS` section from sidebar.</li> <li>After you signed in, select a subscription under your account.</li><li>Open the Teams Toolkit and click `Provision in the cloud` from DEPLOYMENT section or open the command palette and select: `Teams: Provision in the cloud`.</li><li>Open the Teams Toolkit and click `Deploy to the cloud` or open the command palette and select: `Teams: Deploy to the cloud`.</li></ul> | <ul> <li>Run command `teamsfx account login azure`.</li> <li>Run command `teamsfx account set --subscription <your-subscription-id>`.</li> <li> Run command `teamsfx provision`.</li> <li>Run command: `teamsfx deploy`. </li></ul> |
 
-The following files implement the core command and response on the Bot Framework. You generally will not need to customize these files.
+> Note: Provisioning and deployment may incur charges to your Azure Subscription.
 
-| File / Folder | Contents |
-| - | - |
-| `src/internal/initialize.js` | Application initialization and bot message handling |
+## Preview
 
-The following files are project-related files. You generally will not need to customize these files.
+Once the provisioning and deployment steps are finished, you can preview your app:
 
-| File / Folder | Contents |
-| - | - |
-| `.gitignore` | Git ignore file |
-| `package.json` | NPM package file |
+- From Visual Studio Code
 
-# Customize your application
+  1. Open the `Run and Debug Activity Panel`.
+  1. Select `Launch Remote (Edge)` or `Launch Remote (Chrome)` from the launch configuration drop-down.
+  1. Press the Play (green arrow) button to launch your app - now running remotely from Azure.
 
-By default a single command is generated that sends the `helloworldCommand.json` Adaptive Card when a user types `hello` in the private message chat with the bot.
+- From TeamsFx CLI: execute `teamsfx preview --remote` in your project directory to launch your application.
 
-This section outlines some customization you can do to adopt the application for your needs.
+## Validate manifest file
 
-## Customize the command logic
+To check that your manifest file is valid:
 
-The default command logic simply returns a hard-coded Adaptive Card. You can customize this logic with your customize business logic. Often your business logic might require you to call your existing APIs.
+- From Visual Studio Code: open the command palette and select: `Teams: Validate manifest file`.
+- From TeamsFx CLI: run command `teamsfx validate` in your project directory.
 
-Teams Toolkit enables you to [easily connect to an existing API](#connect-to-existing-apis).
+## Package
 
-## Customize the Adaptive Card
+- From Visual Studio Code: open the Teams Toolkit and click `Zip Teams metadata package` or open the command palette and select `Teams: Zip Teams metadata package`.
+- Alternatively, from the command line run `teamsfx package` in the project directory.
 
-You can edit the file `src/adaptiveCards/helloworldCommand.json` to customize the Adaptive Card to your liking. The file `src/cardModels.js` defines a data structure that is used to fill data for the Adaptive Card. 
+## Publish to Teams
 
-The binding between the model and the Adaptive Card is done by name matching (for example,`CardData.title` maps to `${title}` in the Adaptive Card). You can add, edit, or remove properties and their bindings to customize the Adaptive Card to your needs.
+Once deployed, you may want to distribute your application to your organization's internal app store in Teams. Your app will be submitted for admin approval.
 
-You can also add new cards if appropriate for your application. Please follow this [sample](https://aka.ms/teamsfx-adaptive-card-sample) to see how to build different types of adaptive cards with a list or a table of dynamic contents using `ColumnSet` and `FactSet`.
+- From Visual Studio Code: open the Teams Toolkit and click `Publish to Teams` or open the command palette and select: `Teams: Publish to Teams`.
+- From TeamsFx CLI: run command `teamsfx publish` in your project directory.
 
-## Add more commands
+## Play with Messging Extension
 
-A hello world command handler is generated in `bot/src/helloworldCommandHandler.js` as an example. You can customize this command, or you can delete it and add more commands. To add more commands:
+This template provides some sample functionality:
 
-1. Create a new command handler class which implements the `TeamsFxBotCommandHandler` interface.
-2. Register your command handler in `bot/src/internal/initialize.js`.
-    - Option 1: update the `ConversationBot` constructor in include your new command handler(s) in `options.command.commands`.
-    - Option 2: call `ConversationBot.command.registerCommand(s)` to incrementally register your new command(s). 
-3. Update the app's manifest template in `templates/appPackage/manifest.template.json` to include the command definition for the new command(s) in the `bots.commandLists` section. 
+- You can search for `npm` packages from the search bar.
 
-For more code snippets and details, refer to [this document](https://aka.ms/teamsfx-command-response#how-to-add-more-command-and-response).
+- You can create and send an adaptive card.
 
-## Add notifications to your application
+  ![CreateCard](./images/AdaptiveCard.png)
 
-The notification feature adds the ability for your application to send Adaptive Cards in response to external events. For example, when a message is posted to `Event Hub` your application can respond and send an appropriate Adaptive Card to Teams.
+- You can share a message in an adaptive card form.
 
-To add the notification feature:
+  ![ShareMessage](./images/ShareMessage.png)
 
-1. Go to `bot\src\internal\initialize.js`
-2. Update your `conversationBot` initialization to enable notification feature:
-    ![enable-notification](https://user-images.githubusercontent.com/10163840/165462039-12bd4f61-3fc2-4fc8-8910-6a4b1e138626.png)
-3. To quickly add a sample notification triggered by a HTTP request, you can add the following sample code in `bot\src\index.js`:
+- You can paste a link that "unfurls" (`.botframwork.com` is monitored in this template) and a card will be rendered.
 
-    ```typescript
-    server.post("/api/notification", async (req, res) => {
-      for (const target of await commandBot.notification.installations()) {
-        await target.sendMessage("This is a sample notification message");
-      }
-    
-      res.json({});
-    });
+  ![ComposeArea](./images/LinkUnfurlingImage.png)
 
-4. Uninstall your previous bot installation from Teams, and press `F5` to start your application.
-5. Send a notification to the bot installation targets (channel/group chat/personal chat) by using a your favorite tool to send a HTTP POST request to `https://localhost:3978/api/notification`.
+To trigger these functions, there are multiple entry points:
 
-To learn more, refer to [the notification document](https://aka.ms/teamsfx-notification).
+- `@mention` Your message extension, from the `search box area`.
 
-## Accessing Microsoft Graph
+  ![AtBotFromSearch](./images/AtBotFromSearch.png)
 
-If you are responding to a command that needs access to Microsoft Graph, you can leverage single sign on to leverage the logged-in Teams user token to access their Microsoft Graph data. Read more about how Teams Toolkit can help you [add SSO](https://aka.ms/teamsfx-add-sso) to your application.
+- `@mention` your message extension from the `compose message area`.
 
-## Connect to existing APIs
+  ![AtBotFromMessage](./images/AtBotInMessage.png)
 
-Often you need to connect to existing APIs in order to retrieve data to send to Teams. Teams Toolkit makes it easy for you to configure and manage authentication for existing APIs. 
+- Click the `...` under compose message area, find your message extension.
 
-For more information, [click here](https://aka.ms/teamsfx-connect-api).
+  ![ComposeArea](./images/ThreeDot.png)
 
-## Customize the initialization
+- Click the `...` next to any messages you received or sent.
 
-The default initialization is located in `bot/src/internal/initialize.js`.
+  ![ComposeArea](./images/ThreeDotOnMessage.png)
 
-You can update the initialization logic to:
+## Further reading
 
-- Set `options.adapter` to use your own `BotFrameworkAdapter`
-- Set `options.command.commands` to include more command handlers
-- Set `options.{feature}.enabled` to enable more `ConversationBot` functionality
+### Bot
 
-To learn more, visit [additional initialization customizations](https://aka.ms/teamsfx-command-response#customize-initialization).
+- [Bot Basics](https://docs.microsoft.com/azure/bot-service/bot-builder-basics?view=azure-bot-service-4.0)
+- [Bot Framework Documentation](https://docs.botframework.com/)
+- [Azure Bot Service Introduction](https://docs.microsoft.com/azure/bot-service/bot-service-overview-introduction?view=azure-bot-service-4.0)
 
-## Update the Teams application manifest
+### Message Extension
 
-You can find the Teams application manifest in `templates/appPackage/manifest.template.json`.
-
-The file contains template arguments with `{...}` statements which will be replaced at build time. You may add any extra properties or permissions you require to this file.
-
-See the [schema reference](https://docs.microsoft.com/microsoftteams/platform/resources/schema/manifest-schema) for more information.
-
-## Additional information
-
-* Manage [multiple environments](https://docs.microsoft.com/microsoftteams/platform/toolkit/teamsfx-multi-env)
-* [Collaborate](https://docs.microsoft.com/microsoftteams/platform/toolkit/teamsfx-collaboration) with others
-
-# References
-
-* [Teams Toolkit Command Bot Tutorial](https://aka.ms/teamsfx-command-response)
-* [Teams Toolkit Documentations](https://docs.microsoft.com/microsoftteams/platform/toolkit/teams-toolkit-fundamentals)
-* [Teams Toolkit CLI](https://docs.microsoft.com/microsoftteams/platform/toolkit/teamsfx-cli)
-* [TeamsFx SDK](https://docs.microsoft.com/microsoftteams/platform/toolkit/teamsfx-sdk)
-* [Teams Toolkit Samples](https://github.com/OfficeDev/TeamsFx-Samples)
+- [Search Command](https://docs.microsoft.com/en-us/microsoftteams/platform/messaging-extensions/how-to/search-commands/define-search-command)
+- [Action Command](https://docs.microsoft.com/en-us/microsoftteams/platform/messaging-extensions/how-to/action-commands/define-action-command)
+- [Link Unfurling](https://docs.microsoft.com/en-us/microsoftteams/platform/messaging-extensions/how-to/link-unfurling?tabs=dotnet)

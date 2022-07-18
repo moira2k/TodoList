@@ -1,6 +1,6 @@
 {
     "appName": "TodoList",
-    "projectId": "72620fa1-ae0f-492a-9957-f92eb88a0c49",
+    "projectId": "dfb31400-6f2d-4892-b935-66510881bd69",
     "version": "2.1.0",
     "isFromSample": false,
     "solutionSettings": {
@@ -20,7 +20,7 @@
             "fx-resource-api-connector"
         ]
     },
-    "programmingLanguage": "javascript",
+    "programmingLanguage": "typescript",
     "pluginSettings": {
         "fx-resource-bot": {
             "host-type": "app-service",

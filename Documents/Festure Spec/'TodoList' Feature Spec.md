@@ -2,7 +2,7 @@
 
 ## Overview 
 
-Adaptive Card tabs are a new way to build tabs in Teams. Compare to embed web content in an IFrame,  designing adaptive cards is simpler and requires less prerequisite. Now we have some examples, e.g. "to-do list App", using the react framework for front-end development but lack an entire teams app example of using Adaptive Card. We want to create a to-do list using adaptive cards and some other tools and document the pros and cons of adaptive cards. The goal of the project is to provide developer experience and demonstrate the use of our technology.
+Adaptive Card tabs are a new way to build tabs in Teams. Compared to embed web content in an IFrame, designing adaptive cards is simpler and requires less prerequisite. Now we have some examples, e.g., "to-do list App", using the react framework for front-end development but we lack an entire Teams app example of using Adaptive Card. We want to create a to-do list using adaptive cards and some other tools and document the pros and cons of adaptive cards. The goal of the project is to provide developer experience and demonstrate the use of our technology.
 
 ## Technologies and tools
 
@@ -40,13 +40,13 @@ References: https://docs.microsoft.com/en-us/graph/toolkit/overview
 
 <center><img src=".\images\scenario1.PNG" alt="scenario1" style="zoom: 20%;" /></center>
 
-​	To-do Tab is consist of a "To-do List Card" (Figure 1-1) and a "To-do Item Card" (Figure 1-2), showing the To-do item you created.
+​	The To-do Tab consists of a "To-do List Card" (Figure 1-1) and a "To-do Item Card" (Figure 1-2), showing the To-do item you created.
 
 ​	"To-do List Card" Show all the to-do items. Click on the to-do item, the following "To-do Item Card" shows the details.
 
- 	1. If you want to edit the to-do item, you can click the drop-down button. Modification options will be expanded. You can change date, status, participants and content of the task. Complete the changes and send click the Confirm button. 
- 	2. If you want to delete the item, click the corresponding trash button.
- 	3. Add a new to-do item. You cannot set the status, the default is not started.
+1. If you want to edit the to-do item, you can click the drop-down button. Modification options will be expanded. You can change the date, status, participants and content of the task. Complete the changes and send click the Confirm button. 
+2. If you want to delete the item, click the corresponding trash button.
+3. Add a new to-do item. You cannot set the status, and the default is not started.
 
 ### Scenario 2 (Sub): create to-do item based on a Chat message
 
@@ -58,7 +58,7 @@ References: https://docs.microsoft.com/en-us/graph/toolkit/overview
 
 <center><img src=".\images\scenario3.PNG" alt="scenario3" style="zoom: 20%;" /></center>
 
-1. You can share your to-do item with others in the "To-do Item Card" of your own "To-do Tab". If you share it with User A, the to-do item will show up in the User A's "To-do Shared With Me Tab". He can track your progress on this to-do item.
+1. You can share your to-do item with others in the "To-do Item Card" of your own "To-do Tab". If you share it with User A, the to-do item will show up in User A's "To-do Shared with Me Tab". He can track your progress on this to-do item.
 
 ### Scenario 4 (Sub): Daily Notification
 
@@ -68,20 +68,12 @@ References: https://docs.microsoft.com/en-us/graph/toolkit/overview
 
 ## Features
 
-1. [P0] Manage(create, update, delete) to-do items
-
-   ​    1.1 Request and respond to these actions in "To-do List Tab"
-
-2. [P0] Add to do item based on chat message
-
-3. [P1] Share to-do item with others
-
-   ​    3.1 view and track items in "Shared With Me Tab"
-
-   ​    3.2 select the people to share with (with People picker)
-
-4. [P1] show user photos (with SSO)
-
-5. [P2] Send notification (to verify the ease of adding functionality )
-
-6. Stretch goal: Add source (chat name/meeting name) for to-do item
+1.	[P0] Manage (create, update, delete) to-do items (**Tab**)
+1.1 Request and respond to these actions in "To-do List Tab"
+2.	[P0] Add to do item based on chat message (**Message Extension**)
+3.	[P1] Share to-do items with others (**Tab**)
+3.1 View and track items in "Shared with Me Tab"
+3.2 Select the people to share with (with People picker)
+4.	[P1] show user photos (with SSO)
+5.	[P2] Send notification (to verify the ease of adding functionality) (**Bot**)
+6.	Stretch goal: Add source (chat name/meeting name) for to-do item

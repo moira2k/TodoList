@@ -34,8 +34,39 @@
         {
             "label": "Start All",
             "dependsOn": [
+                "Start Backend",
                 "Start Bot"
             ]
+        },
+        {
+            "label": "Start Backend",
+            "type": "shell",
+            "command": "npm run dev:teamsfx",
+            "isBackground": true,
+            "problemMatcher": "$teamsfx-backend-watch",
+            "options": {
+                "cwd": "${workspaceFolder}/api",
+                "env": {
+                    "PATH": "${command:fx-extension.get-func-path}${env:PATH}"
+                }
+            },
+            "presentation": {
+                "reveal": "silent"
+            },
+            "dependsOn": "Watch Backend"
+        },
+        {
+            "label": "Watch Backend",
+            "type": "shell",
+            "command": "npm run watch:teamsfx",
+            "isBackground": true,
+            "problemMatcher": "$tsc-watch",
+            "options": {
+                "cwd": "${workspaceFolder}/api"
+            },
+            "presentation": {
+                "reveal": "silent"
+            }
         },
         {
             "label": "Start Bot",

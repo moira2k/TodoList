@@ -13,7 +13,7 @@
                             "items": [
                                 {
                                     "type": "TextBlock",
-                                    "size": "ExtraLarge",
+                                    "size": "Large",
                                     "color": "Accent",
                                     "style": "heading",
                                     "spacing": "ExtraLarge",

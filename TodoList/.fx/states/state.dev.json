@@ -8,7 +8,7 @@
         "resourceGroupName": "todo_list-dev-rg",
         "location": "East Asia",
         "resourceNameSuffix": "ba6324",
-        "provisionSucceeded": true
+        "provisionSucceeded": false
     },
     "fx-resource-appstudio": {
         "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
@@ -30,7 +30,5 @@
         "appServicePlanName": "todolistdev552ad5bot",
         "resourceId": "/subscriptions/1756abc0-3554-4341-8d6a-46674962ea19/resourceGroups/todo_list-dev-rg/providers/Microsoft.Web/sites/todolistdev552ad5bot",
         "siteEndpoint": "https://todolistdev552ad5bot.azurewebsites.net"
-    },
-    "fx-resource-cicd": {},
-    "fx-resource-api-connector": {}
+    }
 }

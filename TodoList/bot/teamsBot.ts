@@ -1,241 +1,297 @@
 import { default as axios } from "axios";
 import * as querystring from "querystring";
 import {
-  TeamsActivityHandler,
-  CardFactory,
-  TurnContext,
-  AdaptiveCardInvokeValue,
-  AdaptiveCardInvokeResponse,
+    TeamsActivityHandler,
+    CardFactory,
+    TurnContext,
+    AdaptiveCardInvokeValue,
+    AdaptiveCardInvokeResponse,
 } from "botbuilder";
 import rawWelcomeCard from "./adaptiveCards/welcome.json";
 import rawLearnCard from "./adaptiveCards/learn.json";
-import { AdaptiveCards } from "@microsoft/adaptivecards-tools";
+// import { AdaptiveCards } from "@microsoft/adaptivecards-tools";
+import * as ACData from "adaptivecards-templating";
+import * as AdaptiveCards from "adaptivecards";
+import {TabFetchResponse, TodoListCard} from "./middlewares/constant"
+import rawtodoListCard from "./adaptiveCards/todoList.json"
+import rawtodoItemCard from "./adaptiveCards/todoItem.json"
+import rawtaskSharedCard from "./adaptiveCards/taskShared.json"
+import rawtodoMessCard from "./adaptiveCards/todoMess.json"
+import testCard from "./adaptiveCards/test.json"
+// test data
+import rawtodoListData from "./adaptiveCards/todoList.data.json"
+import rawtodoItemData from "./adaptiveCards/todoItem.data.json"
+import rawtaskSharedData from "./adaptiveCards/taskShared.data.json"
+import rawtodoMessData from "./adaptiveCards/todoMess.data.json"
 
-export interface DataInterface {
-  likeCount: number;
-}
+// export interface DataInterface {
+//     likeCount: number;
+// }
 
 export class TeamsBot extends TeamsActivityHandler {
-  // record the likeCount
-  likeCountObj: { likeCount: number };
+    // record the likeCount
+    // likeCountObj: { likeCount: number };
 
-  constructor() {
-    super();
+    constructor() {
+        super();
 
-    this.likeCountObj = { likeCount: 0 };
+        // this.likeCountObj = { likeCount: 0 };
 
-    this.onMessage(async (context, next) => {
-      console.log("Running with Message Activity.");
+        // this.onMessage(async (context, next) => {
+        //     console.log("Running with Message Activity.");
 
-      let txt = context.activity.text;
-      const removedMentionText = TurnContext.removeRecipientMention(context.activity);
-      if (removedMentionText) {
-        // Remove the line break
-        txt = removedMentionText.toLowerCase().replace(/\n|\r/g, "").trim();
-      }
+        //     let txt = context.activity.text;
+        //     const removedMentionText = TurnContext.removeRecipientMention(context.activity);
+        //     if (removedMentionText) {
+        //         // Remove the line break
+        //         txt = removedMentionText.toLowerCase().replace(/\n|\r/g, "").trim();
+        //     }
 
-      // Trigger command by IM text
-      switch (txt) {
-        case "welcome": {
-          const card = AdaptiveCards.declareWithoutData(rawWelcomeCard).render();
-          await context.sendActivity({ attachments: [CardFactory.adaptiveCard(card)] });
-          break;
-        }
-        case "learn": {
-          this.likeCountObj.likeCount = 0;
-          const card = AdaptiveCards.declare<DataInterface>(rawLearnCard).render(this.likeCountObj);
-          await context.sendActivity({ attachments: [CardFactory.adaptiveCard(card)] });
-          break;
-        }
-        /**
-         * case "yourCommand": {
-         *   await context.sendActivity(`Add your response here!`);
-         *   break;
-         * }
-         */
-      }
+        //     // Trigger command by IM text
+        //     switch (txt) {
+        //         case "welcome": {
+        //             const card = AdaptiveCards.declareWithoutData(rawWelcomeCard).render();
+        //             await context.sendActivity({ attachments: [CardFactory.adaptiveCard(card)] });
+        //             break;
+        //         }
+        //         case "learn": {
+        //             this.likeCountObj.likeCount = 0;
+        //             const card = AdaptiveCards.declare<DataInterface>(rawLearnCard).render(this.likeCountObj);
+        //             await context.sendActivity({ attachments: [CardFactory.adaptiveCard(card)] });
+        //             break;
+        //         }
+        //         /**
+        //          * case "yourCommand": {
+        //          *   await context.sendActivity(`Add your response here!`);
+        //          *   break;
+        //          * }
+        //          */
+        //     }
 
-      // By calling next() you ensure that the next BotHandler is run.
-      await next();
-    });
+        //     // By calling next() you ensure that the next BotHandler is run.
+        //     await next();
+        // });
 
-    this.onMembersAdded(async (context, next) => {
-      const membersAdded = context.activity.membersAdded;
-      for (let cnt = 0; cnt < membersAdded.length; cnt++) {
-        if (membersAdded[cnt].id) {
-          const card = AdaptiveCards.declareWithoutData(rawWelcomeCard).render();
-          await context.sendActivity({ attachments: [CardFactory.adaptiveCard(card)] });
-          break;
-        }
-      }
-      await next();
-    });
-  }
-
-  // Invoked when an action is taken on an Adaptive Card. The Adaptive Card sends an event to the Bot and this
-  // method handles that event.
-  async onAdaptiveCardInvoke(
-    context: TurnContext,
-    invokeValue: AdaptiveCardInvokeValue
-  ): Promise<AdaptiveCardInvokeResponse> {
-    // The verb "userlike" is sent from the Adaptive Card defined in adaptiveCards/learn.json
-    if (invokeValue.action.verb === "userlike") {
-      this.likeCountObj.likeCount++;
-      const card = AdaptiveCards.declare<DataInterface>(rawLearnCard).render(this.likeCountObj);
-      await context.updateActivity({
-        type: "message",
-        id: context.activity.replyToId,
-        attachments: [CardFactory.adaptiveCard(card)],
-      });
-      return { statusCode: 200, type: undefined, value: undefined };
+        // this.onMembersAdded(async (context, next) => {
+        //     const membersAdded = context.activity.membersAdded;
+        //     for (let cnt = 0; cnt < membersAdded.length; cnt++) {
+        //         if (membersAdded[cnt].id) {
+        //             const card = AdaptiveCards.declareWithoutData(rawWelcomeCard).render();
+        //             await context.sendActivity({ attachments: [CardFactory.adaptiveCard(card)] });
+        //             break;
+        //         }
+        //     }
+        //     await next();
+        // });
     }
-  }
 
-  // Message extension Code
-  // Action.
-  public async handleTeamsMessagingExtensionSubmitAction(
-    context: TurnContext,
-    action: any
-  ): Promise<any> {
-    switch (action.commandId) {
-      case "createCard":
-        return createCardCommand(context, action);
-      case "shareMessage":
-        return shareMessageCommand(context, action);
-      default:
-        throw new Error("NotImplemented");
+    // Invoked when an action is taken on an Adaptive Card. The Adaptive Card sends an event to the Bot and this
+    // method handles that event.
+    // async onAdaptiveCardInvoke(
+    //     context: TurnContext,
+    //     invokeValue: AdaptiveCardInvokeValue
+    // ): Promise<AdaptiveCardInvokeResponse> {
+    //     // The verb "userlike" is sent from the Adaptive Card defined in adaptiveCards/learn.json
+    //     if (invokeValue.action.verb === "userlike") {
+    //         this.likeCountObj.likeCount++;
+    //         const card = AdaptiveCards.declare<DataInterface>(rawLearnCard).render(this.likeCountObj);
+    //         await context.updateActivity({
+    //             type: "message",
+    //             id: context.activity.replyToId,
+    //             attachments: [CardFactory.adaptiveCard(card)],
+    //         });
+    //         return { statusCode: 200, type: undefined, value: undefined };
+    //     }
+    // }
+
+    // Message extension Code
+    // Action.
+    // public async handleTeamsMessagingExtensionSubmitAction(
+    //     context: TurnContext,
+    //     action: any
+    // ): Promise<any> {
+    //     switch (action.commandId) {
+    //         case "createCard":
+    //             return createCardCommand(context, action);
+    //         case "shareMessage":
+    //             return shareMessageCommand(context, action);
+    //         default:
+    //             throw new Error("NotImplemented");
+    //     }
+    // }
+
+    // Search.
+    // public async handleTeamsMessagingExtensionQuery(context: TurnContext, query: any): Promise<any> {
+    //     const searchQuery = query.parameters[0].value;
+    //     const response = await axios.get(
+    //         `http://registry.npmjs.com/-/v1/search?${querystring.stringify({
+    //             text: searchQuery,
+    //             size: 8,
+    //         })}`
+    //     );
+
+    //     const attachments = [];
+    //     response.data.objects.forEach((obj) => {
+    //         const heroCard = CardFactory.heroCard(obj.package.name);
+    //         const preview = CardFactory.heroCard(obj.package.name);
+    //         preview.content.tap = {
+    //             type: "invoke",
+    //             value: { name: obj.package.name, description: obj.package.description },
+    //         };
+    //         const attachment = { ...heroCard, preview };
+    //         attachments.push(attachment);
+    //     });
+
+    //     return {
+    //         composeExtension: {
+    //             type: "result",
+    //             attachmentLayout: "list",
+    //             attachments: attachments,
+    //         },
+    //     };
+    // }
+
+    // public async handleTeamsMessagingExtensionSelectItem(
+    //     context: TurnContext,
+    //     obj: any
+    // ): Promise<any> {
+    //     return {
+    //         composeExtension: {
+    //             type: "result",
+    //             attachmentLayout: "list",
+    //             attachments: [CardFactory.heroCard(obj.name, obj.description)],
+    //         },
+    //     };
+    // }
+
+    // Link Unfurling.
+    // public async handleTeamsAppBasedLinkQuery(context: TurnContext, query: any): Promise<any> {
+    //     const attachment = CardFactory.thumbnailCard("Image Preview Card", query.url, [query.url]);
+
+    //     const result = {
+    //         attachmentLayout: "list",
+    //         type: "result",
+    //         attachments: [attachment],
+    //     };
+
+    //     const response = {
+    //         composeExtension: result,
+    //     };
+    //     return response;
+    // }
+
+    // Fetch Adaptive Card to render to a tab.
+    async handleTeamsTabFetch(context: TurnContext, tabRequest: any): Promise<any> {
+        const tabFetchResp = {
+            tab: {
+                type: "continue",
+                value: {
+                    cards: []
+                },
+            },
+            responseType: "tab"
+        };
+
+        switch (tabRequest.tabContext.tabEntityId) {    
+            case "todoTabForMe":
+                // Create a Template instance from the template payload
+                const todoListTemplate = new ACData.Template(rawtodoListCard);
+                // Expand the template with your `$root` data object.
+                // This binds it to the data and produces the final Adaptive Card payload
+                const todoListPayload = todoListTemplate.expand({
+                    $root: rawtodoListData
+                });
+                const todoItemTemplate = new ACData.Template(rawtodoItemCard);
+                const todoItemPayload = todoItemTemplate.expand({
+                    $root: rawtodoItemData
+                });
+                tabFetchResp.tab.value.cards = [{"card": todoListPayload}, {"card": todoItemPayload}];
+                break;
+            case "todoTabSharedWithMe":
+                const taskSharedTemplate = new ACData.Template(rawtaskSharedCard);
+                const taskSharedPayload = taskSharedTemplate.expand({
+                    $root: rawtaskSharedData
+                });
+                const todoMessTemplate = new ACData.Template(rawtodoMessCard);
+                const todoMessPayload = todoMessTemplate.expand({
+                    $root: rawtodoMessData
+                });
+                tabFetchResp.tab.value.cards = [{"card": taskSharedPayload}, {"card": todoMessPayload}];
+                break;
+        }
+        return tabFetchResp;
     }
-  }
 
-  // Search.
-  public async handleTeamsMessagingExtensionQuery(context: TurnContext, query: any): Promise<any> {
-    const searchQuery = query.parameters[0].value;
-    const response = await axios.get(
-      `http://registry.npmjs.com/-/v1/search?${querystring.stringify({
-        text: searchQuery,
-        size: 8,
-      })}`
-    );
-
-    const attachments = [];
-    response.data.objects.forEach((obj) => {
-      const heroCard = CardFactory.heroCard(obj.package.name);
-      const preview = CardFactory.heroCard(obj.package.name);
-      preview.content.tap = {
-        type: "invoke",
-        value: { name: obj.package.name, description: obj.package.description },
-      };
-      const attachment = { ...heroCard, preview };
-      attachments.push(attachment);
-    });
-
-    return {
-      composeExtension: {
-        type: "result",
-        attachmentLayout: "list",
-        attachments: attachments,
-      },
-    };
-  }
-
-  public async handleTeamsMessagingExtensionSelectItem(
-    context: TurnContext,
-    obj: any
-  ): Promise<any> {
-    return {
-      composeExtension: {
-        type: "result",
-        attachmentLayout: "list",
-        attachments: [CardFactory.heroCard(obj.name, obj.description)],
-      },
-    };
-  }
-
-  // Link Unfurling.
-  public async handleTeamsAppBasedLinkQuery(context: TurnContext, query: any): Promise<any> {
-    const attachment = CardFactory.thumbnailCard("Image Preview Card", query.url, [query.url]);
-
-    const result = {
-      attachmentLayout: "list",
-      type: "result",
-      attachments: [attachment],
-    };
-
-    const response = {
-      composeExtension: result,
-    };
-    return response;
-  }
 }
 
-async function createCardCommand(context: TurnContext, action: any): Promise<any> {
-  // The user has chosen to create a card by choosing the 'Create Card' context menu command.
-  const data = action.data;
-  const heroCard = CardFactory.heroCard(data.title, data.text);
-  heroCard.content.subtitle = data.subTitle;
-  const attachment = {
-    contentType: heroCard.contentType,
-    content: heroCard.content,
-    preview: heroCard,
-  };
+// async function createCardCommand(context: TurnContext, action: any): Promise<any> {
+//     // The user has chosen to create a card by choosing the 'Create Card' context menu command.
+//     const data = action.data;
+//     const heroCard = CardFactory.heroCard(data.title, data.text);
+//     heroCard.content.subtitle = data.subTitle;
+//     const attachment = {
+//         contentType: heroCard.contentType,
+//         content: heroCard.content,
+//         preview: heroCard,
+//     };
 
-  return {
-    composeExtension: {
-      type: "result",
-      attachmentLayout: "list",
-      attachments: [attachment],
-    },
-  };
-}
+//     return {
+//         composeExtension: {
+//             type: "result",
+//             attachmentLayout: "list",
+//             attachments: [attachment],
+//         },
+//     };
+// }
 
-async function shareMessageCommand(context: TurnContext, action: any): Promise<any> {
-  // The user has chosen to share a message by choosing the 'Share Message' context menu command.
-  let userName = "unknown";
-  if (
-    action.messagePayload &&
-    action.messagePayload.from &&
-    action.messagePayload.from.user &&
-    action.messagePayload.from.user.displayName
-  ) {
-    userName = action.messagePayload.from.user.displayName;
-  }
+// async function shareMessageCommand(context: TurnContext, action: any): Promise<any> {
+//     // The user has chosen to share a message by choosing the 'Share Message' context menu command.
+//     let userName = "unknown";
+//     if (
+//         action.messagePayload &&
+//         action.messagePayload.from &&
+//         action.messagePayload.from.user &&
+//         action.messagePayload.from.user.displayName
+//     ) {
+//         userName = action.messagePayload.from.user.displayName;
+//     }
 
-  // This Message Extension example allows the user to check a box to include an image with the
-  // shared message.  This demonstrates sending custom parameters along with the message payload.
-  let images = [];
-  const includeImage = action.data.includeImage;
-  if (includeImage === "true") {
-    images = [
-      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQtB3AwMUeNoq4gUBGe6Ocj8kyh3bXa9ZbV7u1fVKQoyKFHdkqU",
-    ];
-  }
-  const heroCard = CardFactory.heroCard(
-    `${userName} originally sent this message:`,
-    action.messagePayload.body.content,
-    images
-  );
+//     // This Message Extension example allows the user to check a box to include an image with the
+//     // shared message.  This demonstrates sending custom parameters along with the message payload.
+//     let images = [];
+//     const includeImage = action.data.includeImage;
+//     if (includeImage === "true") {
+//         images = [
+//             "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQtB3AwMUeNoq4gUBGe6Ocj8kyh3bXa9ZbV7u1fVKQoyKFHdkqU",
+//         ];
+//     }
+//     const heroCard = CardFactory.heroCard(
+//         `${userName} originally sent this message:`,
+//         action.messagePayload.body.content,
+//         images
+//     );
 
-  if (
-    action.messagePayload &&
-    action.messagePayload.attachment &&
-    action.messagePayload.attachments.length > 0
-  ) {
-    // This sample does not add the MessagePayload Attachments.  This is left as an
-    // exercise for the user.
-    heroCard.content.subtitle = `(${action.messagePayload.attachments.length} Attachments not included)`;
-  }
+//     if (
+//         action.messagePayload &&
+//         action.messagePayload.attachment &&
+//         action.messagePayload.attachments.length > 0
+//     ) {
+//         // This sample does not add the MessagePayload Attachments.  This is left as an
+//         // exercise for the user.
+//         heroCard.content.subtitle = `(${action.messagePayload.attachments.length} Attachments not included)`;
+//     }
 
-  const attachment = {
-    contentType: heroCard.contentType,
-    content: heroCard.content,
-    preview: heroCard,
-  };
+//     const attachment = {
+//         contentType: heroCard.contentType,
+//         content: heroCard.content,
+//         preview: heroCard,
+//     };
 
-  return {
-    composeExtension: {
-      type: "result",
-      attachmentLayout: "list",
-      attachments: [attachment],
-    },
-  };
-}
+//     return {
+//         composeExtension: {
+//             type: "result",
+//             attachmentLayout: "list",
+//             attachments: [attachment],
+//         },
+//     };
+// }

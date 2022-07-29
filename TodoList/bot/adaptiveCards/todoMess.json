@@ -13,7 +13,7 @@
                             "items": [
                                 {
                                     "type": "TextBlock",
-                                    "size": "ExtraLarge",
+                                    "size": "Large",
                                     "color": "Accent",
                                     "style": "heading",
                                     "spacing": "ExtraLarge",
@@ -149,16 +149,6 @@
                     ]
                 }
             ]
-        },
-        {
-            "type": "Container",
-            "style": "emphasis",
-            "items": [
-                {
-                    "type": "ColumnSet"
-                }
-            ],
-            "bleed": true
         }
     ],
     "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",

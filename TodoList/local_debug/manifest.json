@@ -2,7 +2,7 @@
     "$schema": "https://developer.microsoft.com/en-us/json-schemas/teams/v1.13/MicrosoftTeams.schema.json",
     "manifestVersion": "1.13",
     "version": "1.0.0",
-    "id": "81ca37ff-62e9-4eeb-97fe-9dfd9a468f27",
+    "id": "81ca37ff-62e9-4eeb-97fe-9dfd9a468f29",
     "packageName": "com.microsoft.teams.extension",
     "developer": {
         "name": "Teams App, Inc.",
@@ -23,45 +23,28 @@
         "full": "Full description of TodoList-local-debug"
     },
     "accentColor": "#FFFFFF",
-    "bots": [
-        {
-            "botId": "8d209a9d-f3a7-4c4e-aa93-4ed815d430a0",
-            "scopes": [
-                "personal",
-                "team",
-                "groupchat"
-            ],
-            "supportsFiles": false,
-            "isNotificationOnly": false,
-            "commandLists": [
-                {
-                    "scopes": [
-                        "personal",
-                        "team",
-                        "groupchat"
-                    ],
-                    "commands": [
-                        {
-                            "title": "welcome",
-                            "description": "Resend welcome card of this Bot"
-                        },
-                        {
-                            "title": "learn",
-                            "description": "Learn about Adaptive Card and Bot Command"
-                        }
-                    ]
-                }
-            ]
-        }
-    ],
+    "bots": [],
     "composeExtensions": [],
     "configurableTabs": [],
-    "staticTabs": [],
+    "staticTabs": [
+        {
+          "entityId": "todoTabForMe",
+          "name": "Created by Me",
+          "contentBotId": "7c4787b6-a963-4486-8105-ef8dd6d2479d",
+          "scopes": [ "personal" ]
+        },
+        {
+          "entityId": "todoTabSharedWithMe",
+          "name": "Shared with Me",
+          "contentBotId": "7c4787b6-a963-4486-8105-ef8dd6d2479d",
+          "scopes": [ "personal" ]
+        }
+    ],
     "permissions": [
         "identity",
         "messageTeamMembers"
     ],
     "validDomains": [
-        "9cf4-2404-f801-9000-1a-d8fc-d6fc-45e5-1575.ap.ngrok.io"
+        "*.ap.ngrok.io"
     ]
 }

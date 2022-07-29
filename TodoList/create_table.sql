@@ -1,13 +1,11 @@
-CREATE TABLE Todo.Users
-(
+CREATE TABLE Todo.Users (
     userId INT IDENTITY PRIMARY KEY,
     ADDId NVARCHAR(128) NOT NULL,
     userName NVARCHAR(128) NOT NULL,
     profileImage NVARCHAR(256) NOT NULL
 );
 
-CREATE TABLE Todo.Tasks
-(
+CREATE TABLE Todo.Tasks (
     taskId INT IDENTITY PRIMARY KEY,
     taskTime NVARCHAR(128) NOT NULL,
     taskStatus TinyInt NOT NULL default 0,
@@ -15,15 +13,13 @@ CREATE TABLE Todo.Tasks
     creatorId NVARCHAR(128) NOT NULL,
 );
 
-CREATE TABLE Todo.Participants 
-(
+CREATE TABLE Todo.Participants (
     Id INT IDENTITY PRIMARY KEY,
     taskId INT NOT NULL,
     participantId INT NOT NULL
 );
 
-CREATE TABLE Todo.SharedTabs
-(
+CREATE TABLE Todo.SharedTabs (
     Id INT IDENTITY PRIMARY KEY,
     userId INT NOT NULL,
     taskId INT NOT NULL

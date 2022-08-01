@@ -1,7 +1,7 @@
 {
     "$schema": "https://developer.microsoft.com/en-us/json-schemas/teams/v1.13/MicrosoftTeams.schema.json",
     "manifestVersion": "1.13",
-    "version": "1.0.0",
+    "version": "1.0.2",
     "id": "81ca37ff-62e9-4eeb-97fe-9dfd9a468f29",
     "packageName": "com.microsoft.teams.extension",
     "developer": {
@@ -23,7 +23,6 @@
         "full": "Full description of TodoList-local-debug"
     },
     "accentColor": "#FFFFFF",
-    "bots": [],
     "composeExtensions": [],
     "configurableTabs": [],
     "staticTabs": [
@@ -38,6 +37,33 @@
           "name": "Shared with Me",
           "contentBotId": "7c4787b6-a963-4486-8105-ef8dd6d2479d",
           "scopes": [ "personal" ]
+        }
+    ],
+    "bots": [
+        {
+            "botId": "7c4787b6-a963-4486-8105-ef8dd6d2479d",
+            "scopes": [
+                "personal",
+                "team",
+                "groupchat"
+            ],
+            "supportsFiles": false,
+            "isNotificationOnly": false,
+            "commandLists": [
+                {
+                    "scopes": [
+                        "personal",
+                        "team",
+                        "groupchat"
+                    ],
+                    "commands": [
+                        {
+                            "title": "welcome",
+                            "description": "Resend welcome card of this Bot"
+                        }
+                    ]
+                }
+            ]
         }
     ],
     "permissions": [

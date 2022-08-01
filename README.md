@@ -7,6 +7,9 @@
 ````
 Azure Bot: hk_todolist_test
 AAD App: 
+Azure Database: todoDatabase
+UserName: azureuser
+Password: 1234qwer!
 ````
 
 
@@ -48,8 +51,18 @@ npm run dev:local
 
 ## Develop Back-end
 
-1. 每次更改`manifest.json`都需要更改"id"，否则upload an app后，teams仍然会加载最开始的app。
+1. 每次更改`manifest.json`都需要更改"version"，否则upload an app后，teams仍然会加载最开始的app。
 
 ### Fetch to adaptive card
 
 1. 插入有颜色的空组件，美化adaptive card，这个在本地adaptive card调试和在线designer都是允许的操作，但是在`TeamsActivityHandler`中会引发 <BotError>Unable to process invoke from bot 错误
+
+3.  People Picker
+
+   [Fluent UI - Controls - React - PeoplePicker (microsoft.com)](https://developer.microsoft.com/en-us/fluentui#/controls/web/peoplepicker)
+
+Response for adaptive card
+
+[Application development overview - SQL Database & SQL Managed Instance](https://docs.microsoft.com/en-us/azure/azure-sql/database/develop-overview?view=azuresql)
+
+1. "adaptivecards-templating"  "adaptivecards" "@microsoft/adaptivecards-tools"

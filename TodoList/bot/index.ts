@@ -8,6 +8,8 @@ import { BotFrameworkAdapter, TurnContext } from "botbuilder";
 // This bot's main dialog.
 import { TeamsBot } from "./teamsBot";
 
+import { DBClient, queryDatabase } from "./api/DBclient"
+
 // Create adapter.
 // See https://aka.ms/about-bot-adapter to learn more about adapters.
 const adapter = new BotFrameworkAdapter({
@@ -41,6 +43,11 @@ adapter.onTurnError = onTurnErrorHandler;
 // Create the bot that will handle incoming messages.
 const bot = new TeamsBot();
 
+// Local Debug
+// Create the sql connection
+export const db = new DBClient();
+queryDatabase()
+
 // Create HTTP server.
 const server = restify.createServer();
 server.listen(process.env.port || process.env.PORT || 3978, () => {
@@ -50,7 +57,6 @@ server.listen(process.env.port || process.env.PORT || 3978, () => {
 // Listen for incoming requests.
 server.post("/api/messages", async (req, res) => {
     await adapter.processActivity(req, res, async (context) => {
-        console.log("fuck");
         await bot.run(context);
     });
 });

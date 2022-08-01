@@ -12,7 +12,7 @@ import rawLearnCard from "./adaptiveCards/learn.json";
 // import { AdaptiveCards } from "@microsoft/adaptivecards-tools";
 import * as ACData from "adaptivecards-templating";
 import * as AdaptiveCards from "adaptivecards";
-import {TabFetchResponse, TodoListCard} from "./middlewares/constant"
+import {TabFetchResponse, TodoListCard} from "./api/constant"
 import rawtodoListCard from "./adaptiveCards/todoList.json"
 import rawtodoItemCard from "./adaptiveCards/todoItem.json"
 import rawtaskSharedCard from "./adaptiveCards/taskShared.json"
@@ -23,6 +23,9 @@ import rawtodoListData from "./adaptiveCards/todoList.data.json"
 import rawtodoItemData from "./adaptiveCards/todoItem.data.json"
 import rawtaskSharedData from "./adaptiveCards/taskShared.data.json"
 import rawtodoMessData from "./adaptiveCards/todoMess.data.json"
+import { queryDatabase } from "./api/DBclient"
+
+const AdaptiveCardsTools = require("@microsoft/adaptivecards-tools").AdaptiveCards
 
 // export interface DataInterface {
 //     likeCount: number;
@@ -37,26 +40,26 @@ export class TeamsBot extends TeamsActivityHandler {
 
         // this.likeCountObj = { likeCount: 0 };
 
-        // this.onMessage(async (context, next) => {
-        //     console.log("Running with Message Activity.");
+        this.onMessage(async (context, next) => {
+            console.log("Running with Message Activity.");
 
-        //     let txt = context.activity.text;
-        //     const removedMentionText = TurnContext.removeRecipientMention(context.activity);
-        //     if (removedMentionText) {
-        //         // Remove the line break
-        //         txt = removedMentionText.toLowerCase().replace(/\n|\r/g, "").trim();
-        //     }
+            let txt = context.activity.text;
+            const removedMentionText = TurnContext.removeRecipientMention(context.activity);
+            if (removedMentionText) {
+                // Remove the line break
+                txt = removedMentionText.toLowerCase().replace(/\n|\r/g, "").trim();
+            }
 
-        //     // Trigger command by IM text
-        //     switch (txt) {
-        //         case "welcome": {
-        //             const card = AdaptiveCards.declareWithoutData(rawWelcomeCard).render();
-        //             await context.sendActivity({ attachments: [CardFactory.adaptiveCard(card)] });
-        //             break;
-        //         }
+            // Trigger command by IM text
+            switch (txt) {
+                case "welcome": {
+                    const card = AdaptiveCardsTools.declareWithoutData(rawWelcomeCard).render();
+                    await context.sendActivity({ attachments: [CardFactory.adaptiveCard(card)] });
+                    break;
+                }
         //         case "learn": {
         //             this.likeCountObj.likeCount = 0;
-        //             const card = AdaptiveCards.declare<DataInterface>(rawLearnCard).render(this.likeCountObj);
+        //             const card = AdaptiveCardsTools.declare<DataInterface>(rawLearnCard).render(this.likeCountObj);
         //             await context.sendActivity({ attachments: [CardFactory.adaptiveCard(card)] });
         //             break;
         //         }
@@ -66,17 +69,17 @@ export class TeamsBot extends TeamsActivityHandler {
         //          *   break;
         //          * }
         //          */
-        //     }
+            }
 
         //     // By calling next() you ensure that the next BotHandler is run.
         //     await next();
-        // });
+        });
 
         // this.onMembersAdded(async (context, next) => {
         //     const membersAdded = context.activity.membersAdded;
         //     for (let cnt = 0; cnt < membersAdded.length; cnt++) {
         //         if (membersAdded[cnt].id) {
-        //             const card = AdaptiveCards.declareWithoutData(rawWelcomeCard).render();
+        //             const card = AdaptiveCardsTools.declareWithoutData(rawWelcomeCard).render();
         //             await context.sendActivity({ attachments: [CardFactory.adaptiveCard(card)] });
         //             break;
         //         }
@@ -182,6 +185,7 @@ export class TeamsBot extends TeamsActivityHandler {
 
     // Fetch Adaptive Card to render to a tab.
     async handleTeamsTabFetch(context: TurnContext, tabRequest: any): Promise<any> {
+        queryDatabase();
         const tabFetchResp = {
             tab: {
                 type: "continue",
@@ -193,7 +197,7 @@ export class TeamsBot extends TeamsActivityHandler {
         };
 
         switch (tabRequest.tabContext.tabEntityId) {    
-            case "todoTabForMe":
+            case "todoTabForMe": {
                 // Create a Template instance from the template payload
                 const todoListTemplate = new ACData.Template(rawtodoListCard);
                 // Expand the template with your `$root` data object.
@@ -207,7 +211,8 @@ export class TeamsBot extends TeamsActivityHandler {
                 });
                 tabFetchResp.tab.value.cards = [{"card": todoListPayload}, {"card": todoItemPayload}];
                 break;
-            case "todoTabSharedWithMe":
+            }
+            case "todoTabSharedWithMe": {
                 const taskSharedTemplate = new ACData.Template(rawtaskSharedCard);
                 const taskSharedPayload = taskSharedTemplate.expand({
                     $root: rawtaskSharedData
@@ -218,6 +223,7 @@ export class TeamsBot extends TeamsActivityHandler {
                 });
                 tabFetchResp.tab.value.cards = [{"card": taskSharedPayload}, {"card": todoMessPayload}];
                 break;
+            }
         }
         return tabFetchResp;
     }

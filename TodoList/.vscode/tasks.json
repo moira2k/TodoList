@@ -90,6 +90,9 @@
             },
             "options": {
                 "cwd": "${workspaceFolder}/bot"
+            },
+            "presentation": {
+                "reveal": "silent"
             }
         }
     ]

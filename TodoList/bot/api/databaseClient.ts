@@ -23,9 +23,22 @@ export default async function dbRun(query: String): Promise<Response> {
         //    sqlPassword: process.env.SQL_PASSWORD,
         // });
         const teamsfx = new TeamsFx();
-        connection = await getSQLConnection(teamsfx);
-        // Execute SQL through TeamsFx server SDK generated connection and return result
-        res.body = await execQuery(query, connection);
+        // If there's only one SQL database
+        const config = await getTediousConnectionConfig(teamsfx);
+        connection = new Connection(config);
+        connection.on("connect", (error: any) => {
+            if (error) {
+                console.log(error);
+            } else {
+                res.body = execQuery(query, connection);
+                console.log(res.body);
+            }
+        });
+        console.log(res);
+        // connection = await getSQLConnection(teamsfx);
+        // console.log("fuck");
+        // // Execute SQL through TeamsFx server SDK generated connection and return result
+        // res.body = await execQuery(query, connection);
         return res;
     }
     catch (err) {
@@ -40,13 +53,18 @@ export default async function dbRun(query: String): Promise<Response> {
     }
 }
 
-async function getSQLConnection(teamsfx) {
+async function getSQLConnection(teamsfx: TeamsFx) {
     // If there's only one SQL database
     const config = await getTediousConnectionConfig(teamsfx);
+    // console.log(config);
     const connection = new Connection(config);
+    // console.log("connection" + JSON.stringify(connection, null, 2));
     return new Promise((resolve, reject) => {
+        console.log("test");
         connection.on('connect', err => {
+            console.log("connect");
             if (err) {
+                console.log("err", err);
                 reject(err);
             }
             resolve(connection);

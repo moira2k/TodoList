@@ -185,7 +185,6 @@ export class TeamsBot extends TeamsActivityHandler {
 
     // Fetch Adaptive Card to render to a tab.
     async handleTeamsTabFetch(context: TurnContext, tabRequest: any): Promise<any> {
-        queryDatabase();
         const tabFetchResp = {
             tab: {
                 type: "continue",

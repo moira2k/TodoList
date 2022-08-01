@@ -7,7 +7,7 @@ interface Response {
     body: { [key: string]: any };
 }
 
-export default async function dbRun(query: String): Promise<Response> {
+export default async function dbRun(query: string): Promise<Response> {
     console.log("Processing a query")
     // Initialize response.
     const res: Response = {
@@ -78,6 +78,7 @@ async function getSQLConnection(teamsfx: TeamsFx) {
 async function execQuery(query, connection) {
     return new Promise((resolve, reject) => {
         const res = [];
+        console.log("query", query);
         const request = new Request(query, (err) => {
             if (err) {
                 reject(err);
@@ -90,6 +91,7 @@ async function execQuery(query, connection) {
                 row[column.metadata.colName] = column.value;
             });
             res.push(row)
+            console.log("res", res);
         });
 
         request.on('requestCompleted', () => {
@@ -161,26 +163,26 @@ async function execQuery(query, connection) {
 // }
 
 
-// export function queryDatabase() {
-//     console.log("Reading rows from the Table...");
+export function queryDatabase(connection) {
+    console.log("Reading rows from the Table...");
 
-//     // Read all rows from table
-//     const request = new Request(
-//         `SELECT * FROM [Todo].[Users]`,
-//         (err, rowCount) => {
-//             if (err) {
-//                 console.error(err.message);
-//             } else {
-//                 console.log(`${rowCount} row(s) returned`);
-//             }
-//         }
-//     );
+    // Read all rows from table
+    const request = new Request(
+        `SELECT * FROM [Todo].[Users]`,
+        (err, rowCount) => {
+            if (err) {
+                console.error(err.message);
+            } else {
+                console.log(`${rowCount} row(s) returned`);
+            }
+        }
+    );
 
-//     request.on("row", columns => {
-//         columns.forEach(column => {
-//             console.log("%s\t%s", column.metadata.colName, column.value);
-//         });
-//     });
+    request.on("row", columns => {
+        columns.forEach(column => {
+            console.log("%s\t%s", column.metadata.colName, column.value);
+        });
+    });
 
-//     db.connection.execSql(request);
-// }
+    connection.execSql(request);
+}

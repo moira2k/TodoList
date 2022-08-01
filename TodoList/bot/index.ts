@@ -8,8 +8,6 @@ import { BotFrameworkAdapter, TurnContext } from "botbuilder";
 // This bot's main dialog.
 import { TeamsBot } from "./teamsBot";
 
-import { DBClient, queryDatabase } from "./api/DBclient"
-
 // Create adapter.
 // See https://aka.ms/about-bot-adapter to learn more about adapters.
 const adapter = new BotFrameworkAdapter({
@@ -42,11 +40,6 @@ adapter.onTurnError = onTurnErrorHandler;
 
 // Create the bot that will handle incoming messages.
 const bot = new TeamsBot();
-
-// Local Debug
-// Create the sql connection
-export const db = new DBClient();
-queryDatabase()
 
 // Create HTTP server.
 const server = restify.createServer();

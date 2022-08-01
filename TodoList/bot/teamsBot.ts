@@ -23,7 +23,7 @@ import rawtodoListData from "./adaptiveCards/todoList.data.json"
 import rawtodoItemData from "./adaptiveCards/todoItem.data.json"
 import rawtaskSharedData from "./adaptiveCards/taskShared.data.json"
 import rawtodoMessData from "./adaptiveCards/todoMess.data.json"
-import { queryDatabase } from "./api/DBclient"
+import { getTodoListData } from "./api/getData"
 
 const AdaptiveCardsTools = require("@microsoft/adaptivecards-tools").AdaptiveCards
 
@@ -198,12 +198,14 @@ export class TeamsBot extends TeamsActivityHandler {
 
         switch (tabRequest.tabContext.tabEntityId) {    
             case "todoTabForMe": {
+                getTodoListData(1);
                 // Create a Template instance from the template payload
                 const todoListTemplate = new ACData.Template(rawtodoListCard);
                 // Expand the template with your `$root` data object.
                 // This binds it to the data and produces the final Adaptive Card payload
                 const todoListPayload = todoListTemplate.expand({
                     $root: rawtodoListData
+                    // $root: getTodoListData(1)
                 });
                 const todoItemTemplate = new ACData.Template(rawtodoItemCard);
                 const todoItemPayload = todoItemTemplate.expand({

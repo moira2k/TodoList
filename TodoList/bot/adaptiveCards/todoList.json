@@ -150,13 +150,24 @@
                             "items": [
                                 {
                                     "type": "TextBlock",
-                                    "text": "${taskContent}",
+                                    "text": "**${taskContent}**",
                                     "wrap": true,
                                     "horizontalAlignment": "Left",
-                                    "spacing": "None"
+                                    "spacing": "None",
+                                    "color": "Accent",
+                                    "maxLines": 10
                                 }
                             ],
-                            "width": 60
+                            "width": 60,
+                            "selectAction": {
+                                "type": "Action.Submit",
+                                "data": {
+                                    "action": "show",
+                                    "id": "${$index}",
+                                    "taskId": "${taskId}"
+                                },
+                                "associatedInputs": "none"
+                            }
                         },
                         {
                             "type": "Column",
@@ -218,7 +229,9 @@
                             "selectAction": {
                                 "type": "Action.Submit",
                                 "data": {
-                                    "action": "del"
+                                    "action": "del",
+                                    "id": "${$index}",
+                                    "taskId": "${taskId}"
                                 }
                             },
                             "width": 3
@@ -265,8 +278,8 @@
                                                             "id": "updateStatus${$index}",
                                                             "choices": [
                                                                 {
-                                                                    "title": "Not started",
-                                                                    "value": "Not started"
+                                                                    "title": "Not Started",
+                                                                    "value": "Not Started"
                                                                 },
                                                                 {
                                                                     "title": "Processing",
@@ -277,7 +290,7 @@
                                                                     "value": "Finished"
                                                                 }
                                                             ],
-                                                            "placeholder": "${taskStatus}"
+                                                            "value": "${taskStatus}"
                                                         }
                                                     ],
                                                     "width": 50
@@ -287,13 +300,12 @@
                                         {
                                             "type": "Input.Text",
                                             "id": "updateParticipant${$index}",
-                                            "value": "${creator.name}"
+                                            "value": "${creator.userName}"
                                         },
                                         {
                                             "type": "Input.Text",
                                             "id": "updateContent${$index}",
                                             "isMultiline": true,
-                                            "placeholder": "${taskContent}",
                                             "value": "${taskContent}"
                                         }
                                     ]
@@ -316,9 +328,9 @@
                                                             "type": "Action.Submit",
                                                             "title": "Confirm",
                                                             "data": {
-                                                                "id": "edit",
                                                                 "action": "edit",
-                                                                "lineItem": 1
+                                                                "id": "${$index}",
+                                                                "taskId": "${taskId}"
                                                             }
                                                         }
                                                     ]
@@ -352,7 +364,7 @@
                                         "type": "Action.Submit",
                                         "title": "Confirm",
                                         "data": {
-                                            "id": ""
+                                            "action": "add"
                                         }
                                     }
                                 ],

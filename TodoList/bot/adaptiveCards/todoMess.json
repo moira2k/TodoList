@@ -57,7 +57,7 @@
                                     "facts": [
                                         {
                                             "title": "User Name",
-                                            "value": "${task.creator.name}"
+                                            "value": "${task.creator.userName}"
                                         },
                                         {
                                             "title": "Date",
@@ -135,7 +135,7 @@
                                             "items": [
                                                 {
                                                     "type": "TextBlock",
-                                                    "text": "${name}",
+                                                    "text": "${userName}",
                                                     "wrap": true
                                                 }
                                             ],

@@ -1,6 +1,5 @@
 import { Connection, Request } from "tedious";
 import { TeamsFx, getTediousConnectionConfig } from "@microsoft/teamsfx";
-import { Context } from "@azure/functions";
 
 interface Response {
     status: number;
@@ -23,22 +22,11 @@ export default async function dbRun(query: string): Promise<Response> {
         //    sqlPassword: process.env.SQL_PASSWORD,
         // });
         const teamsfx = new TeamsFx();
-        // If there's only one SQL database
-        const config = await getTediousConnectionConfig(teamsfx);
-        connection = new Connection(config);
-        connection.on("connect", (error: any) => {
-            if (error) {
-                console.log(error);
-            } else {
-                res.body = execQuery(query, connection);
-                console.log(res.body);
-            }
-        });
-        console.log(res);
-        // connection = await getSQLConnection(teamsfx);
-        // console.log("fuck");
-        // // Execute SQL through TeamsFx server SDK generated connection and return result
-        // res.body = await execQuery(query, connection);
+        connection = await getSQLConnection(teamsfx);
+        // Execute SQL through TeamsFx server SDK generated connection and return result
+        const content = await execQuery(query, connection);
+        res.body = {content: content};
+        // console.log(res.body);
         return res;
     }
     catch (err) {
@@ -46,25 +34,21 @@ export default async function dbRun(query: string): Promise<Response> {
         res.body = {error: err.message};
         return res;
     }
-    finally {
-        if (connection) {
-            connection.close();
-        }
-    }
+    // finally {
+    //     if (connection) {
+    //         connection.close();
+    //     }
+    // }
 }
 
-async function getSQLConnection(teamsfx: TeamsFx) {
+async function getSQLConnection(teamsfx) {
     // If there's only one SQL database
     const config = await getTediousConnectionConfig(teamsfx);
-    // console.log(config);
     const connection = new Connection(config);
-    // console.log("connection" + JSON.stringify(connection, null, 2));
+    connection.connect();
     return new Promise((resolve, reject) => {
-        console.log("test");
         connection.on('connect', err => {
-            console.log("connect");
             if (err) {
-                console.log("err", err);
                 reject(err);
             }
             resolve(connection);
@@ -75,10 +59,10 @@ async function getSQLConnection(teamsfx: TeamsFx) {
     })
 }
 
-async function execQuery(query, connection) {
+async function execQuery(query: string, connection: { execSql: (arg0: Request) => void; }) {
+    console.log("query: ", query);
     return new Promise((resolve, reject) => {
         const res = [];
-        console.log("query", query);
         const request = new Request(query, (err) => {
             if (err) {
                 reject(err);
@@ -90,8 +74,7 @@ async function execQuery(query, connection) {
             columns.forEach(column => {
                 row[column.metadata.colName] = column.value;
             });
-            res.push(row)
-            console.log("res", res);
+            res.push(row);
         });
 
         request.on('requestCompleted', () => {
@@ -106,83 +89,26 @@ async function execQuery(query, connection) {
     })
 }
 
-// export class DBClient {
-//     config: {
-//         authentication: {
-//             options: {
-//                 userName: string; // update me
-//                 password: string; // update me
-//             }; type: string;
-//         }; server: string; // update me
-//         options: {
-//             database: string; //update me
-//             encrypt: boolean;
-//         };
-//     };
-//     connection: any;
+// export function queryDatabase(connection) {
+//     console.log("Reading rows from the Table...");
 
-//     constructor() {
-//         const teamsfx = new TeamsFx();
-//         // If there's only one SQL database
-//         const config = await getTediousConnectionConfig(teamsfx);
-//         // If there are multiple SQL databases
-//         const config2 = await getTediousConnectionConfig(teamsfx "your database name");
-//         const connection = new Connection(config);
-//         connection.on("connect", (error) => {
-//         if (error) {
-//             console.log(error);
-//         }
-//         });
-//         // Create connection to database
-//         this.config = {
-//             authentication: {
-//                 options: {
-//                     userName: process.env.SQL_USER_NAME, // update me
-//                     password: process.env.SQL_PASSWORD // update me
-//                 },
-//                 type: "default"
-//             },
-//             server: process.env.SQL_ENDPOINT, // update me
-//             options: {
-//                 database: process.env.SQL_DATABASE_NAME, //update me
-//                 encrypt: true
-//             }
-//         };
-//         this.connection = new Connection(this.config);
-//           // Attempt to connect and execute queries if connection goes through
-//         this.connection.on("connect", err => {
+//     // Read all rows from table
+//     const request = new Request(
+//         `SELECT * FROM [Todo].[Users]`,
+//         (err, rowCount) => {
 //             if (err) {
 //                 console.error(err.message);
 //             } else {
-//         queryDatabase();
+//                 console.log(`${rowCount} row(s) returned`);
+//             }
 //         }
+//     );
+
+//     request.on("row", columns => {
+//         columns.forEach(column => {
+//             console.log("%s\t%s", column.metadata.colName, column.value);
 //         });
-//         this.connection.connect();
-//     }
-    
+//     });
+
+//     connection.execSql(request);
 // }
-
-
-export function queryDatabase(connection) {
-    console.log("Reading rows from the Table...");
-
-    // Read all rows from table
-    const request = new Request(
-        `SELECT * FROM [Todo].[Users]`,
-        (err, rowCount) => {
-            if (err) {
-                console.error(err.message);
-            } else {
-                console.log(`${rowCount} row(s) returned`);
-            }
-        }
-    );
-
-    request.on("row", columns => {
-        columns.forEach(column => {
-            console.log("%s\t%s", column.metadata.colName, column.value);
-        });
-    });
-
-    connection.execSql(request);
-}

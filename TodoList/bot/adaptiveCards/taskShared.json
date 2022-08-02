@@ -157,13 +157,24 @@
                             "items": [
                                 {
                                     "type": "TextBlock",
-                                    "text": "${taskContent}",
+                                    "text": "**${taskContent}**",
                                     "wrap": true,
                                     "horizontalAlignment": "Left",
-                                    "spacing": "None"
+                                    "spacing": "None",
+                                    "color": "Accent",
+                                    "maxLines": 10
                                 }
                             ],
-                            "width": 60
+                            "width": 60,
+                            "selectAction": {
+                                "type": "Action.Submit",
+                                "data": {
+                                    "action": "show",
+                                    "id": "${$index}",
+                                    "taskId": "${taskId}"
+                                },
+                                "associatedInputs": "none"
+                            }
                         },
                         {
                             "type": "Column",
@@ -184,7 +195,7 @@
                             "items": [
                                 {
                                     "type": "TextBlock",
-                                    "text": "${creator.name}",
+                                    "text": "${creator.userName}",
                                     "wrap": true
                                 }
                             ],

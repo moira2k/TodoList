@@ -17,17 +17,17 @@ INSERT INTO Todo.Users (ADDId, userName, profileImage)
 CREATE TABLE Todo.Tasks (
     taskId INT IDENTITY PRIMARY KEY,
     taskTime NVARCHAR(128) NOT NULL,
-    taskStatus TinyInt NOT NULL default 0,
+    taskStatus NVARCHAR(32) NOT NULL default 'Not Started',
     taskContent NVARCHAR(256),
-    creatorId NVARCHAR(128) NOT NULL,
+    creatorId INT NOT NULL,
 );
 
 -- enum: 'Not Started' 0, 'Processing' 1, 'Finished' 2
 INSERT INTO Todo.Tasks (taskTime, taskStatus, taskContent, creatorId)
     VALUES
-        ('2022-07-21T18:33:12+08:00', 0, 'a meeting with supplier representatives in Room602, Building01', 1),
-        ('2022-02-22T18:33:12+08:00', 1, 'Follow up orders from X Companies and remind shipments', 1),
-        ('2022-08-02T18:33:12+08:00', 0, 'Follow up orders from X Companies', 3);
+        ('2022-07-21T18:33:12+08:00', 'Not Started', 'a meeting with supplier representatives in Room602, Building01', 1),
+        ('2022-02-22T18:33:12+08:00', 'Processing', 'Follow up orders from X Companies and remind shipments', 1),
+        ('2022-08-02T18:33:12+08:00', 'Not Started', 'Follow up orders from X Companies', 3);
 
 CREATE TABLE Todo.Participants (
     Id INT IDENTITY PRIMARY KEY,

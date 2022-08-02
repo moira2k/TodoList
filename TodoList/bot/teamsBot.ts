@@ -12,7 +12,7 @@ import rawLearnCard from "./adaptiveCards/learn.json";
 // import { AdaptiveCards } from "@microsoft/adaptivecards-tools";
 import * as ACData from "adaptivecards-templating";
 import * as AdaptiveCards from "adaptivecards";
-import {TabFetchResponse, TodoListCard} from "./api/constant"
+import {TabFetchResponse, TodoListCard, User} from "./api/constant"
 import rawtodoListCard from "./adaptiveCards/todoList.json"
 import rawtodoItemCard from "./adaptiveCards/todoItem.json"
 import rawtaskSharedCard from "./adaptiveCards/taskShared.json"
@@ -23,7 +23,8 @@ import rawtodoListData from "./adaptiveCards/todoList.data.json"
 import rawtodoItemData from "./adaptiveCards/todoItem.data.json"
 import rawtaskSharedData from "./adaptiveCards/taskShared.data.json"
 import rawtodoMessData from "./adaptiveCards/todoMess.data.json"
-import { getTodoListData } from "./api/getData"
+import { getTodoListData, getUserDetails, getTodoItemData } from "./api/getData"
+import { ThisMemoryScope } from "botbuilder-dialogs";
 
 const AdaptiveCardsTools = require("@microsoft/adaptivecards-tools").AdaptiveCards
 
@@ -34,6 +35,7 @@ const AdaptiveCardsTools = require("@microsoft/adaptivecards-tools").AdaptiveCar
 export class TeamsBot extends TeamsActivityHandler {
     // record the likeCount
     // likeCountObj: { likeCount: number };
+    user: {[key: string]: any};
 
     constructor() {
         super();
@@ -195,24 +197,34 @@ export class TeamsBot extends TeamsActivityHandler {
             responseType: "tab"
         };
 
-        switch (tabRequest.tabContext.tabEntityId) {    
+        this.user = await getUserDetails(1); // test account
+
+        switch (tabRequest.tabContext.tabEntityId) {
+            // the first tab: todoTabForMe
             case "todoTabForMe": {
-                getTodoListData(1);
+                // the first card: TodoList
+                const todoListData = await getTodoListData(this.user.userId);
+                todoListData.enquirer = this.user;
                 // Create a Template instance from the template payload
                 const todoListTemplate = new ACData.Template(rawtodoListCard);
                 // Expand the template with your `$root` data object.
                 // This binds it to the data and produces the final Adaptive Card payload
                 const todoListPayload = todoListTemplate.expand({
-                    $root: rawtodoListData
-                    // $root: getTodoListData(1)
+                    // $root: rawtodoListData
+                    $root: todoListData
                 });
+                // the second card: todoItem
+                const todoItemData = await getTodoItemData(todoListData.tasks[0].taskId);
+                todoItemData.enquirer = this.user;
+
                 const todoItemTemplate = new ACData.Template(rawtodoItemCard);
                 const todoItemPayload = todoItemTemplate.expand({
-                    $root: rawtodoItemData
+                    $root: todoItemData
                 });
                 tabFetchResp.tab.value.cards = [{"card": todoListPayload}, {"card": todoItemPayload}];
                 break;
             }
+            // the second tab: todoTabSharedWithMe
             case "todoTabSharedWithMe": {
                 const taskSharedTemplate = new ACData.Template(rawtaskSharedCard);
                 const taskSharedPayload = taskSharedTemplate.expand({

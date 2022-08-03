@@ -1,15 +1,15 @@
 import { Connection, Request } from "tedious";
 import { TeamsFx, getTediousConnectionConfig } from "@microsoft/teamsfx";
 
-interface Response {
+interface DBResponse {
     status: number;
     body: { [key: string]: any };
 }
 
-export default async function dbRun(query: string): Promise<Response> {
+export default async function dbRun(query: string): Promise<DBResponse> {
     console.log("Processing a query")
     // Initialize response.
-    const res: Response = {
+    const res: DBResponse = {
         status: 200,
         body: {},
     };
@@ -53,14 +53,14 @@ async function getSQLConnection(teamsfx) {
             }
             resolve(connection);
         })
-        connection.on('debug', function (err) {
-            console.log('debug:', err);
-        });
+        // connection.on('debug', function (err) {
+        //     console.log('debug:', err);
+        // });
     })
 }
 
 async function execQuery(query: string, connection: { execSql: (arg0: Request) => void; }) {
-    console.log("query: ", query);
+    // console.log("query: ", query);
     return new Promise((resolve, reject) => {
         const res = [];
         const request = new Request(query, (err) => {
@@ -88,27 +88,3 @@ async function execQuery(query: string, connection: { execSql: (arg0: Request) =
         connection.execSql(request);
     })
 }
-
-// export function queryDatabase(connection) {
-//     console.log("Reading rows from the Table...");
-
-//     // Read all rows from table
-//     const request = new Request(
-//         `SELECT * FROM [Todo].[Users]`,
-//         (err, rowCount) => {
-//             if (err) {
-//                 console.error(err.message);
-//             } else {
-//                 console.log(`${rowCount} row(s) returned`);
-//             }
-//         }
-//     );
-
-//     request.on("row", columns => {
-//         columns.forEach(column => {
-//             console.log("%s\t%s", column.metadata.colName, column.value);
-//         });
-//     });
-
-//     connection.execSql(request);
-// }

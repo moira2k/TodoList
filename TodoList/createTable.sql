@@ -39,7 +39,9 @@ INSERT INTO Todo.Participants (taskId, participantId)
     VALUES
         (1, 2),
         (1, 3),
-        (2, 2);
+        (2, 2),
+        (3, 2),
+        (3, 4);
 
 CREATE TABLE Todo.SharedTabs (
     Id INT IDENTITY PRIMARY KEY,

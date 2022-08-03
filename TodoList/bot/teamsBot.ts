@@ -23,7 +23,13 @@ import rawtodoListData from "./adaptiveCards/todoList.data.json"
 import rawtodoItemData from "./adaptiveCards/todoItem.data.json"
 import rawtaskSharedData from "./adaptiveCards/taskShared.data.json"
 import rawtodoMessData from "./adaptiveCards/todoMess.data.json"
-import { getTodoListData, getUserDetails, getTodoItemData } from "./api/getData"
+import {
+    getTodoListData,
+    getUserDetails,
+    getTodoItemData,
+    getTaskSharedData,
+    handleTodoListAction
+} from "./api/handleData"
 import { ThisMemoryScope } from "botbuilder-dialogs";
 
 const AdaptiveCardsTools = require("@microsoft/adaptivecards-tools").AdaptiveCards
@@ -200,8 +206,8 @@ export class TeamsBot extends TeamsActivityHandler {
         this.user = await getUserDetails(1); // test account
 
         switch (tabRequest.tabContext.tabEntityId) {
-            // the first tab: todoTabForMe
-            case "todoTabForMe": {
+            // the first tab: MyTab
+            case "MyTab": {
                 // the first card: TodoList
                 const todoListData = await getTodoListData(this.user.userId);
                 todoListData.enquirer = this.user;
@@ -210,35 +216,94 @@ export class TeamsBot extends TeamsActivityHandler {
                 // Expand the template with your `$root` data object.
                 // This binds it to the data and produces the final Adaptive Card payload
                 const todoListPayload = todoListTemplate.expand({
-                    // $root: rawtodoListData
                     $root: todoListData
                 });
-                // the second card: todoItem
-                const todoItemData = await getTodoItemData(todoListData.tasks[0].taskId);
-                todoItemData.enquirer = this.user;
-
-                const todoItemTemplate = new ACData.Template(rawtodoItemCard);
-                const todoItemPayload = todoItemTemplate.expand({
-                    $root: todoItemData
-                });
-                tabFetchResp.tab.value.cards = [{"card": todoListPayload}, {"card": todoItemPayload}];
+                tabFetchResp.tab.value.cards = [{"card": todoListPayload}];
                 break;
             }
-            // the second tab: todoTabSharedWithMe
-            case "todoTabSharedWithMe": {
+            // the second tab: SharedTab
+            case "SharedTab": {
+                const taskSharedData = await getTaskSharedData(this.user.userId);
+                taskSharedData.enquirer = this.user;
                 const taskSharedTemplate = new ACData.Template(rawtaskSharedCard);
                 const taskSharedPayload = taskSharedTemplate.expand({
-                    $root: rawtaskSharedData
+                    $root: taskSharedData
                 });
-                const todoMessTemplate = new ACData.Template(rawtodoMessCard);
-                const todoMessPayload = todoMessTemplate.expand({
-                    $root: rawtodoMessData
-                });
-                tabFetchResp.tab.value.cards = [{"card": taskSharedPayload}, {"card": todoMessPayload}];
+                tabFetchResp.tab.value.cards = [{"card": taskSharedPayload}];
                 break;
             }
         }
         return tabFetchResp;
+    }
+
+    // Handle submits from Adaptive Card.
+    async handleTeamsTabSubmit(context: TurnContext, tabRequest: any): Promise<any> {
+        const tabSubmitResp = {
+            tab: {
+                type: "continue",
+                value: {
+                    cards: []
+                },
+            },
+            responseType: "tab"
+        };
+        // console.log(tabRequest);
+        
+        this.user = await getUserDetails(1); // test account
+
+        switch (tabRequest.tabContext.tabEntityId) {
+            // the first tab: MyTab
+            case "MyTab": {
+                if (tabRequest.data.action != "show") {
+                    const handleStatus = await handleTodoListAction(this.user.userId, tabRequest.data);
+                    if (handleStatus != 200) {
+                        break;
+                    }
+                }
+                // Todo: get from static resources, if action is "show"
+                const todoListData = await getTodoListData(this.user.userId);
+                todoListData.enquirer = this.user;
+                const todoListTemplate = new ACData.Template(rawtodoListCard);
+                const todoListPayload = todoListTemplate.expand({
+                    $root: todoListData
+                });
+                tabSubmitResp.tab.value.cards = [{"card": todoListPayload}]
+
+                if (tabRequest.data.action == "show") {
+                    const todoItemData = await getTodoItemData(tabRequest.data.taskId);
+                    todoItemData.enquirer = this.user;
+                    const todoItemTemplate = new ACData.Template(rawtodoItemCard);
+                    const todoItemPayload = todoItemTemplate.expand({
+                        $root: todoItemData
+                    });
+                    tabSubmitResp.tab.value.cards.push({"card": todoItemPayload});
+                }
+                break;
+            }
+            // the second tab: SharedTab
+            case "SharedTab": {
+                // Todo: get from static resources, if action is "show"
+                const taskSharedData = await getTaskSharedData(this.user.userId);
+                taskSharedData.enquirer = this.user;
+                const taskSharedTemplate = new ACData.Template(rawtaskSharedCard);
+                const taskSharedPayload = taskSharedTemplate.expand({
+                    $root: taskSharedData
+                });
+                tabSubmitResp.tab.value.cards = [{"card": taskSharedPayload}];
+
+                if (tabRequest.data.action == "show") {
+                    const todoMessData = await getTodoItemData(tabRequest.data.taskId);
+                    todoMessData.enquirer = this.user;
+                    const todoMessTemplate = new ACData.Template(rawtodoMessCard);
+                    const todoMessPayload = todoMessTemplate.expand({
+                        $root: todoMessData
+                    });
+                    tabSubmitResp.tab.value.cards.push({"card": todoMessPayload});
+                }
+                break;
+            }
+        }
+        return tabSubmitResp;
     }
 
 }

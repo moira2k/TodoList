@@ -44,10 +44,6 @@
                         {
                             "title": "welcome",
                             "description": "Resend welcome card of this Bot"
-                        },
-                        {
-                            "title": "learn",
-                            "description": "Learn about Adaptive Card and Bot Command"
                         }
                     ]
                 }
@@ -56,7 +52,20 @@
     ],
     "composeExtensions": [],
     "configurableTabs": [],
-    "staticTabs": [],
+    "staticTabs": [
+        {
+            "entityId": "MyTab",
+            "name": "My Tab",
+            "contentBotId": "{{state.fx-resource-bot.botId}}",
+            "scopes": [ "personal" ]
+          },
+          {
+            "entityId": "SharedTab",
+            "name": "Shared Tab",
+            "contentBotId": "{{state.fx-resource-bot.botId}}",
+            "scopes": [ "personal" ]
+          }
+    ],
     "permissions": [
         "identity",
         "messageTeamMembers"

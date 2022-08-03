@@ -36,6 +36,7 @@ export const getCurrentTimeString = () => {
 }
 
 export const getUserDetails = async (userId: number) => {
+    console.log("Reading User Details From DB.");
     var query:string = `SELECT * FROM Todo.Users WHERE userId = ${userId}`;
     var req = await dbRun(query);
     if (req.status == 200) {
@@ -45,6 +46,7 @@ export const getUserDetails = async (userId: number) => {
 }
 
 export const getTodoListData = async (userId: number) => {
+    console.log("Reading Todo List From DB.");
     const todoListResp:  TodoListResponse = {
         message: "success",
         enquiredDate: getCurrentTimeString(),
@@ -104,6 +106,7 @@ interface TodoItemResponse {
 }
 
 export const getTodoItemData = async (taskId: number) => {
+    console.log("Reading Todo Item From DB.");
     const todoItemResp:  TodoItemResponse = {
         message: "success",
         enquiredDate: getCurrentTimeString(),
@@ -152,6 +155,7 @@ export const getTodoItemData = async (taskId: number) => {
 }
 
 export const handleTodoListAction = async(userId: number, data: any) => {
+    console.log("Handling the Action Of MyTab.");
     var query:string;
     switch (data.action) {
         case "add": {
@@ -176,6 +180,7 @@ export const handleTodoListAction = async(userId: number, data: any) => {
 }
 
 export const getTaskSharedData = async(userId: number) => {
+    console.log("Reading Tasks Shared From DB.");
     const taskSharedResp:  TodoListResponse = {
         message: "success",
         enquiredDate: getCurrentTimeString(),

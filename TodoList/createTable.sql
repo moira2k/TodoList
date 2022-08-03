@@ -2,12 +2,12 @@ CREATE SCHEMA Todo;
 
 CREATE TABLE Todo.Users (
     userId INT IDENTITY PRIMARY KEY,
-    ADDId NVARCHAR(128) NOT NULL,
+    AADId NVARCHAR(128) NOT NULL,
     userName NVARCHAR(128) NOT NULL,
     profileImage NVARCHAR(256) NOT NULL
 );
 
-INSERT INTO Todo.Users (ADDId, userName, profileImage)
+INSERT INTO Todo.Users (AADId, userName, profileImage)
     VALUES
         ('test', 'Matt Hidinger','https://pbs.twimg.com/profile_images/3647943215/d7f12830b3c17a5a9e4afcc370e3a37e_400x400.jpeg'),
         ('test', 'Alice', 'https://messagecardplayground.azurewebsites.net/assets/person_w1.png'),
@@ -50,4 +50,4 @@ CREATE TABLE Todo.SharedTabs (
 );
 
 INSERT INTO Todo.SharedTabs (userId, taskId)
-    VALUE (1, 3);
+    VALUES (1, 3);

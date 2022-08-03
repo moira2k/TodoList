@@ -6,5 +6,6 @@
             "short": "TodoList",
             "full": "Full name for TodoList"
         }
-    }
+    },
+    "skipAddingSqlUser": true
 }

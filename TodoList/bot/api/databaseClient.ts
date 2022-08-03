@@ -26,7 +26,6 @@ export default async function dbRun(query: string): Promise<DBResponse> {
         // Execute SQL through TeamsFx server SDK generated connection and return result
         const content = await execQuery(query, connection);
         res.body = {content: content};
-        // console.log(res.body);
         return res;
     }
     catch (err) {

@@ -55,22 +55,3 @@ output azureSqlOutput object = {
   sqlEndpoint: azureSqlProvision.outputs.sqlEndpoint
   databaseName: azureSqlProvision.outputs.databaseName
 }
-// Resources for Azure Functions
-module functionProvision './provision/function.bicep' = {
-  name: 'functionProvision'
-  params: {
-    provisionParameters: provisionParameters
-    userAssignedIdentityId: userAssignedIdentityProvision.outputs.identityResourceId
-  }
-}
-
-output functionOutput object = {
-  teamsFxPluginId: 'fx-resource-function'
-  functionAppResourceId: functionProvision.outputs.functionAppResourceId
-  functionEndpoint: functionProvision.outputs.functionEndpoint
-}
-// output for database with name suffix [48e825]
-output azureSqlOutput_48e825 object = {
-  teamsFxPluginId: 'fx-resource-azure-sql'
-  databaseName_48e825: azureSqlProvision.outputs.databaseName_48e825
-}

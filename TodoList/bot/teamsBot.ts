@@ -202,9 +202,9 @@ export class TeamsBot extends TeamsActivityHandler {
             },
             responseType: "tab"
         };
-
+        
         this.user = await getUserDetails(1); // test account
-
+        // console.log(this.user)
         switch (tabRequest.tabContext.tabEntityId) {
             // the first tab: MyTab
             case "MyTab": {

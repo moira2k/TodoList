@@ -42,18 +42,3 @@ resource sqlFirewallRules 'Microsoft.Sql/servers/firewallRules@2021-05-01-previe
 output resourceId string = sqlServer.id
 output sqlEndpoint string = sqlServer.properties.fullyQualifiedDomainName
 output databaseName string = sqlDatabaseName
-// database added with name suffix [48e825]
-var sqlDatabaseName_48e825 = contains(provisionParameters, 'sqlDatabaseName_48e825') ? provisionParameters['sqlDatabaseName_48e825'] : '${resourceBaseName}_48e825'
-var sqlDatabaseSku_48e825 = contains(provisionParameters, 'sqlDatabaseSku_48e825') ? provisionParameters['sqlDatabaseSku_48e825'] : 'Basic'
-
-resource sqlDatabase_48e825 'Microsoft.Sql/servers/databases@2021-05-01-preview' = {
-  // parent should refer to resource symbolic name of SQL server
-  parent: sqlServer
-  location: resourceGroup().location
-  name: sqlDatabaseName_48e825
-  sku: {
-    name: sqlDatabaseSku_48e825 
-  }
-}
-
-output databaseName_48e825 string = sqlDatabaseName_48e825

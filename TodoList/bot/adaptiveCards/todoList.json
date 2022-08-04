@@ -17,7 +17,8 @@
                                     "color": "Accent",
                                     "weight": "Bolder",
                                     "text": "*Keep early hours and enjoy yourself.*",
-                                    "style": "heading"
+                                    "style": "heading",
+                                    "fontType": "Monospace"
                                 }
                             ],
                             "width": "stretch"
@@ -39,16 +40,18 @@
                                 {
                                     "type": "TextBlock",
                                     "size": "ExtraLarge",
-                                    "text": "**To-do List**",
+                                    "text": "**TO-DO LIST**",
                                     "wrap": true,
-                                    "style": "heading"
+                                    "style": "heading",
+                                    "horizontalAlignment": "Left"
                                 }
                             ],
                             "width": "stretch"
                         }
                     ]
                 }
-            ]
+            ],
+            "spacing": "ExtraLarge"
         },
         {
             "type": "Container",
@@ -64,8 +67,11 @@
                                 {
                                     "type": "TextBlock",
                                     "weight": "Bolder",
-                                    "text": "DATE",
-                                    "horizontalAlignment": "Left"
+                                    "text": "**DATE**",
+                                    "horizontalAlignment": "Left",
+                                    "fontType": "Monospace",
+                                    "size": "Large",
+                                    "isSubtle": true
                                 }
                             ],
                             "width": 8
@@ -75,9 +81,12 @@
                             "items": [
                                 {
                                     "type": "TextBlock",
-                                    "text": "STATUS",
+                                    "text": "**STATUS**",
                                     "horizontalAlignment": "Left",
-                                    "weight": "Bolder"
+                                    "weight": "Bolder",
+                                    "fontType": "Monospace",
+                                    "size": "Large",
+                                    "isSubtle": true
                                 }
                             ],
                             "spacing": "Small",
@@ -89,25 +98,15 @@
                                 {
                                     "type": "TextBlock",
                                     "weight": "Bolder",
-                                    "text": "CONTENT",
+                                    "text": "**CONTENT**",
                                     "horizontalAlignment": "Left",
-                                    "spacing": "Large"
+                                    "fontType": "Monospace",
+                                    "size": "Large",
+                                    "isSubtle": true
                                 }
                             ],
-                            "width": 60,
+                            "width": 70,
                             "spacing": "Small"
-                        },
-                        {
-                            "type": "Column",
-                            "items": [
-                                {
-                                    "type": "TextBlock",
-                                    "weight": "Bolder",
-                                    "text": "Participants",
-                                    "horizontalAlignment": "Left"
-                                }
-                            ],
-                            "width": 15
                         }
                     ]
                 }
@@ -130,7 +129,8 @@
                                     "wrap": true
                                 }
                             ],
-                            "width": 7
+                            "width": 7,
+                            "verticalContentAlignment": "Center"
                         },
                         {
                             "type": "Column",
@@ -138,11 +138,11 @@
                                 {
                                     "type": "TextBlock",
                                     "text": "${taskStatus}",
-                                    "wrap": true,
-                                    "horizontalAlignment": "Left"
+                                    "wrap": true
                                 }
                             ],
-                            "width": 13
+                            "width": 13,
+                            "verticalContentAlignment": "Center"
                         },
                         {
                             "type": "Column",
@@ -150,42 +150,42 @@
                             "items": [
                                 {
                                     "type": "TextBlock",
-                                    "text": "**${taskContent}**",
+                                    "text": "${taskContent}",
                                     "wrap": true,
                                     "horizontalAlignment": "Left",
-                                    "spacing": "None",
                                     "color": "Accent",
-                                    "maxLines": 10
+                                    "maxLines": 10,
+                                    "weight": "Bolder"
                                 }
                             ],
                             "width": 60,
+                            "verticalContentAlignment": "Center"
+                        },
+                        {
+                            "type": "Column",
+                            "spacing": "None",
+                            "verticalContentAlignment": "Center",
+                            "items": [
+                                {
+                                    "type": "Image",
+                                    "url": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGAAAABgCAMAAADVRocKAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAABdUExURQAAAICAgICAgICAgHt7e4CAgHx8fH5+fnx8fHt7e3t7e3p6enp6ent7e3t7e3x8fH19fX19fXx8fHx8fHt7e3t7e3x8fHx8fHx8fHx8fHt7e3x8fHx8fHx8fHx8fNrckqwAAAAedFJOUwAECBwdHk5RUlNXYGRoeH+Rk7W3uLq9y+br7u/z+/VS7GcAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAC4SURBVGhD7dRLDoJAFERRVEQRVJCfirL/ZRpCdQtK4uCFxME9M27XAAIhAAAAAAAAc1Zp3rRNnqx1/cU4iC7doNipfDAOjk+ddt3zpDZhHERXnfXuseqIcbBxTzcoQ3XPOkjVnUTdsw4yZSdT96yDWtmp1T3roFV2WnXPOlj8CRZ/B4t/RWGhPqi26p55sL/ppPc4qI6YB6f3n6Q7q02YB3Gpw2rm9nrmwfrX794+AAAAAADgnwXBCzbQTSMwsX56AAAAAElFTkSuQmCC",
+                                    "width": "15px",
+                                    "horizontalAlignment": "Center"
+                                }
+                            ],
                             "selectAction": {
                                 "type": "Action.Submit",
                                 "data": {
                                     "action": "show",
                                     "id": "${$index}",
                                     "taskId": "${taskId}"
-                                },
-                                "associatedInputs": "none"
-                            }
-                        },
-                        {
-                            "type": "Column",
-                            "width": "auto",
-                            "items": [
-                                {
-                                    "type": "Image",
-                                    "style": "Person",
-                                    "url": "${participants[0].profileImage}",
-                                    "width": "40px"
                                 }
-                            ],
-                            "spacing": "Small",
-                            "verticalContentAlignment": "Center"
+                            },
+                            "width": 3
                         },
                         {
                             "type": "Column",
-                            "spacing": "Small",
+                            "spacing": "None",
                             "selectAction": {
                                 "type": "Action.ToggleVisibility",
                                 "title": "expand",
@@ -217,13 +217,14 @@
                         },
                         {
                             "type": "Column",
-                            "spacing": "Small",
+                            "spacing": "None",
                             "verticalContentAlignment": "Center",
                             "items": [
                                 {
                                     "type": "Image",
                                     "url": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGAAAABgCAMAAADVRocKAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAABjUExURQAAAKqqqq2tra+np7GqqrOsrLCqqq6qqq+pqa6rq6+srK6srK6qqq+rq6+srLCrq6+srLCsrLCrq6+srK+rq66qqq+rq66qqq6rq7Crq6+rq6+rq6+rq6+rq6+rq6+rq6+rq800rIUAAAAgdFJOUwAMHCAkKCpIUFhcX3h8o6eoqKuvv8DCxNTU1ePr7/P5f4iHlAAAAAlwSFlzAAAOwwAADsMBx2+oZAAAAUBJREFUaEPt2ctSwkAQheGQqIhGg+ANRy7v/5Rq8lsVpdtJT1OWVfa3m5nTpxewgiqEMNWsXafDSFq3M55OYvFA8cjjFY8nsNhS+sX+mme383sqv3m6IODVUnjkhoDXkr4jdwS8hu/PJafevL9KnLz6sgMHSHfFpDLprphUJt0Vk8qku2JSmXQ3Sd29DrNl0m1NkaJ21X/YNlTJOmIOHVWyF1IOz1TJCLlQJSPjQpWMjAtVMjIuVIW/jU/LjPE88maM55E3YzyPvBnjeeTNGM8jb8Z4HvnPCQ7vMufhOAH5WKAjHwt05GOBjnws0JGPBTrysUBHPhboyMcCHflYoCMfC3TkY4GOfCzQkY8FOvKxQEf+FxYYMZ5H3ozxvA0DRhvG81ZMGP38w/5Ys2PEZHfG+ATNyvxPSOoM/SH8K1X1BhAtgGSXJVnsAAAAAElFTkSuQmCC",
-                                    "width": "20px"
+                                    "width": "20px",
+                                    "horizontalAlignment": "Center"
                                 }
                             ],
                             "selectAction": {
@@ -248,10 +249,11 @@
                             "items": [
                                 {
                                     "type": "TextBlock",
-                                    "text": "- Modify the above to-do item",
+                                    "text": "*Modify the above to-do item:*",
                                     "isSubtle": true,
                                     "wrap": true,
-                                    "horizontalAlignment": "Left"
+                                    "horizontalAlignment": "Left",
+                                    "weight": "Lighter"
                                 },
                                 {
                                     "type": "Container",
@@ -296,11 +298,6 @@
                                                     "width": 50
                                                 }
                                             ]
-                                        },
-                                        {
-                                            "type": "Input.Text",
-                                            "id": "updateParticipant${$index}",
-                                            "value": "${creator.userName}"
                                         },
                                         {
                                             "type": "Input.Text",
@@ -376,11 +373,6 @@
                                         "label": "Date",
                                         "value": "${formatDateTime(enquiredDate, 'YYYY-MM-dd')}",
                                         "isRequired": true
-                                    },
-                                    {
-                                        "type": "Input.Text",
-                                        "id": "addParticipants",
-                                        "label": "Participants"
                                     },
                                     {
                                         "type": "Input.Text",

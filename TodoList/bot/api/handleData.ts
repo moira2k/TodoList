@@ -35,9 +35,10 @@ export const getCurrentTimeString = () => {
     return res;
 }
 
-export const getUserDetails = async (userId: number) => {
+// test acount AADId: 'test1'
+export const getUserDetails = async (AADId: string) => {
     console.log("Reading User Details From DB.");
-    var query:string = `SELECT * FROM Todo.Users WHERE userId = ${userId}`;
+    var query:string = `SELECT * FROM Todo.Users WHERE AADId = '${AADId}'`;
     var req = await dbRun(query);
     if (req.status == 200) {
         return req.body.content[0];
@@ -45,7 +46,7 @@ export const getUserDetails = async (userId: number) => {
     }
 }
 
-export const getTodoListData = async (userId: number) => {
+export const getTodoListData = async (AADId: string) => {
     console.log("Reading Todo List From DB.");
     const todoListResp:  TodoListResponse = {
         message: "success",
@@ -54,11 +55,14 @@ export const getTodoListData = async (userId: number) => {
         tasks: []
     };
 
+    // var query:string = `SELECT Todo.Tasks.taskId, Todo.Tasks.taskTime, Todo.Tasks.taskStatus, Todo.Tasks.taskContent,
+    //     A.userId AS creatorId, A.AADId AS creatorAADId , A.userName AS creatorName, A.profileImage AS creatorImage,
+    //     B.userId AS participantId, B.AADId AS participantAADId, B.userName AS participantName, B.profileImage AS participantImage
+    // FROM (Todo.Tasks INNER JOIN (SELECT userId, AADId, userName, profileImage FROM Todo.Users WHERE AADId = '${AADId}') AS A ON Todo.Tasks.creatorAADId = A.AADId)
+    //     LEFT JOIN (Todo.Participants INNER JOIN Todo.Users AS B ON Todo.Participants.participantAADId = B.AADId) ON Todo.Tasks.taskId = Todo.Participants.taskId`;
     var query:string = `SELECT Todo.Tasks.taskId, Todo.Tasks.taskTime, Todo.Tasks.taskStatus, Todo.Tasks.taskContent,
-        A.userId AS creatorId, A.AADId AS creatorAADId , A.userName AS creatorName, A.profileImage AS creatorImage,
-        B.userId AS participantId, B.AADId AS participantAADId, B.userName AS participantName, B.profileImage AS participantImage
-    FROM (Todo.Tasks INNER JOIN (SELECT userId, AADId, userName, profileImage FROM Todo.Users WHERE userId = ${userId}) AS A ON Todo.Tasks.creatorId = A.userId)
-        LEFT JOIN (Todo.Participants INNER JOIN Todo.Users AS B ON Todo.Participants.participantId = B.userId) ON Todo.Tasks.taskId = Todo.Participants.taskId`;
+        A.userId AS creatorId, A.AADId AS creatorAADId , A.userName AS creatorName, A.profileImage AS creatorImage
+    FROM (Todo.Tasks INNER JOIN (SELECT userId, AADId, userName, profileImage FROM Todo.Users WHERE AADId = '${AADId}') AS A ON Todo.Tasks.creatorAADId = A.AADId)`;
     var req = await dbRun(query);
     if (req.status != 200) {
         todoListResp.message = "failure"
@@ -82,13 +86,13 @@ export const getTodoListData = async (userId: number) => {
                 participants: []
             }
         }
-        let participant = {
-            userId: req.body.content[i].participantId,
-            AADId: req.body.content[i].participantAADId,
-            userName: req.body.content[i].participantName,
-            profileImage: req.body.content[i].participantImage
-        }
-        taskMap[req.body.content[i].taskId].participants.push(participant);
+        // let participant = {
+        //     userId: req.body.content[i].participantId,
+        //     AADId: req.body.content[i].participantAADId,
+        //     userName: req.body.content[i].participantName,
+        //     profileImage: req.body.content[i].participantImage
+        // }
+        // taskMap[req.body.content[i].taskId].participants.push(participant);
     }
 
     for (let task of Object.values(taskMap)) {
@@ -114,12 +118,16 @@ export const getTodoItemData = async (taskId: number) => {
         task: {}
     };
 
+    // var query:string = `SELECT Task.taskId, Task.taskTime, Task.taskStatus, Task.taskContent,
+    //     A.userId AS creatorId, A.AADId AS creatorAADId , A.userName AS creatorName, A.profileImage AS creatorImage,
+    //     B.userId AS participantId, B.AADId AS participantAADId, B.userName AS participantName, B.profileImage AS participantImage 
+    // FROM ((SELECT taskId, taskTime, taskStatus, taskContent, creatorAADId FROM Todo.Tasks WHERE taskId = ${taskId}) AS Task INNER JOIN Todo.Users AS A ON Task.creatorAADId = A.AADId)
+    //     LEFT JOIN ((SELECT taskId, participantAADId FROM Todo.Participants WHERE taskId = ${taskId}) AS C INNER JOIN Todo.Users AS B ON C.participantAADId = B.AADId) ON Task.taskId = C.taskId`;
     var query:string = `SELECT Task.taskId, Task.taskTime, Task.taskStatus, Task.taskContent,
         A.userId AS creatorId, A.AADId AS creatorAADId , A.userName AS creatorName, A.profileImage AS creatorImage,
-        B.userId AS participantId, B.AADId AS participantAADId, B.userName AS participantName, B.profileImage AS participantImage 
-    FROM ((SELECT taskId, taskTime, taskStatus, taskContent, creatorId FROM Todo.Tasks WHERE taskId = ${taskId}) AS Task INNER JOIN Todo.Users AS A ON Task.creatorId = A.userId)
-        LEFT JOIN ((SELECT taskId, participantId FROM Todo.Participants WHERE taskId = ${taskId}) AS C INNER JOIN Todo.Users AS B ON C.participantId = B.userId)
-        ON Task.taskId = C.taskId`;
+        B.userId AS viewerId, B.AADId AS viewerAADId, B.userName AS viewerName, B.profileImage AS viewerImage 
+    FROM ((SELECT taskId, taskTime, taskStatus, taskContent, creatorAADId FROM Todo.Tasks WHERE taskId = ${taskId}) AS Task INNER JOIN Todo.Users AS A ON Task.creatorAADId = A.AADId)
+        LEFT JOIN ((SELECT taskId, userAADId FROM Todo.SharedTabs WHERE taskId = ${taskId}) AS C INNER JOIN Todo.Users AS B ON C.userAADId = B.AADId) ON Task.taskId = C.taskId`;
     var req = await dbRun(query);
     if (req.status != 200) {
         todoItemResp.message = "failure"
@@ -138,29 +146,29 @@ export const getTodoItemData = async (taskId: number) => {
         taskStatus: req.body.content[0].taskStatus,
         taskContent: req.body.content[0].taskContent,
         creator: creator,
-        participants: []
+        viewers: []
     }
 
     for (let i:number = 0; i < req.body.content.length; ++i) {
-        let participant = {
-            userId: req.body.content[i].participantId,
-            AADId: req.body.content[i].participantAADId,
-            userName: req.body.content[i].participantName,
-            profileImage: req.body.content[i].participantImage
+        let viewer = {
+            userId: req.body.content[i].viewerId,
+            AADId: req.body.content[i].viewerAADId,
+            userName: req.body.content[i].viewerName,
+            profileImage: req.body.content[i].viewerImage
         }
-        todoItemResp.task.participants.push(participant);
+        todoItemResp.task.viewers.push(viewer);
     }
 
     return todoItemResp;
 }
 
-export const handleTodoListAction = async(userId: number, data: any) => {
+export const handleTodoListAction = async(AADId: string, data: any) => {
     console.log("Handling the Action Of MyTab.");
     var query:string;
     switch (data.action) {
         case "add": {
             const addTime = data.addDate + "T00:00:00Z";
-            query = `INSERT INTO Todo.Tasks (taskTime, taskStatus, taskContent, creatorId) VALUES ('${addTime}', 'Not Started', '${data.addContent}', ${userId})`;
+            query = `INSERT INTO Todo.Tasks (taskTime, taskStatus, taskContent, creatorAADId) VALUES ('${addTime}', 'Not Started', '${data.addContent}', '${AADId}')`;
             // get taskId
             // insert Todo.Participants
             break;
@@ -174,12 +182,17 @@ export const handleTodoListAction = async(userId: number, data: any) => {
             query = `DELETE FROM Todo.Tasks WHERE taskId = ${data.taskId}`;
             break;
         }
+        case "share": {
+            const sharedUsers = data.sharedUsers.split(',');
+            console.log(sharedUsers);
+            break;
+        }
     }
     const req = await dbRun(query);
     return req.status;
 }
 
-export const getTaskSharedData = async(userId: number) => {
+export const getTaskSharedData = async(AADId: string) => {
     console.log("Reading Tasks Shared From DB.");
     const taskSharedResp:  TodoListResponse = {
         message: "success",
@@ -188,13 +201,15 @@ export const getTaskSharedData = async(userId: number) => {
         tasks: []
     };
 
+    // var query:string = `SELECT Todo.Tasks.taskId, Todo.Tasks.taskTime, Todo.Tasks.taskStatus, Todo.Tasks.taskContent,
+    //     A.userId AS creatorId, A.AADId AS creatorAADId , A.userName As creatorName, A.profileImage AS creatorImage,
+    //     B.userId AS participantId, B.AADId AS participantAADId, B.userName AS participantName, B.profileImage AS participantImage
+    // FROM ((Todo.Tasks INNER JOIN (SELECT taskId FROM Todo.SharedTabs WHERE userAADId = '${AADId}') AS C ON Todo.Tasks.taskId = C.taskId)
+    //     INNER JOIN Todo.Users AS A ON Todo.Tasks.creatorAADId = A.AADId)`;
     var query:string = `SELECT Todo.Tasks.taskId, Todo.Tasks.taskTime, Todo.Tasks.taskStatus, Todo.Tasks.taskContent,
-    A.userId AS creatorId, A.AADId AS creatorAADId , A.userName As creatorName, A.profileImage AS creatorImage,
-    B.userId AS participantId, B.AADId AS participantAADId, B.userName AS participantName, B.profileImage AS participantImage
-FROM ((Todo.Tasks INNER JOIN (SELECT taskId FROM Todo.SharedTabs WHERE userId = ${userId}) AS C ON Todo.Tasks.taskId = C.taskId)
-    INNER JOIN Todo.Users AS A ON Todo.Tasks.creatorId = A.userId)
-LEFT JOIN
-(Todo.Participants INNER JOIN Todo.Users AS B ON Todo.Participants.participantId = B.userId) ON Todo.Tasks.taskId = Todo.Participants.taskId`;
+    A.userId AS creatorId, A.AADId AS creatorAADId , A.userName As creatorName, A.profileImage AS creatorImage
+FROM (Todo.Tasks INNER JOIN (SELECT taskId FROM Todo.SharedTabs WHERE userAADId = '${AADId}') AS C ON Todo.Tasks.taskId = C.taskId)
+    INNER JOIN Todo.Users AS A ON Todo.Tasks.creatorAADId = A.AADId`;
     var req = await dbRun(query);
     if (req.status != 200) {
         taskSharedResp.message = "failure"
@@ -218,13 +233,13 @@ LEFT JOIN
                 participants: []
             }
         }
-        let participant = {
-            userId: req.body.content[i].participantId,
-            AADId: req.body.content[i].participantAADId,
-            userName: req.body.content[i].participantName,
-            profileImage: req.body.content[i].participantImage
-        }
-        taskMap[req.body.content[i].taskId].participants.push(participant);
+        // let participant = {
+        //     userId: req.body.content[i].participantId,
+        //     AADId: req.body.content[i].participantAADId,
+        //     userName: req.body.content[i].participantName,
+        //     profileImage: req.body.content[i].participantImage
+        // }
+        // taskMap[req.body.content[i].taskId].participants.push(participant);
     }
 
     for (let task of Object.values(taskMap)) {

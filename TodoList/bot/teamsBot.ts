@@ -221,6 +221,32 @@ export class TeamsBot extends TeamsActivityHandler {
 
     // Fetch Adaptive Card to render to a tab.
     async handleTeamsTabFetch(context: TurnContext, tabRequest: any): Promise<any> {
+        // When the Bot Service Auth flow completes, context will contain a magic code used for verification.
+        const magicCode =
+        context.activity.value && context.activity.value.state
+            ? context.activity.value.state
+            : '';
+
+        // Getting the tokenResponse for the user
+        const tokenResponse = await (<BotFrameworkAdapter> context.adapter).getUserToken(
+            context,
+            process.env.connectionName,
+            magicCode
+        );
+        console.log(magicCode);
+        console.log(tokenResponse);
+        if (!tokenResponse || !tokenResponse.token) {
+            // Token is not available, hence we need to send back the auth response
+
+            // Retrieve the OAuth Sign in Link.
+            const signInLink = await (<BotFrameworkAdapter> context.adapter).getSignInLink(
+                context,
+                process.env.ConnectionName
+            );
+            console.log(signInLink);
+            // Generating and returning auth response.
+            return createAuthResponse(signInLink);
+        }
         // "_activity"."from": {
         //     "id": "29:1kA70lko0omlG82UshStbT7vs7zUWLvuY8qUOazHzI0PFvzzf_XDuSSZcH_kizizDoINul3VU_G6r9aNaHQJTkw",
         //     "name": "Kun Huang",

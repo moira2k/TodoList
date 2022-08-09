@@ -27,10 +27,10 @@ export default async function dbRun(query: string): Promise<DBResponse> {
         const content = await execQuery(query, connection);
         res.body = {content: content};
         return res;
-    }
-    catch (err) {
+    } catch (err) {
         res.status = 500;
         res.body = {error: err.message};
+        console.log(JSON.stringify(res, null, 2));
         return res;
     }
     // finally {

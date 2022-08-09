@@ -36,10 +36,21 @@ export const getCurrentTimeString = () => {
 }
 
 // test acount AADId: 'test1'
-export const getUserDetails = async (AADId: string) => {
+export const getUserDetails = async (AADId: string, data: any) => {
     console.log("Reading User Details From DB.");
     var query:string = `SELECT * FROM Todo.Users WHERE AADId = '${AADId}'`;
     var req = await dbRun(query);
+    console.log(JSON.stringify(req.body.content, null, 2))
+    if (req.body.content.length == 0) {
+        query = `INSERT INTO Todo.Users (AADId, userId, userName) VALUES ('${data.aadObjectId}', '${data.id}', '${data.name}')`;
+        console.log(query)
+        req = await dbRun(query);
+        console.log(JSON.stringify(req, null, 2))
+        query = `SELECT * FROM Todo.Users WHERE AADId = '${AADId}'`;
+        console.log(query)
+        req = await dbRun(query);
+        console.log(JSON.stringify(req, null, 2))
+    }
     if (req.status == 200) {
         return req.body.content[0];
         // If the user do not exist, ...
@@ -184,10 +195,15 @@ export const handleTodoListAction = async(AADId: string, data: any) => {
         }
         case "share": {
             const sharedUsers = data.sharedUsers.split(',');
-            console.log(sharedUsers);
+            query = 'INSERT INTO Todo.SharedTabs (userAADId, taskId) VALUES ';
+            for (let i: number = 0; i < sharedUsers.length; ++i) {
+                if (i != 0) query = query + ',';
+                query = query + ` ('${sharedUsers[i]}', ${data.taskId})`;
+            }
             break;
         }
     }
+    console.log(query);
     const req = await dbRun(query);
     return req.status;
 }
@@ -248,3 +264,23 @@ FROM (Todo.Tasks INNER JOIN (SELECT taskId FROM Todo.SharedTabs WHERE userAADId 
     // console.log(JSON.stringify(res, null,2));
     return taskSharedResp;
 }
+
+// Card response for authentication
+export const createAuthResponse = (signInLink) => {
+    console.log("Create Auth response")
+    const res = {
+            tab: {
+                type: "auth",
+                suggestedActions: {
+                    actions: [
+                        {
+                            type: "openUrl",
+                            value: signInLink,
+                            title: "Sign in to this app"
+                        }
+                    ]
+                }
+            }
+    };
+    return res;
+};

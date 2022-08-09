@@ -3,7 +3,12 @@ import * as restify from "restify";
 
 // Import required bot services.
 // See https://aka.ms/bot-services to learn more about the different parts of a bot.
-import { BotFrameworkAdapter, TurnContext } from "botbuilder";
+import { 
+    BotFrameworkAdapter, 
+    TurnContext, 
+    MemoryStorage, 
+    UserState
+} from "botbuilder";
 
 // This bot's main dialog.
 import { TeamsBot } from "./teamsBot";
@@ -38,8 +43,18 @@ const onTurnErrorHandler = async (context: TurnContext, error: Error) => {
 // Set the onTurnError for the singleton BotFrameworkAdapter.
 adapter.onTurnError = onTurnErrorHandler;
 
+// Define a state store for your bot. See https://aka.ms/about-bot-state to learn more about using MemoryStorage.
+// A bot requires a state store to persist the dialog and user state between messages.
+
+// For local development, in-memory storage is used.
+// CAUTION: The Memory Storage used here is for local bot debugging only. When the bot
+// is restarted, anything stored in memory will be gone.
+const memoryStorage = new MemoryStorage();
+const userState = new UserState(memoryStorage);
+
+
 // Create the bot that will handle incoming messages.
-const bot = new TeamsBot();
+const bot = new TeamsBot(userState);
 
 // Create HTTP server.
 const server = restify.createServer();

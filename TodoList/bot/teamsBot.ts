@@ -6,19 +6,20 @@ import {
     TurnContext,
     AdaptiveCardInvokeValue,
     AdaptiveCardInvokeResponse,
+    BotFrameworkAdapter,
+    BotAdapter
 } from "botbuilder";
 import rawWelcomeCard from "./adaptiveCards/welcome.json";
-import rawLearnCard from "./adaptiveCards/learn.json";
 // import { AdaptiveCards } from "@microsoft/adaptivecards-tools";
 import * as ACData from "adaptivecards-templating";
 import * as AdaptiveCards from "adaptivecards";
-import {TabFetchResponse, TodoListCard, User} from "./api/constant"
 import rawtodoListCard from "./adaptiveCards/todoList.json"
 import rawtodoItemCard from "./adaptiveCards/todoItem.json"
 import rawtaskSharedCard from "./adaptiveCards/taskShared.json"
 import rawtodoMessCard from "./adaptiveCards/todoMess.json"
-import testCard from "./adaptiveCards/test.json"
+import graphRun from "./api/graphClient";
 // test data
+import testCard from "./adaptiveCards/test.json"
 import rawtodoListData from "./adaptiveCards/todoList.data.json"
 import rawtodoItemData from "./adaptiveCards/todoItem.data.json"
 import rawtaskSharedData from "./adaptiveCards/taskShared.data.json"
@@ -28,7 +29,8 @@ import {
     getUserDetails,
     getTodoItemData,
     getTaskSharedData,
-    handleTodoListAction
+    handleTodoListAction,
+    createAuthResponse
 } from "./api/handleData"
 import { ThisMemoryScope } from "botbuilder-dialogs";
 
@@ -38,15 +40,31 @@ const AdaptiveCardsTools = require("@microsoft/adaptivecards-tools").AdaptiveCar
 //     likeCount: number;
 // }
 
+// User Configuration property name
+const USER_CONFIGURATION = 'userConfigurationProperty';
+
 export class TeamsBot extends TeamsActivityHandler {
     // record the likeCount
     // likeCountObj: { likeCount: number };
     user: {[key: string]: any};
-
-    constructor() {
+    userConfigurationProperty: any;
+    connectionName: string;
+    userState: any;
+    /**
+     *
+     * @param {UserState} User state to persist configuration settings
+     */
+    constructor(userState) {
         super();
 
-        // this.likeCountObj = { likeCount: 0 };
+        // Creates a new user property accessor.
+        // See https://aka.ms/about-bot-state-accessors to learn more about the bot state and state accessors.
+        this.userConfigurationProperty = userState.createProperty(
+            USER_CONFIGURATION
+        );
+        this.connectionName = process.env.ConnectionName;
+        this.userState = userState;
+
 
         this.onMessage(async (context, next) => {
             console.log("Running with Message Activity.");
@@ -96,6 +114,16 @@ export class TeamsBot extends TeamsActivityHandler {
         // });
     }
 
+     /**
+     * Override the ActivityHandler.run() method to save state changes after the bot logic completes.
+     */
+      async run(context: TurnContext) {
+        await super.run(context);
+
+        // Save state changes
+        await this.userState.saveChanges(context);
+    }
+    
     // Invoked when an action is taken on an Adaptive Card. The Adaptive Card sends an event to the Bot and this
     // method handles that event.
     // async onAdaptiveCardInvoke(
@@ -193,12 +221,13 @@ export class TeamsBot extends TeamsActivityHandler {
 
     // Fetch Adaptive Card to render to a tab.
     async handleTeamsTabFetch(context: TurnContext, tabRequest: any): Promise<any> {
-        // "_activity"."from":{
-        //     "id"
-        //     "name"
-        //     "addObjectId"
+        // "_activity"."from": {
+        //     "id": "29:1kA70lko0omlG82UshStbT7vs7zUWLvuY8qUOazHzI0PFvzzf_XDuSSZcH_kizizDoINul3VU_G6r9aNaHQJTkw",
+        //     "name": "Kun Huang",
+        //     "aadObjectId": "293e2e1f-8167-44bf-b03f-74a48abf4ad3" // people picker
         // }
         // console.log("TurnContext", JSON.stringify(context, null,2));
+        console.log(tabRequest);
         const tabFetchResp = {
             tab: {
                 type: "continue",
@@ -208,14 +237,22 @@ export class TeamsBot extends TeamsActivityHandler {
             },
             responseType: "tab"
         };
-        
-        this.user = await getUserDetails(1); // test account
-        // console.log(this.user)
+
+        // if account not in db, get photos graph client and insert into db
+
+        // test account 1
+        this.user = await getUserDetails(context.activity.from.aadObjectId, context.activity.from);
+        // // test my account and graph client
+        // this.user = context.activity.from;
+        // this.user.AADId = context.activity.from.aadObjectId;
+
+        // const mess = await graphRun();
+        // console.log(JSON.stringify(mess, null, 2));
         switch (tabRequest.tabContext.tabEntityId) {
             // the first tab: MyTab
             case "MyTab": {
                 // the first card: TodoList
-                const todoListData = await getTodoListData(this.user.userId);
+                const todoListData = await getTodoListData(this.user.AADId);
                 todoListData.enquirer = this.user;
                 // Create a Template instance from the template payload
                 const todoListTemplate = new ACData.Template(rawtodoListCard);
@@ -229,8 +266,9 @@ export class TeamsBot extends TeamsActivityHandler {
             }
             // the second tab: SharedTab
             case "SharedTab": {
-                const taskSharedData = await getTaskSharedData(this.user.userId);
+                const taskSharedData = await getTaskSharedData(this.user.AADId);
                 taskSharedData.enquirer = this.user;
+                console.log(JSON.stringify(taskSharedData, null, 2));
                 const taskSharedTemplate = new ACData.Template(rawtaskSharedCard);
                 const taskSharedPayload = taskSharedTemplate.expand({
                     $root: taskSharedData
@@ -253,21 +291,25 @@ export class TeamsBot extends TeamsActivityHandler {
             },
             responseType: "tab"
         };
-        // console.log(tabRequest);
+        console.log(tabRequest);
         
-        this.user = await getUserDetails(1); // test account
+        // test account 1
+        this.user = await getUserDetails(context.activity.from.aadObjectId, context.activity.from);
+        // // test my account and graph client
+        // this.user = context.activity.from;
+        // this.user.AADId = context.activity.from.aadObjectId;
 
         switch (tabRequest.tabContext.tabEntityId) {
             // the first tab: MyTab
             case "MyTab": {
                 if (tabRequest.data.action != "show") {
-                    const handleStatus = await handleTodoListAction(this.user.userId, tabRequest.data);
+                    const handleStatus = await handleTodoListAction(this.user.AADId, tabRequest.data);
                     if (handleStatus != 200) {
                         break;
                     }
                 }
                 // Todo: get from static resources, if action is "show"
-                const todoListData = await getTodoListData(this.user.userId);
+                const todoListData = await getTodoListData(this.user.AADId);
                 todoListData.enquirer = this.user;
                 const todoListTemplate = new ACData.Template(rawtodoListCard);
                 const todoListPayload = todoListTemplate.expand({
@@ -275,7 +317,7 @@ export class TeamsBot extends TeamsActivityHandler {
                 });
                 tabSubmitResp.tab.value.cards = [{"card": todoListPayload}]
 
-                if (tabRequest.data.action == "show") {
+                if (tabRequest.data.action == "show" || tabRequest.data.action == "share") {
                     const todoItemData = await getTodoItemData(tabRequest.data.taskId);
                     todoItemData.enquirer = this.user;
                     const todoItemTemplate = new ACData.Template(rawtodoItemCard);
@@ -289,7 +331,7 @@ export class TeamsBot extends TeamsActivityHandler {
             // the second tab: SharedTab
             case "SharedTab": {
                 // Todo: get from static resources, if action is "show"
-                const taskSharedData = await getTaskSharedData(this.user.userId);
+                const taskSharedData = await getTaskSharedData(this.user.AADId);
                 taskSharedData.enquirer = this.user;
                 const taskSharedTemplate = new ACData.Template(rawtaskSharedCard);
                 const taskSharedPayload = taskSharedTemplate.expand({

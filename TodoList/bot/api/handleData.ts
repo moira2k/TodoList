@@ -35,21 +35,14 @@ export const getCurrentTimeString = () => {
     return res;
 }
 
-// test acount AADId: 'test1'
 export const getUserDetails = async (AADId: string, data: any) => {
     console.log("Reading User Details From DB.");
     var query:string = `SELECT * FROM Todo.Users WHERE AADId = '${AADId}'`;
     var req = await dbRun(query);
-    console.log(JSON.stringify(req.body.content, null, 2))
+    // console.log(JSON.stringify(req.body.content, null, 2))
     if (req.body.content.length == 0) {
-        query = `INSERT INTO Todo.Users (AADId, userId, userName) VALUES ('${data.aadObjectId}', '${data.id}', '${data.name}')`;
-        console.log(query)
+        query = `INSERT INTO Todo.Users (AADId, userId, userName) VALUES ('${data.aadObjectId}', '${data.id}', '${data.name}'); SELECT * FROM Todo.Users WHERE AADId = '${AADId}';`;
         req = await dbRun(query);
-        console.log(JSON.stringify(req, null, 2))
-        query = `SELECT * FROM Todo.Users WHERE AADId = '${AADId}'`;
-        console.log(query)
-        req = await dbRun(query);
-        console.log(JSON.stringify(req, null, 2))
     }
     if (req.status == 200) {
         return req.body.content[0];
@@ -94,7 +87,7 @@ export const getTodoListData = async (AADId: string) => {
                 taskStatus: req.body.content[i].taskStatus,
                 taskContent: req.body.content[i].taskContent,
                 creator: creator,
-                participants: []
+                // participants: []
             }
         }
         // let participant = {
@@ -246,7 +239,7 @@ FROM (Todo.Tasks INNER JOIN (SELECT taskId FROM Todo.SharedTabs WHERE userAADId 
                 taskStatus: req.body.content[i].taskStatus,
                 taskContent: req.body.content[i].taskContent,
                 creator: creator,
-                participants: []
+                // participants: []
             }
         }
         // let participant = {

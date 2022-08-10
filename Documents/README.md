@@ -110,5 +110,12 @@ Response for adaptive card
 
 - 使用 vscode teams toolkit add features 加入 Azure SQL Database。会自动加入 Azure Function 和 BOTSSO，没有考虑用户只是想要增加一个 Azure SQL Database。
 - 使用Provision in the cloud，第一次由于某些原因创建失败某个 resources，在解决问题后，再次 provision，会出现某个资源无法创建，已经存在重名的资源。需要重命名`resourceBaseName`或者进入用户进入 azure 人工删除资源。
-- Azure SQL Database可能会出现SQL.DatabaseUserCreateError错误。需要参考 [TeamsFx/sql-help.md at main · OfficeDev/TeamsFx (github.com)](https://github.com/OfficeDev/TeamsFx/blob/main/docs/fx-core/sql-help.md) 进行解决。
-5. Team Toolkit
+- Azure SQL Database可能会出现 SQL.DatabaseUserCreateError 错误。需要参考 [TeamsFx/sql-help.md at main · OfficeDev/TeamsFx (github.com)](https://github.com/OfficeDev/TeamsFx/blob/main/docs/fx-core/sql-help.md) 进行解决。
+
+### Add Authentication
+
+[Add authentication to a bot in Bot Framework SDK - Bot Service | Microsoft Docs](https://docs.microsoft.com/en-us/azure/bot-service/bot-builder-authentication?view=azure-bot-service-4.0&tabs=userassigned%2Caadv2%2Ccsharp)
+
+and add "token.botframework.com" to "validDomains" in manifest.json
+
+### Azure Graph Client

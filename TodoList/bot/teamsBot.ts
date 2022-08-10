@@ -233,8 +233,7 @@ export class TeamsBot extends TeamsActivityHandler {
             process.env.connectionName,
             magicCode
         );
-        console.log(magicCode);
-        console.log(tokenResponse);
+
         if (!tokenResponse || !tokenResponse.token) {
             // Token is not available, hence we need to send back the auth response
 
@@ -243,10 +242,11 @@ export class TeamsBot extends TeamsActivityHandler {
                 context,
                 process.env.ConnectionName
             );
-            console.log(signInLink);
+
             // Generating and returning auth response.
             return createAuthResponse(signInLink);
         }
+        // console.log(tokenResponse.token)
         // "_activity"."from": {
         //     "id": "29:1kA70lko0omlG82UshStbT7vs7zUWLvuY8qUOazHzI0PFvzzf_XDuSSZcH_kizizDoINul3VU_G6r9aNaHQJTkw",
         //     "name": "Kun Huang",
@@ -272,8 +272,8 @@ export class TeamsBot extends TeamsActivityHandler {
         // this.user = context.activity.from;
         // this.user.AADId = context.activity.from.aadObjectId;
 
-        // const mess = await graphRun();
-        // console.log(JSON.stringify(mess, null, 2));
+        const mess = await graphRun(this.user.AADId, tokenResponse.token);
+        console.log(JSON.stringify(mess, null, 2));
         switch (tabRequest.tabContext.tabEntityId) {
             // the first tab: MyTab
             case "MyTab": {

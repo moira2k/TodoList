@@ -1,7 +1,7 @@
 {
     "$schema": "https://developer.microsoft.com/en-us/json-schemas/teams/v1.13/MicrosoftTeams.schema.json",
     "manifestVersion": "1.13",
-    "version": "1.0.0",
+    "version": "1.1.0",
     "id": "{{state.fx-resource-appstudio.teamsAppId}}",
     "packageName": "com.microsoft.teams.extension",
     "developer": {
@@ -71,7 +71,8 @@
         "messageTeamMembers"
     ],
     "validDomains": [
-        "{{state.fx-resource-bot.validDomain}}"
+        "{{state.fx-resource-bot.validDomain}}",
+        "token.botframework.com"
     ],
     "webApplicationInfo": {
         "id": "{{state.fx-resource-aad-app-for-teams.clientId}}",

@@ -7,7 +7,6 @@ interface DBResponse {
 }
 
 export default async function dbRun(query: string): Promise<DBResponse> {
-    console.log("Processing a query")
     // Initialize response.
     const res: DBResponse = {
         status: 200,
@@ -27,10 +26,10 @@ export default async function dbRun(query: string): Promise<DBResponse> {
         const content = await execQuery(query, connection);
         res.body = {content: content};
         return res;
-    } catch (err) {
+    } catch (error) {
+        console.log(error);
         res.status = 500;
-        res.body = {error: err.message};
-        console.log(JSON.stringify(res, null, 2));
+        res.body = {error: error.message};
         return res;
     }
     // finally {
@@ -46,14 +45,14 @@ async function getSQLConnection(teamsfx) {
     const connection = new Connection(config);
     connection.connect();
     return new Promise((resolve, reject) => {
-        connection.on('connect', err => {
-            if (err) {
-                reject(err);
+        connection.on('connect', error => {
+            if (error) {
+                reject(error);
             }
             resolve(connection);
         })
-        // connection.on('debug', function (err) {
-        //     console.log('debug:', err);
+        // connection.on('debug', function (error) {
+        //     console.log('debug:', error);
         // });
     })
 }
@@ -62,9 +61,9 @@ async function execQuery(query: string, connection: { execSql: (arg0: Request) =
     // console.log("query: ", query);
     return new Promise((resolve, reject) => {
         const res = [];
-        const request = new Request(query, (err) => {
-            if (err) {
-                reject(err);
+        const request = new Request(query, (error) => {
+            if (error) {
+                reject(error);
             }
         });
 
@@ -80,8 +79,8 @@ async function execQuery(query: string, connection: { execSql: (arg0: Request) =
             resolve(res)
         });
 
-        request.on("error", err => {
-            reject(err);
+        request.on("error", error => {
+            reject(error);
         });
 
         connection.execSql(request);

@@ -17,7 +17,6 @@ import rawtodoListCard from "./adaptiveCards/todoList.json"
 import rawtodoItemCard from "./adaptiveCards/todoItem.json"
 import rawtaskSharedCard from "./adaptiveCards/taskShared.json"
 import rawtodoMessCard from "./adaptiveCards/todoMess.json"
-import graphRun from "./api/graphClient";
 // test data
 import testCard from "./adaptiveCards/test.json"
 import rawtodoListData from "./adaptiveCards/todoList.data.json"
@@ -62,7 +61,7 @@ export class TeamsBot extends TeamsActivityHandler {
         this.userConfigurationProperty = userState.createProperty(
             USER_CONFIGURATION
         );
-        this.connectionName = process.env.ConnectionName;
+        this.connectionName = "todolist_v3";
         this.userState = userState;
 
 
@@ -226,34 +225,28 @@ export class TeamsBot extends TeamsActivityHandler {
         context.activity.value && context.activity.value.state
             ? context.activity.value.state
             : '';
-
+        
         // Getting the tokenResponse for the user
         const tokenResponse = await (<BotFrameworkAdapter> context.adapter).getUserToken(
             context,
-            process.env.connectionName,
+            this.connectionName,
             magicCode
         );
-
+        
         if (!tokenResponse || !tokenResponse.token) {
             // Token is not available, hence we need to send back the auth response
 
             // Retrieve the OAuth Sign in Link.
             const signInLink = await (<BotFrameworkAdapter> context.adapter).getSignInLink(
                 context,
-                process.env.ConnectionName
+                this.connectionName
             );
 
             // Generating and returning auth response.
             return createAuthResponse(signInLink);
         }
-        // console.log(tokenResponse.token)
-        // "_activity"."from": {
-        //     "id": "29:1kA70lko0omlG82UshStbT7vs7zUWLvuY8qUOazHzI0PFvzzf_XDuSSZcH_kizizDoINul3VU_G6r9aNaHQJTkw",
-        //     "name": "Kun Huang",
-        //     "aadObjectId": "293e2e1f-8167-44bf-b03f-74a48abf4ad3" // people picker
-        // }
-        // console.log("TurnContext", JSON.stringify(context, null,2));
-        console.log(tabRequest);
+        // console.log("token", tokenResponse.token);
+        // console.log("tabRequest", tabRequest);
         const tabFetchResp = {
             tab: {
                 type: "continue",
@@ -264,21 +257,13 @@ export class TeamsBot extends TeamsActivityHandler {
             responseType: "tab"
         };
 
-        // if account not in db, get photos graph client and insert into db
+        this.user = await getUserDetails(context.activity.from.aadObjectId, tokenResponse.token);
 
-        // test account 1
-        this.user = await getUserDetails(context.activity.from.aadObjectId, context.activity.from);
-        // // test my account and graph client
-        // this.user = context.activity.from;
-        // this.user.AADId = context.activity.from.aadObjectId;
-
-        const mess = await graphRun(this.user.AADId, tokenResponse.token);
-        console.log(JSON.stringify(mess, null, 2));
         switch (tabRequest.tabContext.tabEntityId) {
             // the first tab: MyTab
             case "MyTab": {
                 // the first card: TodoList
-                const todoListData = await getTodoListData(this.user.AADId);
+                const todoListData = await getTodoListData(this.user.AADId, tokenResponse.token);
                 todoListData.enquirer = this.user;
                 // Create a Template instance from the template payload
                 const todoListTemplate = new ACData.Template(rawtodoListCard);
@@ -292,9 +277,8 @@ export class TeamsBot extends TeamsActivityHandler {
             }
             // the second tab: SharedTab
             case "SharedTab": {
-                const taskSharedData = await getTaskSharedData(this.user.AADId);
+                const taskSharedData = await getTaskSharedData(this.user.AADId, tokenResponse.token);
                 taskSharedData.enquirer = this.user;
-                console.log(JSON.stringify(taskSharedData, null, 2));
                 const taskSharedTemplate = new ACData.Template(rawtaskSharedCard);
                 const taskSharedPayload = taskSharedTemplate.expand({
                     $root: taskSharedData
@@ -308,6 +292,23 @@ export class TeamsBot extends TeamsActivityHandler {
 
     // Handle submits from Adaptive Card.
     async handleTeamsTabSubmit(context: TurnContext, tabRequest: any): Promise<any> {
+        const magicCode =
+        context.activity.value && context.activity.value.state
+            ? context.activity.value.state
+            : '';
+        var tokenResponse = await (<BotFrameworkAdapter> context.adapter).getUserToken(
+            context,
+            this.connectionName,
+            magicCode
+        );
+        if (!tokenResponse || !tokenResponse.token) {
+            const signInLink = await (<BotFrameworkAdapter> context.adapter).getSignInLink(
+                context,
+                this.connectionName
+            );
+            return createAuthResponse(signInLink);
+        }
+        
         const tabSubmitResp = {
             tab: {
                 type: "continue",
@@ -317,10 +318,7 @@ export class TeamsBot extends TeamsActivityHandler {
             },
             responseType: "tab"
         };
-        console.log(tabRequest);
-        
-        // test account 1
-        this.user = await getUserDetails(context.activity.from.aadObjectId, context.activity.from);
+        this.user = await getUserDetails(context.activity.from.aadObjectId, tokenResponse.token);
         // // test my account and graph client
         // this.user = context.activity.from;
         // this.user.AADId = context.activity.from.aadObjectId;
@@ -335,7 +333,7 @@ export class TeamsBot extends TeamsActivityHandler {
                     }
                 }
                 // Todo: get from static resources, if action is "show"
-                const todoListData = await getTodoListData(this.user.AADId);
+                const todoListData = await getTodoListData(this.user.AADId, tokenResponse.token);
                 todoListData.enquirer = this.user;
                 const todoListTemplate = new ACData.Template(rawtodoListCard);
                 const todoListPayload = todoListTemplate.expand({
@@ -344,7 +342,7 @@ export class TeamsBot extends TeamsActivityHandler {
                 tabSubmitResp.tab.value.cards = [{"card": todoListPayload}]
 
                 if (tabRequest.data.action == "show" || tabRequest.data.action == "share") {
-                    const todoItemData = await getTodoItemData(tabRequest.data.taskId);
+                    const todoItemData = await getTodoItemData(tabRequest.data.taskId, tokenResponse.token);
                     todoItemData.enquirer = this.user;
                     const todoItemTemplate = new ACData.Template(rawtodoItemCard);
                     const todoItemPayload = todoItemTemplate.expand({
@@ -357,7 +355,7 @@ export class TeamsBot extends TeamsActivityHandler {
             // the second tab: SharedTab
             case "SharedTab": {
                 // Todo: get from static resources, if action is "show"
-                const taskSharedData = await getTaskSharedData(this.user.AADId);
+                const taskSharedData = await getTaskSharedData(this.user.AADId, tokenResponse.token);
                 taskSharedData.enquirer = this.user;
                 const taskSharedTemplate = new ACData.Template(rawtaskSharedCard);
                 const taskSharedPayload = taskSharedTemplate.expand({
@@ -366,7 +364,7 @@ export class TeamsBot extends TeamsActivityHandler {
                 tabSubmitResp.tab.value.cards = [{"card": taskSharedPayload}];
 
                 if (tabRequest.data.action == "show") {
-                    const todoMessData = await getTodoItemData(tabRequest.data.taskId);
+                    const todoMessData = await getTodoItemData(tabRequest.data.taskId, tokenResponse.token);
                     todoMessData.enquirer = this.user;
                     const todoMessTemplate = new ACData.Template(rawtodoMessCard);
                     const todoMessPayload = todoMessTemplate.expand({

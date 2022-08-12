@@ -28,12 +28,8 @@ import {
 
 const AdaptiveCardsTools = require("@microsoft/adaptivecards-tools").AdaptiveCards
 
-// export interface DataInterface {
-//     likeCount: number;
-// }
-
 // User Configuration property name
-const USER_CONFIGURATION = 'userConfigurationProperty';
+// const USER_CONFIGURATION = 'userConfigurationProperty';
 
 export class TeamsBot extends TeamsActivityHandler {
     connectionName: string;

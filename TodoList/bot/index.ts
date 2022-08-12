@@ -49,12 +49,12 @@ adapter.onTurnError = onTurnErrorHandler;
 // For local development, in-memory storage is used.
 // CAUTION: The Memory Storage used here is for local bot debugging only. When the bot
 // is restarted, anything stored in memory will be gone.
-const memoryStorage = new MemoryStorage();
-const userState = new UserState(memoryStorage);
+// const memoryStorage = new MemoryStorage();
+// const userState = new UserState(memoryStorage);
 
 
 // Create the bot that will handle incoming messages.
-const bot = new TeamsBot(userState);
+const bot = new TeamsBot();
 
 // Create HTTP server.
 const server = restify.createServer();

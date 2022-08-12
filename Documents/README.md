@@ -119,3 +119,9 @@ Response for adaptive card
 and add "token.botframework.com" to "validDomains" in manifest.json
 
 ### Azure Graph Client
+
+AAD App Service: deploy to the cloud: `Y_C8Q~biYFyzF_pmzWw7ToOadDWxF0LkvA7lgcOQ`
+
+AAD App Service注册到Bot时，需要
+
+### Azure 

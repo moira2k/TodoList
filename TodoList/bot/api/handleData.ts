@@ -209,11 +209,11 @@ export const getTaskSharedData = async(AADId: string, token: string) => {
     return taskSharedResp;
 }
 
-// Card response for authentication
 export const createAuthResponse = (signInLink) => {
     console.log("Create Auth response")
     const res = {
             tab: {
+                // type: "silentAuth",
                 type: "auth",
                 suggestedActions: {
                     actions: [
@@ -227,4 +227,19 @@ export const createAuthResponse = (signInLink) => {
             }
     };
     return res;
+};
+
+const signOutCard = {
+    $schema: 'http://adaptivecards.io/schemas/adaptive-card.json',
+    body: [
+        {
+            type: 'TextBlock',
+            size: 'Medium',
+            weight: 'Bolder',
+            text: 'Sign out successful. Please refresh to Sign in again.',
+            wrap: true,
+        }
+    ],
+    type: 'AdaptiveCard',
+    version: '1.4'
 };

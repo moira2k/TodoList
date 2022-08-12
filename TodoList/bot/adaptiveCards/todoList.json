@@ -3,33 +3,6 @@
     "body": [
         {
             "type": "Container",
-            "style": "emphasis",
-            "items": [
-                {
-                    "type": "ColumnSet",
-                    "columns": [
-                        {
-                            "type": "Column",
-                            "items": [
-                                {
-                                    "type": "TextBlock",
-                                    "size": "Medium",
-                                    "color": "Accent",
-                                    "weight": "Bolder",
-                                    "text": "*Keep early hours and enjoy yourself.*",
-                                    "style": "heading",
-                                    "fontType": "Monospace"
-                                }
-                            ],
-                            "width": "stretch"
-                        }
-                    ]
-                }
-            ],
-            "bleed": true
-        },
-        {
-            "type": "Container",
             "items": [
                 {
                     "type": "ColumnSet",

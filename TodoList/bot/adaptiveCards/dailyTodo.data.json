@@ -4,12 +4,12 @@
         "userName": "Matt Hidinger",
         "profileImage": "https://pbs.twimg.com/profile_images/3647943215/d7f12830b3c17a5a9e4afcc370e3a37e_400x400.jpeg"
     },
-    "enquiredDate": "2017-02-21T18:33:12+0800",
+    "time": "2017-02-21T18:33:12+0800",
     "tasks": [
         {
             "taskId": "undefined",
-            "taskTime": "2017-02-21",
-            "taskStatus": "Not Started",
+            "dueDate": "2017-02-21",
+            "CurrentStatus": "Not Started",
             "taskContent": "a meeting with supplier representatives in Room602, Building01",
             "creator": {
                 "userName": "Matt Hidinger",
@@ -30,8 +30,8 @@
         },
         {
             "taskId": "undefined",
-            "taskTime": "2017-02-21",
-            "taskStatus": "Processing",
+            "dueDate": "2017-02-21",
+            "CurrentStatus": "Processing",
             "taskContent": "Follow up orders from X Companies and remind shipments",
             "creator": {
                 "userName": "Matt Hidinger",

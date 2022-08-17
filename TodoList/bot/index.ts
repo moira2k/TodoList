@@ -1,4 +1,5 @@
 // Import required packages
+import * as path from "path";
 import * as restify from "restify";
 
 // Import required bot services.
@@ -7,10 +8,12 @@ import {
     BotFrameworkAdapter, 
     TurnContext, 
     MemoryStorage, 
-    UserState
+    UserState,
+    ConversationState,
 } from "botbuilder";
 
 // This bot's main dialog.
+import { MainDialog } from "./dialogs/MainDialog";
 import { TeamsBot } from "./teamsBot";
 
 // Create adapter.
@@ -49,12 +52,16 @@ adapter.onTurnError = onTurnErrorHandler;
 // For local development, in-memory storage is used.
 // CAUTION: The Memory Storage used here is for local bot debugging only. When the bot
 // is restarted, anything stored in memory will be gone.
-// const memoryStorage = new MemoryStorage();
-// const userState = new UserState(memoryStorage);
+const memoryStorage = new MemoryStorage();
 
+// Create conversation and user state with in-memory storage provider.
+const conversationState = new ConversationState(memoryStorage);
+const userState = new UserState(memoryStorage);
 
+// Create the main dialog.
+const dialog = new MainDialog();
 // Create the bot that will handle incoming messages.
-const bot = new TeamsBot();
+const bot = new TeamsBot(conversationState, userState, dialog);
 
 // Create HTTP server.
 const server = restify.createServer();
@@ -66,5 +73,19 @@ server.listen(process.env.port || process.env.PORT || 3978, () => {
 server.post("/api/messages", async (req, res) => {
     await adapter.processActivity(req, res, async (context) => {
         await bot.run(context);
+    })
+    .catch((err) => {
+        // Error message including "412" means it is waiting for user's consent, which is a normal process of SSO, sholdn't throw this error.
+        if (!err.message.includes("412")) {
+          throw err;
+        }
     });
 });
+
+server.get(
+    "/auth-*.html",
+    restify.plugins.serveStatic({
+      directory: path.join(__dirname, "public"),
+    })
+  );
+  

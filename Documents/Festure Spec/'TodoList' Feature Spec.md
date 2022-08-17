@@ -69,11 +69,11 @@ References: https://docs.microsoft.com/en-us/graph/toolkit/overview
 ## Features
 
 1.	[P0] Manage (create, update, delete) to-do items (**Tab**)
-1.1 Request and respond to these actions in "To-do List Tab"
+   1.1 Request and respond to these actions in "To-do List Tab"
 2.	[P0] Add to do item based on chat message (**Message Extension**)
 3.	[P1] Share to-do items with others (**Tab**)
-3.1 View and track items in "Shared with Me Tab"
-3.2 Select the people to share with (with People picker)
+   3.1 View and track items in "Shared with Me Tab"
+   3.2 Select the people to share with (with People picker)
 4.	[P1] show user photos (with SSO)
 5.	[P2] Send notification (to verify the ease of adding functionality) (**Bot**)
 6.	Stretch goal: Add source (chat name/meeting name) for to-do item

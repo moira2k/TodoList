@@ -1,219 +1,75 @@
+import { Request, TYPES } from "tedious";
 import dbRun from "./databaseClient";
 import graphRun from "./graphClient";
 
-interface TodoListResponse {
-    message: string;
-    enquirer: { [key: string]: any };
-    enquiredDate: string;
-    tasks: { [key: string]: any }[];
-}
-
-export const getCurrentTimeString = () => {
-    // 2017-02-14T06:08:00Z
-    // 2017-02-14T06:08:00-07:00
-    // 2017-02-14T06:08:00+07:00
+function convertInt2String(timeInt: number) {
     var res: string;
-
-    const time = new Date()
-    const timeGmt = time.toISOString()
-    const offest = time.getTimezoneOffset()
-
-    var tmp: string;
-    const timezone = Math.abs(offest / 60);
-    if (timezone < 10) {
-        tmp = "0" + timezone + ":00";
+    if (timeInt < 10) {
+        res = "0" + timeInt;
     } else {
-        tmp = timezone + ":00";
-    }
-
-    if (offest == 0) {
-        res = timeGmt.slice(0, timeGmt.length - 5) + "Z";
-    } else if (offest > 0) {
-        res = timeGmt.slice(0, timeGmt.length - 5) + `-` + tmp;
-    } else {
-        res = timeGmt.slice(0, timeGmt.length - 5) + `+` + tmp;
+        res = timeInt.toString();
     }
     return res;
 }
 
-export const getUserDetails = async (AADId: string, token: string) => {
-    console.log("Reading User Details From MS Graph.");
-    const user = {
-        userName: "",
-        AADId: "",
-        profileImage: ""
-    };
+function getTimezone(time: Date) {
+    const offest = time.getTimezoneOffset();
 
-    const req = await graphRun(AADId, token);
-    if (req.status == 200) {
-        user.userName = req.body.profile.displayName;
-        user.AADId = req.body.profile.id;
-        user.profileImage = req.body.profileImage;
+    const bias = Math.abs(offest / 60);
+    var timezone: string = convertInt2String(bias) + ":00";
+
+    if (offest == 0) {
+        timezone = timezone + "Z";
+    } else if (offest > 0) {
+        timezone = "-" + timezone;
+    } else {
+        timezone = "+" + timezone;
     }
-    return user;
-}
-
-export const getTodoListData = async (AADId: string, token: string) => {
-    console.log("Reading Todo List From Azure SQL Database.");
-    const todoListResp:  TodoListResponse = {
-        message: "success",
-        enquiredDate: getCurrentTimeString(),
-        enquirer: {},
-        tasks: []
-    };
-
-    const query:string = `SELECT taskId, taskTime, taskStatus, taskContent, creatorAADId
-    FROM Todo.Tasks WHERE creatorAADId = '${AADId}'`;
-    const req = await dbRun(query);
-    if (req.status != 200) {
-        todoListResp.message = "failure"
-        return todoListResp;
-    }
-    const creator = await getUserDetails(AADId, token);
-
-    var taskMap = {};
-    for (let i:number = 0; i < req.body.content.length; ++i) {
-        if (!(req.body.content[i].taskId in taskMap)) {
-            taskMap[req.body.content[i].taskId] = {
-                taskId: req.body.content[i].taskId,
-                taskTime: req.body.content[i].taskTime,
-                taskStatus: req.body.content[i].taskStatus,
-                taskContent: req.body.content[i].taskContent,
-                creator: creator
-            }
-        }
-    }
-    for (let task of Object.values(taskMap)) {
-        todoListResp.tasks.push(task);
-    }
-
-    return todoListResp;
-}
-
-interface TodoItemResponse {
-    message: string;
-    enquirer: { [key: string]: any };
-    enquiredDate: string;
-    task: { [key: string]: any };
-}
-
-export const getTodoItemData = async (taskId: number, token: string) => {
-    console.log("Reading Todo Item From Azure SQL Database.");
-    const todoItemResp:  TodoItemResponse = {
-        message: "success",
-        enquiredDate: getCurrentTimeString(),
-        enquirer: {},
-        task: {}
-    };
-
-    const query:string = `SELECT Task.taskId, Task.taskTime, Task.taskStatus, Task.taskContent, creatorAADId , A.userAADId AS viewerAADId
-    FROM (SELECT taskId, taskTime, taskStatus, taskContent, creatorAADId FROM Todo.Tasks WHERE taskId = ${taskId}) AS Task
-        LEFT JOIN (SELECT taskId, userAADId FROM Todo.SharedTabs WHERE taskId = ${taskId}) AS A ON Task.taskId = A.taskId`;
     
-    const req = await dbRun(query);
-    if (req.status != 200) {
-        todoItemResp.message = "failure"
-        return todoItemResp;
-    }
-
-    const creator = await getUserDetails(req.body.content[0].creatorAADId, token);
-    todoItemResp.task = {
-        taskId: req.body.content[0].taskId,
-        taskTime: req.body.content[0].taskTime,
-        taskStatus: req.body.content[0].taskStatus,
-        taskContent: req.body.content[0].taskContent,
-        creator: creator,
-        viewers: []
-    }
-
-    var viewerMap = {};
-    for (let i:number = 0; i < req.body.content.length; ++i) {
-        if (req.body.content[i].viewerAADId != null && !(req.body.content[i].viewerAADId in viewerMap)) {
-            let viewer =  await getUserDetails(req.body.content[i].viewerAADId, token);
-            viewerMap[req.body.content[i].viewerAADId] = 1;
-            todoItemResp.task.viewers.push(viewer);
-        }
-    }
-
-    return todoItemResp;
+    return timezone;
 }
 
-export const handleTodoListAction = async(AADId: string, data: any) => {
-    console.log("Handling the Action Of MyTab.");
-    var query:string;
-    switch (data.action) {
-        case "add": {
-            const addTime = data.addDate + "T00:00:00Z";
-            query = `INSERT INTO Todo.Tasks (taskTime, taskStatus, taskContent, creatorAADId) VALUES ('${addTime}', 'Not Started', '${data.addContent}', '${AADId}')`;
-            // get taskId
-            // insert Todo.Participants
-            break;
-        }
-        case "edit": {
-            const updateTime = data[`updateTime${data.id}`] + "T00:00:00Z";
-            query = `UPDATE Todo.Tasks SET taskTime = '${updateTime}', taskStatus = '${data[`updateStatus${data.id}`]}', taskContent = '${data[`updateContent${data.id}`]}' WHERE taskId = ${data.taskId}`;
-            break;
-        }
-        case "del": {
-            query = `DELETE FROM Todo.Tasks WHERE taskId = ${data.taskId}`;
-            break;
-        }
-        case "share": {
-            const sharedUsers = data.sharedUsers.split(',');
-            query = 'INSERT INTO Todo.SharedTabs (userAADId, taskId) VALUES ';
-            for (let i: number = 0; i < sharedUsers.length; ++i) {
-                if (i != 0) query = query + ',';
-                query = query + ` ('${sharedUsers[i]}', ${data.taskId})`;
-            }
-            break;
-        }
-    }
-    const req = await dbRun(query);
-    return req.status;
+export function convertTimeString(time: Date) {
+    /**
+     * Adaptive Cards offers DATE() and TIME() formatting functions to automatically localize the time on the target device.
+     * Date/Time function rules: 1.CASE SENSITIVE, 2.NO SPACES, 3.STRICT RFC 3389 FORMATTING, 4.MUST BE a valid date and time
+     * Valid formats:
+     * 2017-02-14T06:08:00Z
+     * 2017-02-14T06:08:00-07:00
+     * 2017-02-14T06:08:00+07:00
+     */
+
+    var res: string;
+    const year = time.getFullYear();
+    const month = convertInt2String(time.getMonth());
+    const date = convertInt2String(time.getDate());
+    const hour = convertInt2String(time.getHours());
+    const minute = convertInt2String(time.getMinutes());
+    const second = convertInt2String(time.getSeconds());
+    res = `${year}-${month}-${date}T${hour}:${minute}:${second}${getTimezone(time)}`;
+
+    return res;
 }
 
-export const getTaskSharedData = async(AADId: string, token: string) => {
-    console.log("Reading Tasks Shared From Azure SQL Database.");
-    const taskSharedResp:  TodoListResponse = {
-        message: "success",
-        enquiredDate: getCurrentTimeString(),
-        enquirer: {},
-        tasks: []
-    };
-
-    const query:string = `SELECT Todo.Tasks.taskId, Todo.Tasks.taskTime, Todo.Tasks.taskStatus, Todo.Tasks.taskContent, Todo.Tasks.creatorAADId
-    FROM Todo.Tasks INNER JOIN (SELECT taskId FROM Todo.SharedTabs WHERE userAADId = '${AADId}') AS A ON Todo.Tasks.taskId = A.taskId`;
-
-    const req = await dbRun(query);
-    if (req.status != 200) {
-        taskSharedResp.message = "failure"
-        return taskSharedResp;
-    }
-    var taskMap = {};
-    for (let i:number = 0; i < req.body.content.length; ++i) {
-        if (!(req.body.content[i].taskId in taskMap)) {
-            let creator = await getUserDetails(req.body.content[i].creatorAADId, token);
-            taskMap[req.body.content[i].taskId] = {
-                taskId: req.body.content[i].taskId,
-                taskTime: req.body.content[i].taskTime,
-                taskStatus: req.body.content[i].taskStatus,
-                taskContent: req.body.content[i].taskContent,
-                creator: creator
-            }
-        }
-    }
-
-    for (let task of Object.values(taskMap)) {
-        taskSharedResp.tasks.push(task);
-    }
-    return taskSharedResp;
+export interface User {
+    userName: string;
+    aadObjectId: string;
+    profileImage: string;
 }
 
-export const createAuthResponse = (signInLink) => {
+export interface TodoItem {
+    taskId?: number;
+    dueDate?: string;
+    currentStatus?: string;
+    taskContent?: string;
+    creator?: User;
+    viewers?: User[];
+}
+
+export function createAuthResponse(signInLink) {
     console.log("Create Auth response")
     const res = {
             tab: {
-                // type: "silentAuth",
                 type: "auth",
                 suggestedActions: {
                     actions: [
@@ -229,17 +85,271 @@ export const createAuthResponse = (signInLink) => {
     return res;
 };
 
-const signOutCard = {
-    $schema: 'http://adaptivecards.io/schemas/adaptive-card.json',
-    body: [
-        {
-            type: 'TextBlock',
-            size: 'Medium',
-            weight: 'Bolder',
-            text: 'Sign out successful. Please refresh to Sign in again.',
-            wrap: true,
+export async function getUserDetails(aadObjectId: string, token: string) {
+    console.log("Reading User Details From MS Graph.");
+    const user: User = {
+        userName: "",
+        aadObjectId: aadObjectId,
+        profileImage: ""
+    };
+    
+    try {
+        const resp = await graphRun(aadObjectId, token);
+
+        user.userName = resp.profile.displayName;
+        user.aadObjectId = resp.profile.id;
+        user.profileImage = resp.profileImage;
+
+    } catch (err) {
+        console.log(err);
+    }
+    return user;
+}
+
+interface TodoListResponse {
+    title: string;
+    time: string;
+    tasks: TodoItem[];
+}
+
+export async function getTodoListData(aadObjectId: string) {
+    console.log("Reading Todo List From Azure SQL Database.");
+    const todoListResp: TodoListResponse = {
+        title: "TodoList",
+        time: "",
+        tasks: []
+    };
+
+    const query:string = `SELECT taskId, dueDate, currentStatus, taskContent, creatorId
+    FROM Todo.Tasks WHERE creatorId = @userId`;
+    const request = new Request(query, (err) => {
+        if (err) {
+            throw new Error(err.message);
         }
-    ],
-    type: 'AdaptiveCard',
-    version: '1.4'
-};
+    });
+    request.addParameter('userId', TYPES.UniqueIdentifier, aadObjectId);
+    
+    try {
+        const resp = await dbRun(request);
+
+        for (let i:number = 0; i < resp.body.length; ++i) {
+            const task = {
+                taskId: resp.body[i].taskId,
+                dueDate: convertTimeString(resp.body[i].dueDate),
+                currentStatus: resp.body[i].currentStatus,
+                taskContent: resp.body[i].taskContent
+            }
+            todoListResp.tasks.push(task);
+        }
+
+    } catch (err) {
+        console.log(err);
+    }
+
+    return todoListResp;
+}
+
+export async function getSharedTodoListData(aadObjectId: string, token: string) {
+    console.log("Reading Tasks Shared From Azure SQL Database.");
+    const sharedTodoListResp:  TodoListResponse = {
+        title: "SharedTodoList",
+        time: "",
+        tasks: []
+    };
+
+    const query:string = `SELECT Todo.Tasks.taskId, Todo.Tasks.dueDate, Todo.Tasks.currentStatus, Todo.Tasks.taskContent, Todo.Tasks.creatorId
+    FROM Todo.Tasks INNER JOIN (SELECT taskId FROM Todo.SharedItems WHERE userId = @userId) AS A ON Todo.Tasks.taskId = A.taskId`;
+    const request = new Request(query, (err) => {
+        if (err) {
+            throw new Error(err.message);
+        }
+    });
+    request.addParameter('userId', TYPES.UniqueIdentifier, aadObjectId);
+    
+    try {
+        const resp = await dbRun(request);
+
+        sharedTodoListResp.tasks = await Promise.all(resp.body.map(async con => {
+            let creator = await getUserDetails(con.creatorId, token);
+            return {
+                taskId: con.taskId,
+                dueDate: convertTimeString(con.dueDate),
+                currentStatus: con.currentStatus,
+                taskContent: con.taskContent,
+                creator: creator
+            }
+        }));
+
+    } catch (err) {
+        console.log(err);
+    }
+
+    return sharedTodoListResp;
+}
+
+interface TodoItemResponse {
+    title: string;
+    time: string;
+    task: TodoItem;
+}
+
+export async function getTodoItemData(taskId: number, token: string, isViewer: boolean = false) {
+    console.log("Reading Todo Item From Azure SQL Database.");
+    const todoItemResp: TodoItemResponse = {
+        title: "SharedTodoItem",
+        time: "",
+        task: {}
+    };
+
+    const query:string = `SELECT Task.taskId, Task.dueDate, Task.currentStatus, Task.taskContent, creatorId , A.userId AS viewerId
+        FROM (SELECT taskId, dueDate, currentStatus, taskContent, creatorId FROM Todo.Tasks WHERE taskId = @taskId) AS Task
+        LEFT JOIN (SELECT taskId, userId FROM Todo.SharedItems WHERE taskId = @taskId) AS A
+        ON Task.taskId = A.taskId`;
+
+    const request = new Request(query, (err) => {
+        if (err) {
+            throw new Error(err.message);
+        }
+    });
+    request.addParameter('taskId', TYPES.Int, taskId);
+    
+    try {
+        const resp = await dbRun(request);
+
+        const creator = await getUserDetails(resp.body[0].creatorId, token);
+        todoItemResp.task = {
+            taskId: resp.body[0].taskId,
+            dueDate: convertTimeString(resp.body[0].dueDate),
+            currentStatus: resp.body[0].currentStatus,
+            taskContent: resp.body[0].taskContent,
+            creator: creator,
+            viewers: []
+        }
+        if (isViewer) {
+            todoItemResp.title = "TodoItem";
+            const viewers: User[] = await Promise.all(resp.body.map(async con => {
+                if (con.viewerId != null ) {
+                    let viewer =  await getUserDetails(con.viewerId, token);
+                    return viewer;
+                }
+                return undefined;
+            }));
+    
+            todoItemResp.task.viewers = viewers.filter(function(viewer) {
+                return viewer != undefined;
+            });
+        }
+
+    } catch (err) {
+        console.log(err);
+    }
+
+    return todoItemResp;
+}
+
+export async function handleTodoListAction(aadObjectId: string, data: any) {
+    console.log("Handling the Action Of MyTab.");
+    var request: Request;
+    switch (data.action) {
+        case "add": {
+            const task: TodoItem = {
+                dueDate: data.addDate,
+                taskContent: data.addContent
+            }
+            request = addTodoItem(aadObjectId, task);
+            break;
+        }
+        case "edit": {
+            const task: TodoItem = {
+                taskId: data.taskId,
+                dueDate: data[`updateTime${data.id}`],
+                currentStatus: data[`updateStatus${data.id}`],
+                taskContent: data[`updateContent${data.id}`],
+            }
+            request = updateTodoItem(task);
+            break;
+        }
+        case "del": {
+            request = deleteTodoItem(data.taskId);
+            break;
+        }
+        case "share": {
+            request = shareTodoItem(data.taskId, data.sharedUsers);
+            break;
+        }
+    }
+    try {
+        await dbRun(request);
+
+    } catch (err) {
+        console.log(err);
+    }
+}
+
+function addTodoItem(aadObjectId: string, data: TodoItem) {
+    const query = `INSERT INTO Todo.Tasks (dueDate, taskContent, creatorId) VALUES (@date, @content, @userId)`;
+    const request = new Request(query, (err) => {
+        if (err) {
+            throw new Error(err.message);
+        }
+    });
+
+    request.addParameter("date", TYPES.DateTime, data.dueDate);
+    request.addParameter("content", TYPES.NVarChar, data.taskContent);
+    request.addParameter("userId", TYPES.UniqueIdentifier, aadObjectId);
+    
+    return request;
+    // await dbRun(request);
+}
+
+function updateTodoItem(data: TodoItem) {
+    const query = `UPDATE Todo.Tasks SET dueDate = @date, currentStatus = @status, taskContent = @content WHERE taskId = @taskId`;
+    const request = new Request(query, (err) => {
+        if (err) {
+            throw new Error(err.message);
+        }
+    });
+    
+    request.addParameter("date", TYPES.DateTime, data.dueDate);
+    request.addParameter("status", TYPES.NVarChar, data.currentStatus);
+    request.addParameter("content", TYPES.NVarChar, data.taskContent);
+    request.addParameter("taskId", TYPES.Int, data.taskId);
+
+    return request;
+}
+
+function deleteTodoItem(taskId: number) {
+    const query = `DELETE FROM Todo.Tasks WHERE taskId = @taskId`;
+    const request = new Request(query, (err) => {
+        if (err) {
+            throw new Error(err.message);
+        }
+    });
+    
+    request.addParameter("taskId", TYPES.Int, taskId);
+
+    return request;
+}
+
+function shareTodoItem(taskId: number, rawSharedUsers: string) {
+    var query: string = "";
+    const sharedUsers = rawSharedUsers.split(',');
+
+    for (let i: number = 0; i < sharedUsers.length; ++i) {
+        query = query + `INSERT INTO Todo.SharedItems(userId, taskId) 
+        SELECT @userId${i}, @taskId WHERE NOT EXISTS (SELECT * FROM Todo.SharedItems WHERE userId = @userId${i} AND taskId = @taskId); `;
+    }
+
+    const request = new Request(query, (err) => {
+        if (err) {
+            throw new Error(err.message);
+        }
+    });
+
+    request.addParameter("taskId", TYPES.Int, taskId);
+    for (let i: number = 0; i < sharedUsers.length; ++i) {
+        request.addParameter(`userId${i}`, TYPES.UniqueIdentifier, sharedUsers[i]);
+    }
+
+    return request;
+}

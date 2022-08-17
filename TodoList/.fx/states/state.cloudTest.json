@@ -7,47 +7,47 @@
         "needCreateResourceGroup": true,
         "resourceGroupName": "todolist-cloudTest-rg",
         "location": "East US",
-        "resourceNameSuffix": "14dfe8",
+        "resourceNameSuffix": "de5d5a",
         "provisionSucceeded": true
     },
     "fx-resource-appstudio": {
         "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
-        "teamsAppId": "bf660c44-bb24-4638-aab2-52ac9c5001a6",
-        "teamsAppUpdatedAt": 1660184112357
+        "teamsAppId": "600ec5f4-e4ff-4b6e-901d-457be712cd2a",
+        "teamsAppUpdatedAt": 1660621314478
     },
     "fx-resource-identity": {
-        "identityName": "todolistclou12d039",
-        "identityResourceId": "/subscriptions/1756abc0-3554-4341-8d6a-46674962ea19/resourceGroups/todolist-cloudTest-rg/providers/Microsoft.ManagedIdentity/userAssignedIdentities/todolistclou12d039",
-        "identityClientId": "1c17e0e4-28b9-4b12-af4a-7c70144bf558"
+        "identityName": "todolistclou59d2ae",
+        "identityResourceId": "/subscriptions/1756abc0-3554-4341-8d6a-46674962ea19/resourceGroups/todolist-cloudTest-rg/providers/Microsoft.ManagedIdentity/userAssignedIdentities/todolistclou59d2ae",
+        "identityClientId": "841bd131-16aa-42ee-8e4d-a94ed53775cd"
     },
     "fx-resource-azure-sql": {
         "admin": "azureuser",
-        "sqlResourceId": "/subscriptions/1756abc0-3554-4341-8d6a-46674962ea19/resourceGroups/todolist-cloudTest-rg/providers/Microsoft.Sql/servers/todolistclou12d039",
-        "sqlEndpoint": "todolistclou12d039.database.windows.net",
-        "databaseName": "todolistclou12d039"
+        "sqlResourceId": "/subscriptions/1756abc0-3554-4341-8d6a-46674962ea19/resourceGroups/todolist-cloudTest-rg/providers/Microsoft.Sql/servers/todolistclou59d2ae",
+        "sqlEndpoint": "todolistclou59d2ae.database.windows.net",
+        "databaseName": "todolistclou59d2ae"
     },
     "fx-resource-bot": {
-        "botId": "3dd9404c-367c-4a17-91fa-95d5413c5033",
+        "botId": "606ddeff-6bf0-4cec-b00f-9065d8117987",
         "botPassword": "{{fx-resource-bot.botPassword}}",
-        "objectId": "ff2dd12d-0e1f-47d4-8685-106d8181a652",
+        "objectId": "8f35e4da-5e57-418a-9099-f7a027e0fe49",
         "skuName": "B1",
-        "siteName": "todolistclou12d039bot",
-        "validDomain": "todolistclou12d039bot.azurewebsites.net",
-        "appServicePlanName": "todolistclou12d039bot",
-        "resourceId": "/subscriptions/1756abc0-3554-4341-8d6a-46674962ea19/resourceGroups/todolist-cloudTest-rg/providers/Microsoft.Web/sites/todolistclou12d039bot",
-        "siteEndpoint": "https://todolistclou12d039bot.azurewebsites.net"
+        "siteName": "todolistclou59d2aebot",
+        "validDomain": "todolistclou59d2aebot.azurewebsites.net",
+        "appServicePlanName": "todolistclou59d2aebot",
+        "resourceId": "/subscriptions/1756abc0-3554-4341-8d6a-46674962ea19/resourceGroups/todolist-cloudTest-rg/providers/Microsoft.Web/sites/todolistclou59d2aebot",
+        "siteEndpoint": "https://todolistclou59d2aebot.azurewebsites.net"
     },
     "fx-resource-aad-app-for-teams": {
-        "clientId": "ee50bec1-8841-4660-98cc-f64bac5a4769",
+        "clientId": "54826e1b-c623-4a77-9093-a05ed3c053c1",
         "clientSecret": "{{fx-resource-aad-app-for-teams.clientSecret}}",
-        "objectId": "eaa337c0-0d08-4f29-ac93-ff4e1511c3c3",
-        "oauth2PermissionScopeId": "7c946c25-2e03-4002-919c-825f793df450",
+        "objectId": "9a16b3bd-6809-4cf4-9b08-57aa6a728793",
+        "oauth2PermissionScopeId": "94723dc2-f0bd-4aa7-81c3-5b0b1f7069be",
         "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
         "oauthHost": "https://login.microsoftonline.com",
         "oauthAuthority": "https://login.microsoftonline.com/72f988bf-86f1-41af-91ab-2d7cd011db47",
-        "applicationIdUris": "api://botid-3dd9404c-367c-4a17-91fa-95d5413c5033",
-        "botId": "3dd9404c-367c-4a17-91fa-95d5413c5033",
-        "botEndpoint": "https://todolistclou12d039bot.azurewebsites.net"
+        "applicationIdUris": "api://botid-606ddeff-6bf0-4cec-b00f-9065d8117987",
+        "botId": "606ddeff-6bf0-4cec-b00f-9065d8117987",
+        "botEndpoint": "https://todolistclou59d2aebot.azurewebsites.net"
     },
     "fx-resource-cicd": {},
     "fx-resource-api-connector": {}

@@ -105,12 +105,30 @@ Response for adaptive card
 ### Azure SQL Database
 
 - local debug的时候创建数据库，[Create a single database - Azure SQL Database | Microsoft Docs](https://docs.microsoft.com/en-us/azure/azure-sql/database/single-database-create-quickstart?view=azuresql&tabs=azure-portal) 
-
 - [TeamsFx SDK - Teams | Microsoft Docs](https://docs.microsoft.com/en-us/microsoftteams/platform/toolkit/teamsfx-sdk) 官方sample采用的是低版本的tedious。使用最新版本的tedious，需要加`connection.connect()`。
-
 - 使用 vscode teams toolkit add features 加入 Azure SQL Database。会自动加入 Azure Function 和 BOTSSO，没有考虑用户只是想要增加一个 Azure SQL Database。
 - 使用Provision in the cloud，第一次由于某些原因创建失败某个 resources，在解决问题后，再次 provision，会出现某个资源无法创建，已经存在重名的资源。需要重命名`resourceBaseName`或者进入用户进入 azure 人工删除资源。
 - Azure SQL Database可能会出现 SQL.DatabaseUserCreateError 错误。需要参考 [TeamsFx/sql-help.md at main · OfficeDev/TeamsFx (github.com)](https://github.com/OfficeDev/TeamsFx/blob/main/docs/fx-core/sql-help.md) 进行解决。
+
+```sql
+SELECT name FROM sys.database_principals;
+-- template
+CREATE USER [{identityName}] FROM EXTERNAL PROVIDER;
+go
+sp_addrolemember  'db_datareader',  '{identityName}';
+go
+sp_addrolemember  'db_datawriter',  '{identityName}';
+go
+-- copy board
+CREATE USER [todolistclou59d2ae] FROM EXTERNAL PROVIDER;
+go
+sp_addrolemember  'db_datareader',  'todolistclou59d2ae';
+go
+sp_addrolemember  'db_datawriter',  'todolistclou59d2ae';
+go
+```
+
+
 
 ### Add Authentication
 
@@ -122,6 +140,55 @@ and add "token.botframework.com" to "validDomains" in manifest.json
 
 AAD App Service: deploy to the cloud: `Y_C8Q~biYFyzF_pmzWw7ToOadDWxF0LkvA7lgcOQ`
 
-AAD App Service注册到Bot时，需要
+AAD App Service注册到Bot时（OAuth Connection），ConnectionName 'todolist_v4'
 
-### Azure 
+todolist-localDebug-rg
+
+todolist-cloudTest-rg
+
+### Config
+
+**Local Debug Extra Config**
+
+```shell
+BOT_ID=7c4787b6-a963-4486-8105-ef8dd6d2479d
+BOT_PASSWORD=_db8Q~-NyqLynzpUC1oF42N-pDIAjWY1kUKJSc6n
+```
+**Common Config**
+
+```shell
+SQL_ENDPOINT=mysqlservertodos.database.windows.net
+SQL_DATABASE_NAME=todoDatabase
+
+SQL_USER_NAME=azureuser
+SQL_PASSWORD=1234qwer!
+
+ConnectionName=todolist_v4
+Scopes=User.ReadBasic.All
+OAuth_Client_Id=f5746c23-9625-40c1-9e35-a3ac021df31f
+LocalDebug_OAuth_Client_Secret=sA38Q~2zDpaEtvxXRGZBT9OGNc7y37dkHHVVibBT
+Deploy_To_Cloud_OAuth_Client_Secret=Y_C8Q~biYFyzF_pmzWw7ToOadDWxF0LkvA7lgcOQ
+```
+
+**sql**
+
+```sql
+CREATE SCHEMA Todo;
+
+CREATE TABLE Todo.Tasks (
+    taskId INT IDENTITY PRIMARY KEY,
+    dueDate DATETIME NOT NULL,
+    currentStatus NVARCHAR(32) NOT NULL default 'Not Started',
+    taskContent NVARCHAR(256) NOT NULL,
+    creatorId UNIQUEIDENTIFIER NOT NULL
+);
+
+CREATE TABLE Todo.SharedItems (
+    taskId INT NOT NULL,
+    userId UNIQUEIDENTIFIER NOT NULL,
+    CONSTRAINT SharedWith PRIMARY KEY (taskId, userId),
+    FOREIGN KEY (taskId) REFERENCES Todo.Tasks(taskId) ON DELETE CASCADE 
+);
+
+```
+

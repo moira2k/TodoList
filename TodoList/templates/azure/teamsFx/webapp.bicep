@@ -37,5 +37,6 @@ resource botWebAppSettings 'Microsoft.Web/sites/config@2021-02-01' = {
     SQL_DATABASE_NAME: provisionOutputs.azureSqlOutput.value.databaseName // SQL database name
     SQL_ENDPOINT: provisionOutputs.azureSqlOutput.value.sqlEndpoint // SQL server endpoint
     IDENTITY_ID: provisionOutputs.identityOutput.value.identityClientId // User assigned identity id, the identity is used to access other Azure resources
+    ConnectionName: 'todolist_v4' //Oauth Connection Name
   }, currentAppSettings)
 }

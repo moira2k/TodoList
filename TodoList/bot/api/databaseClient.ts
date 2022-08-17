@@ -2,15 +2,13 @@ import { Connection, Request } from "tedious";
 import { TeamsFx, getTediousConnectionConfig } from "@microsoft/teamsfx";
 
 interface DBResponse {
-    status: number;
-    body: { [key: string]: any };
+    body: any;
 }
 
-export default async function dbRun(query: string): Promise<DBResponse> {
+export default async function dbRun(request: Request): Promise<DBResponse> {
     // Initialize response.
     const res: DBResponse = {
-        status: 200,
-        body: {},
+        body: [],
     };
     let connection;
     try {
@@ -23,14 +21,15 @@ export default async function dbRun(query: string): Promise<DBResponse> {
         const teamsfx = new TeamsFx();
         connection = await getSQLConnection(teamsfx);
         // Execute SQL through TeamsFx server SDK generated connection and return result
-        const content = await execQuery(query, connection);
-        res.body = {content: content};
+        const content = await execQuery(request, connection);
+        console.log(typeof(content))
+        console.log(JSON.stringify(content, null, 2));
+        res.body = content;
+
         return res;
-    } catch (error) {
-        console.log(error);
-        res.status = 500;
-        res.body = {error: error.message};
-        return res;
+    } catch (err) {
+        console.log("error", err);
+        throw new Error("Failed to execute query in SQL Database.");
     }
     // finally {
     //     if (connection) {
@@ -39,33 +38,27 @@ export default async function dbRun(query: string): Promise<DBResponse> {
     // }
 }
 
-async function getSQLConnection(teamsfx) {
+async function getSQLConnection(teamsfx: TeamsFx) {
     // If there's only one SQL database
     const config = await getTediousConnectionConfig(teamsfx);
     const connection = new Connection(config);
     connection.connect();
     return new Promise((resolve, reject) => {
-        connection.on('connect', error => {
-            if (error) {
-                reject(error);
+        connection.on('connect', err => {
+            if (err) {
+                reject(err);
             }
             resolve(connection);
         })
-        // connection.on('debug', function (error) {
-        //     console.log('debug:', error);
+        // connection.on('debug', function (err) {
+        //     console.log('debug:', err);
         // });
     })
 }
 
-async function execQuery(query: string, connection: { execSql: (arg0: Request) => void; }) {
-    // console.log("query: ", query);
+async function execQuery(request: Request, connection: { execSql: (arg0: Request) => void; }) {
     return new Promise((resolve, reject) => {
         const res = [];
-        const request = new Request(query, (error) => {
-            if (error) {
-                reject(error);
-            }
-        });
 
         request.on('row', columns => {
             const row = {};
@@ -79,8 +72,8 @@ async function execQuery(query: string, connection: { execSql: (arg0: Request) =
             resolve(res)
         });
 
-        request.on("error", error => {
-            reject(error);
+        request.on("error", err => {
+            reject(err);
         });
 
         connection.execSql(request);

@@ -98,7 +98,7 @@
                             "items": [
                                 {
                                     "type": "TextBlock",
-                                    "text": "${formatDateTime(taskTime, 'MM-dd')}",
+                                    "text": "${formatDateTime(dueDate, 'MM-dd')}",
                                     "wrap": true
                                 }
                             ],
@@ -110,7 +110,7 @@
                             "items": [
                                 {
                                     "type": "TextBlock",
-                                    "text": "${taskStatus}",
+                                    "text": "${CurrentStatus}",
                                     "wrap": true
                                 }
                             ],
@@ -240,7 +240,7 @@
                                                         {
                                                             "type": "Input.Date",
                                                             "id": "updateTime${$index}",
-                                                            "value": "${formatDateTime(taskTime, 'YYYY-MM-dd')}"
+                                                            "value": "${formatDateTime(dueDate, 'YYYY-MM-dd')}"
                                                         }
                                                     ],
                                                     "width": 50
@@ -265,7 +265,7 @@
                                                                     "value": "Finished"
                                                                 }
                                                             ],
-                                                            "value": "${taskStatus}"
+                                                            "value": "${CurrentStatus}"
                                                         }
                                                     ],
                                                     "width": 50
@@ -344,7 +344,7 @@
                                         "type": "Input.Date",
                                         "id": "addDate",
                                         "label": "Date",
-                                        "value": "${formatDateTime(enquiredDate, 'YYYY-MM-dd')}",
+                                        "value": "${formatDateTime(time, 'YYYY-MM-dd')}",
                                         "isRequired": true
                                     },
                                     {
@@ -365,6 +365,5 @@
         }
     ],
     "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
-    "version": "1.4",
-    "fallbackText": "This card requires Adaptive Cards v1.2 support to be rendered properly."
+    "version": "1.4"
 }

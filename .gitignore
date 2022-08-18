@@ -4,6 +4,7 @@ TodoListTab/.fx/configs/localSettings.json
 TodoListTab/.fx/states/*.userdata
 .DS_Store
 .env.teamsfx.local
+.env.local
 TodoListTab/subscriptionInfo.json
 TodoListTab/build/
 TodoListTab/.fx/configs/config.local.json

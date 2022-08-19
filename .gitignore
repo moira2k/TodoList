@@ -1,11 +1,14 @@
 # TeamsFx files
 node_modules
-TodoListTab/.fx/configs/localSettings.json
-TodoListTab/.fx/states/*.userdata
+TodoList/.fx/configs/localSettings.json
+TodoList/.fx/states/*.userdata
 .DS_Store
 .env.teamsfx.local
+TodoList/subscriptionInfo.json
+TodoList/build/
+TodoList/.fx/configs/config.local.json
+TodoList/.fx/states/state.local.json
+# local debug
 .env.local
-TodoListTab/subscriptionInfo.json
-TodoListTab/build/
-TodoListTab/.fx/configs/config.local.json
-TodoListTab/.fx/states/state.local.json
+TodoList/logs
+TodoList/local_debug

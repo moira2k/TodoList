@@ -9,6 +9,11 @@ import {
     ConversationState,
     UserState
 } from "botbuilder";
+import {
+    TabRequest, TabSubmit, TabResponse,
+    MessagingExtensionAction,
+    MessagingExtensionActionResponse,
+} from "botbuilder-core";
 import { ComponentDialog } from "botbuilder-dialogs";
 import { SsoOAuthHelpler } from "./api/ssoOauthHelpler"
 import rawWelcomeCard from "./adaptiveCards/welcome.json";
@@ -21,22 +26,38 @@ import rawtodoItemCard from "./adaptiveCards/todoItem.json"
 import rawsharedTodoListCard from "./adaptiveCards/sharedTodoList.json"
 import rawsharedTodoItemCard from "./adaptiveCards/sharedTodoItem.json"
 import rawsignOutCard from "./adaptiveCards/signOut.json"
+import rawnewItemCard from "./adaptiveCards/newItem.json"
+import rawMEstatusCard from "./adaptiveCards/MEStatus.json"
 import {
     getTodoListData,
     getTodoItemData,
     getSharedTodoListData,
     handleTodoListAction,
+    handleNewItemAction,
     createAuthResponse,
-    convertTimeString
+    convertTimeString,
+    repalceHtmlToText
 } from "./api/handleData"
 
 const AdaptiveCardsTools = require("@microsoft/adaptivecards-tools").AdaptiveCards
+import * as z from 'zod';
+import { ExtendedUserTokenProvider} from 'botbuilder-core';
+const ExtendedUserTokenProviderT = z.custom<ExtendedUserTokenProvider>(
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (val: any) =>
+        typeof val.exchangeToken === 'function' &&
+        typeof val.getSignInResource === 'function' &&
+        typeof val.getUserToken === 'function' &&
+        typeof val.signOutUser === 'function',
+    {
+        message: 'ExtendedUserTokenProvider',
+    }
+);
 
 // User Configuration property name
 const USER_CONFIGURATION = 'userConfigurationProperty';
 
 export class TeamsBot extends TeamsActivityHandler {
-    connectionName: string;
     conversationState: any;
     userState: any;
     userConfigurationProperty: any;
@@ -55,8 +76,6 @@ export class TeamsBot extends TeamsActivityHandler {
 
         // Creates a new user property accessor.
         // See https://aka.ms/about-bot-state-accessors to learn more about the bot state and state accessors.
-        // this.connectionName = "todolist_v4";
-        this.connectionName = process.env.ConnectionName;
         if (!conversationState) throw new Error('[DialogBot]: Missing parameter. conversationState is required');
         if (!userState) throw new Error('[DialogBot]: Missing parameter. userState is required');
         if (!dialog) throw new Error('[DialogBot]: Missing parameter. dialog is required');
@@ -69,13 +88,13 @@ export class TeamsBot extends TeamsActivityHandler {
             USER_CONFIGURATION
         );
 
-        this._ssoOAuthHelper = new SsoOAuthHelpler(this.connectionName, conversationState);
+        this._ssoOAuthHelper = new SsoOAuthHelpler(process.env.ConnectionName, conversationState);
 
         this.onMessage(async (context, next) => {
-            console.log('Running dialog with Message Activity.');
+            console.log("Running dialog with Message Activity.");
             // Run the Dialog with the new message Activity.
+            console.log(context.activity);
             await this.dialog.run(context, this.dialogState);
-            // console.log("Running with Message Activity.");
 
             // let txt = context.activity.text;
             // const removedMentionText = TurnContext.removeRecipientMention(context.activity);
@@ -130,58 +149,139 @@ export class TeamsBot extends TeamsActivityHandler {
         this.dialog.run(context, this.dialogState);
         return this;
     }
+
+    async handleTeamsMessagingExtensionFetchTask(context: TurnContext, action: MessagingExtensionAction) {
+        // console.log("ME", JSON.stringify(action, null, 2));
+        const time = convertTimeString(new Date());;
+        const newItemTemplate = new ACData.Template(rawnewItemCard);
+        var content:string = repalceHtmlToText(action.messagePayload.body.content);
+
+        const newItemPayload = newItemTemplate.expand({
+            $root: {content: content, time: time}
+        });
+
+        const MEActionResp: MessagingExtensionActionResponse = {
+            task: {
+                type: "continue",
+                value: {
+                    card: CardFactory.adaptiveCard(newItemPayload),
+                    width: 400
+                },
+            },
+        };
+
+        return MEActionResp;
+    }
+    async handleTeamsMessagingExtensionSubmitAction(context: TurnContext, action: MessagingExtensionAction) {
+        // console.log("ME", JSON.stringify(action, null, 2));
+        const user = {
+            userId: context.activity.from.aadObjectId,
+            userName: context.activity.from.name
+        };
+
+        var content: string;
+        try {
+            await handleNewItemAction(user.userId, action.data);
+            content = "Success! Please check \"My Todos\" Tab"
+        } catch (error) {
+            content = "Fail. Please check and have a retry."
+        }
+
+        const MEstatusTemplate = new ACData.Template(rawMEstatusCard);
+        const MEstatusPayload = MEstatusTemplate.expand({
+            $root: {content: content}
+        });
+
+        const MEActionResp: MessagingExtensionActionResponse = {
+            task: {
+                type: "continue",
+                value: {
+                    card: CardFactory.adaptiveCard(MEstatusPayload),
+                    width: 300
+                },
+            },
+        };
+
+        return MEActionResp;
+    }
+
+
+    
+    async getUserToken2(context: TurnContext,  connectionName, magicCode: string): Promise<any> {
+        const userTokenClient = context.turnState.get(Symbol('TokenApiClientCredentials'));
+        if (userTokenClient) {
+            return userTokenClient.getUserToken(
+                context.activity?.from?.id,
+                connectionName,
+                context.activity?.channelId,
+                magicCode
+            );
+        } else if (ExtendedUserTokenProviderT.check(context.adapter)) {
+            return context.adapter.getUserToken(context, connectionName, magicCode, undefined);
+        } else {
+            throw new Error('OAuth prompt is not supported by the current adapter');
+        }
+    }
+
     // Fetch Adaptive Card to render to a tab.
-    async handleTeamsTabFetch(context: TurnContext, tabRequest: any): Promise<any> {
+    async handleTeamsTabFetch(context: TurnContext, tabRequest: TabRequest): Promise<TabResponse> {
+        // console.log("context", JSON.stringify(context, null, 2));
+        console.log('Trying To Fetch Tab Content');
         // When the Bot Service Auth flow completes, context will contain a magic code used for verification.
         // console.log("TurnContext", JSON.stringify(context, null, 2));
         // console.log("tabRequest", JSON.stringify(tabRequest, null, 2));
         // authentication
-        const magicCode =
-        context.activity.value && context.activity.value.state
-            ? context.activity.value.state
-            : '';
+        // const magicCode =
+        // context.activity.value && context.activity.value.state
+        //     ? context.activity.value.state
+        //     : '';
+        var token = await this.getUserToken2(context, process.env.ConnectionName, undefined);
+        console.log("token", token);
+        
+        console.log(context.activity.value);
+        console.log("OAuth state", context.activity.value, tabRequest.state);
+        const magicCode = tabRequest.state && Number.isInteger(Number(tabRequest.state)) ? tabRequest.state : '';
         // Getting the tokenResponse for the user
+        console.log("context.turnState.TokenApiClientCredentials", context.turnState.get(Symbol('TokenApiClientCredentials')));
         const tokenResponse = await (<BotFrameworkAdapter> context.adapter).getUserToken(
             context,
-            this.connectionName,
+            process.env.ConnectionName,
             magicCode
         );
-
+        console.log("context.turnState.TokenApiClientCredentials", context.turnState.get(Symbol('TokenApiClientCredentials')));
+        console.log("token2", token);
         if (!tokenResponse || !tokenResponse.token) {
             // Token is not available, hence we need to send back the auth response
 
             // Retrieve the OAuth Sign in Link.
             const signInLink = await (<BotFrameworkAdapter> context.adapter).getSignInLink(
                 context,
-                this.connectionName
+                process.env.ConnectionName
             );
 
             // Generating and returning auth response.
             return createAuthResponse(signInLink);
         }
         
-        const tabFetchResp = {
+        const tabFetchResp: TabResponse = {
             tab: {
                 type: "continue",
                 value: {
                     cards: []
                 },
-            },
-            responseType: "tab"
+            }
         };
 
         const user = {
             userId: context.activity.from.aadObjectId,
             userName: context.activity.from.name
         };
-        const time = convertTimeString(new Date());
-
+        const time = convertTimeString(new Date());;
         const headingTemplate = new ACData.Template(rawheadingCard);
         const headingPayload = headingTemplate.expand({
             $root: {enquirer: user, time: time}
         });
         tabFetchResp.tab.value.cards = [{"card": headingPayload}];
-
         switch (tabRequest.tabContext.tabEntityId) {
             case "MyTodos": {
                 const todoListData = await getTodoListData(user.userId);
@@ -194,7 +294,6 @@ export class TeamsBot extends TeamsActivityHandler {
                     $root: todoListData
                 });
                 tabFetchResp.tab.value.cards.push({"card": todoListPayload});
-                // console.log(JSON.stringify(tabFetchResp, null, 2));
                 break;
             }
             case "SharedwithMe": {
@@ -207,37 +306,37 @@ export class TeamsBot extends TeamsActivityHandler {
                 break;
             }
         }
-        // console.log(tabFetchResp);
+        // console.log(JSON.stringify(tabFetchResp, null, 2));
         return tabFetchResp;
     }
 
     // Handle submits from Adaptive Card.
-    async handleTeamsTabSubmit(context: TurnContext, tabRequest: any): Promise<any> {
-        console.log('Trying to submit tab content');
+    async handleTeamsTabSubmit(context: TurnContext, tabSubmit: TabSubmit): Promise<TabResponse> {
+        console.log('Trying To Submit Tab Content');
 
         // authentication
         const magicCode =
         context.activity.value && context.activity.value.state
             ? context.activity.value.state
             : '';
+        // const magicCode = tabSubmit.state && Number.isInteger(Number(tabSubmit.state)) ? tabSubmit.state : '';
         var tokenResponse = await (<BotFrameworkAdapter> context.adapter).getUserToken(
             context,
-            this.connectionName,
+            process.env.ConnectionName,
             magicCode
         );
 
-        const tabSubmitResp = {
+        const tabSubmitResp: TabResponse = {
             tab: {
                 type: "continue",
                 value: {
                     cards: []
                 },
-            },
-            responseType: "tab"
+            }
         };
         
-        if (tabRequest.data.action == "signout") {
-            await (<BotFrameworkAdapter> context.adapter).signOutUser(context, this.connectionName);
+        if (tabSubmit.data.action == "signout") {
+            await (<BotFrameworkAdapter> context.adapter).signOutUser(context, process.env.ConnectionName);
     
             // Generating and returning submit response.
             tabSubmitResp.tab.value.cards = [{"card": rawsignOutCard}]
@@ -257,10 +356,10 @@ export class TeamsBot extends TeamsActivityHandler {
         tabSubmitResp.tab.value.cards = [{"card": headingPayload}];
         console.log("headingPayload", JSON.stringify(headingPayload).length)
 
-        switch (tabRequest.tabContext.tabEntityId) {
+        switch (tabSubmit.tabContext.tabEntityId) {
             case "MyTodos": {
-                if (tabRequest.data.action != "show") {
-                    await handleTodoListAction(user.userId, tabRequest.data);
+                if (tabSubmit.data.action != "show") {
+                    await handleTodoListAction(user.userId, tabSubmit.data);
                 }
                 // Todo: get from static resources, if action is "show"
                 const todoListData = await getTodoListData(user.userId);
@@ -271,9 +370,11 @@ export class TeamsBot extends TeamsActivityHandler {
                 });
                 tabSubmitResp.tab.value.cards.push({"card": todoListPayload});
                 console.log("todoListPayload", JSON.stringify(todoListPayload).length);
-                console.log("todoListPayloadItem", JSON.stringify(todoListPayload.body[3]).length);
-                if (tabRequest.data.action == "show" || tabRequest.data.action == "share") {
-                    const todoItemData = await getTodoItemData(tabRequest.data.taskId, tokenResponse.token, true);
+                if (todoListPayload.length >= 3) {
+                    console.log("todoListPayloadItem", JSON.stringify(todoListPayload.body[3]).length);
+                }
+                if (tabSubmit.data.action == "show" || tabSubmit.data.action == "share") {
+                    const todoItemData = await getTodoItemData(<number> tabSubmit.data.taskId, tokenResponse.token, true);
                     const todoItemTemplate = new ACData.Template(rawtodoItemCard);
                     const todoItemPayload = todoItemTemplate.expand({
                         $root: todoItemData
@@ -292,8 +393,8 @@ export class TeamsBot extends TeamsActivityHandler {
                 });
                 tabSubmitResp.tab.value.cards.push({"card": sharedTodoListPayload});
 
-                if (tabRequest.data.action == "show") {
-                    const sharedTodoItemData = await getTodoItemData(tabRequest.data.taskId, tokenResponse.token, false);
+                if (tabSubmit.data.action == "show") {
+                    const sharedTodoItemData = await getTodoItemData(<number> tabSubmit.data.taskId, tokenResponse.token, false);
                     const sharedTodoItemTemplate = new ACData.Template(rawsharedTodoItemCard);
                     const sharedTodoItemPayload = sharedTodoItemTemplate.expand({
                         $root: sharedTodoItemData
@@ -303,7 +404,51 @@ export class TeamsBot extends TeamsActivityHandler {
                 break;
             }
         }
+        // console.log(JSON.stringify(tabSubmitResp, null, 2));
         return tabSubmitResp;
+    }
+
+    async onInvokeActivity(context: TurnContext) {
+        console.log("onInvoke, ", context.activity.name);
+        console.log("query", context.activity.value);
+        // console.log("context", JSON.stringify(context, null, 2));
+        const valueObj = context.activity.value;
+        if (valueObj.authentication) {
+            const authObj = valueObj.authentication;
+            if (authObj.token) {
+                // If the token is NOT exchangeable, then do NOT deduplicate requests.
+                if (await this.tokenIsExchangeable(context)) {
+                    return await super.onInvokeActivity(context);
+                } else {
+                    const response = {
+                        status: 412
+                    };
+                    return response;
+                }
+            }
+        }
+        return await super.onInvokeActivity(context);
+    }
+
+    async tokenIsExchangeable(context: TurnContext) {
+        let tokenExchangeResponse = null;
+        try {
+            const valueObj = context.activity.value;
+            const tokenExchangeRequest = valueObj.authentication;
+            console.log("tokenExchangeReques", context.activity.value.authentication);
+            tokenExchangeResponse = await (<BotFrameworkAdapter> context.adapter).exchangeToken(context,
+                process.env.connectionName,
+                context.activity.from.id,
+                { token: tokenExchangeRequest.token });
+        } catch (err) {
+            console.log('tokenExchange error: ' + err);
+            // Ignore Exceptions
+            // If token exchange failed for any reason, tokenExchangeResponse above stays null , and hence we send back a failure invoke response to the caller.
+        }
+        if (!tokenExchangeResponse || !tokenExchangeResponse.token) {
+            return false;
+        }
+        return true;
     }
 
 }

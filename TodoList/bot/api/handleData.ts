@@ -1,6 +1,13 @@
 import { Request, TYPES } from "tedious";
+import { TabResponse } from "botbuilder";
 import dbRun from "./databaseClient";
 import graphRun from "./graphClient";
+
+export function repalceHtmlToText(str: string) {
+    str = str.replace(/<\/?.+?>/g, "");
+    str = str.replace(/&nbsp;/g, "");
+    return str;
+}
 
 function convertInt2String(timeInt: number) {
     var res: string;
@@ -13,14 +20,12 @@ function convertInt2String(timeInt: number) {
 }
 
 function getTimezone(time: Date) {
-    const offest = time.getTimezoneOffset();
-
-    const bias = Math.abs(offest / 60);
+    const bias = Math.abs(time.getTimezoneOffset() / 60);
     var timezone: string = convertInt2String(bias) + ":00";
 
-    if (offest == 0) {
-        timezone = timezone + "Z";
-    } else if (offest > 0) {
+    if (bias == 0) {
+        timezone = "Z";
+    } else if (bias > 0) {
         timezone = "-" + timezone;
     } else {
         timezone = "+" + timezone;
@@ -68,9 +73,10 @@ export interface TodoItem {
 
 export function createAuthResponse(signInLink) {
     console.log("Create Auth response")
-    const res = {
+    const res: TabResponse = {
             tab: {
-                type: "auth",
+                // type: "auth",
+                type: "silentAuth",
                 suggestedActions: {
                     actions: [
                         {
@@ -245,6 +251,23 @@ export async function getTodoItemData(taskId: number, token: string, isViewer: b
     }
 
     return todoItemResp;
+}
+
+export async function handleNewItemAction(aadObjectId: string, data: any) {
+    console.log("Handling the Action Of Message Extension.");
+    const task: TodoItem = {
+        dueDate: data.addDate,
+        taskContent: data.addContent
+    }
+
+    const request = addTodoItem(aadObjectId, task);
+    
+    try {
+        await dbRun(request);
+
+    } catch (err) {
+        console.log(err);
+    }
 }
 
 export async function handleTodoListAction(aadObjectId: string, data: any) {

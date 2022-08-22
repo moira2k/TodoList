@@ -1,65 +1,42 @@
 {
     "type": "AdaptiveCard",
-    "body": [
+    "version": "1.4",
+    "actions": [
         {
-            "type": "Container",
-            "style": "emphasis",
-            "items": [
-                {
-                    "type": "ColumnSet",
-                    "columns": [
-                        {
-                            "type": "Column",
-                            "items": [
-                                {
-                                    "type": "TextBlock",
-                                    "size": "ExtraLarge",
-                                    "color": "Accent",
-                                    "style": "heading",
-                                    "spacing": "ExtraLarge",
-                                    "height": "stretch",
-                                    "text": "**New To-do Item**",
-                                    "wrap": true,
-                                    "weight": "Bolder"
-                                }
-                            ],
-                            "width": "stretch"
-                        }
-                    ]
-                }
-            ],
-            "bleed": true
-        },
-        {
-            "type": "Container",
-            "spacing": "Large",
-            "items": [
-                {
-                    "type": "Input.Date",
-                    "label": "Date",
-                    "isRequired": true,
-                    "value": "${formatDateTime(createdDdate, 'YYYY-MM-DD')}",
-                    "id": "newTaskDate"
-                },
-                {
-                    "type": "Input.Text",
-                    "placeholder": "Placeholder text",
-                    "id": "newTaskContent",
-                    "label": "Content",
-                    "isMultiline": true,
-                    "isRequired": true,
-                    "maxLength": 10,
-                    "value": "${taskMessage}"
-                },
-                {
-                    "type": "Input.Text",
-                    "placeholder": "participants of the task",
-                    "label": "Participants"
-                }
-            ],
-            "bleed": true
+            "type": "Action.Submit",
+            "title": "Send",
+            "data": {
+                "submitLocation": "messagingExtensionFetchTask",
+                "action": "add"
+            }
         }
     ],
     "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
-    "version": "1.4"
+    "body": [
+        {
+            "type": "TextBlock",
+            "text": "CREATE A TO-DO ITEM",
+            "wrap": true,
+            "horizontalAlignment": "Center",
+            "size": "ExtraLarge",
+            "style": "heading",
+            "color": "Accent",
+            "weight": "Bolder"
+        },
+        {
+            "type": "Input.Date",
+            "id": "addDate",
+            "label": "Date",
+            "value": "${formatDateTime(time, 'YYYY-MM-dd')}",
+            "isRequired": true
+        },
+        {
+            "type": "Input.Text",
+            "value": "${content}",
+            "id": "addContent",
+            "label": "Content",
+            "isMultiline": true,
+            "isRequired": true
+        }
+    ]
 }

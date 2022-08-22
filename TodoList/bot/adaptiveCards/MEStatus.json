@@ -1,0 +1,16 @@
+{
+    "type": "AdaptiveCard",
+    "version": "1.4",
+    "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+    "body": [
+        {
+            "type": "TextBlock",
+            "text": "${content}.",
+            "wrap": true,
+            "size": "Large",
+            "color": "Accent",
+            "weight": "Bolder",
+            "fontType": "Monospace"
+        }
+    ]
+}

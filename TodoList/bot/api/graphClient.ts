@@ -14,7 +14,7 @@ export default async function graphRun(aadObjectId: string, token: string) {
         profile: {},
         profileImage: "",
     };
-    console.log("grapg aadId", aadObjectId);
+    console.log("graph aadId", aadObjectId);
     if (!token || !token.trim()) {
         throw new Error("GraphClient: Empty token received.");
     }

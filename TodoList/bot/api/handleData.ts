@@ -75,8 +75,8 @@ export function createAuthResponse(signInLink) {
     console.log("Create Auth response")
     const res: TabResponse = {
             tab: {
-                // type: "auth",
-                type: "silentAuth",
+                type: "auth",
+                // type: "silentAuth",
                 suggestedActions: {
                     actions: [
                         {

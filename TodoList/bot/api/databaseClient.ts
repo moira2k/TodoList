@@ -21,12 +21,10 @@ export default async function dbRun(request: Request): Promise<DBResponse> {
         const teamsfx = new TeamsFx();
         connection = await getSQLConnection(teamsfx);
         // Execute SQL through TeamsFx server SDK generated connection and return result
-        const content = await execQuery(request, connection);
-        console.log(typeof(content))
-        console.log(JSON.stringify(content, null, 2));
-        res.body = content;
+        res.body = await execQuery(request, connection);
 
         return res;
+
     } catch (err) {
         console.log("error", err);
         throw new Error("Failed to execute query in SQL Database.");

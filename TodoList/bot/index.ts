@@ -12,8 +12,6 @@ import {
     ConversationState,
 } from "botbuilder";
 
-// This bot's main dialog.
-import { MainDialog } from "./dialogs/MainDialog";
 import { TeamsBot } from "./teamsBot";
 
 // Create adapter.
@@ -46,22 +44,8 @@ const onTurnErrorHandler = async (context: TurnContext, error: Error) => {
 // Set the onTurnError for the singleton BotFrameworkAdapter.
 adapter.onTurnError = onTurnErrorHandler;
 
-// Define a state store for your bot. See https://aka.ms/about-bot-state to learn more about using MemoryStorage.
-// A bot requires a state store to persist the dialog and user state between messages.
-
-// For local development, in-memory storage is used.
-// CAUTION: The Memory Storage used here is for local bot debugging only. When the bot
-// is restarted, anything stored in memory will be gone.
-const memoryStorage = new MemoryStorage();
-
-// Create conversation and user state with in-memory storage provider.
-const conversationState = new ConversationState(memoryStorage);
-const userState = new UserState(memoryStorage);
-
-// Create the main dialog.
-const dialog = new MainDialog();
 // Create the bot that will handle incoming messages.
-const bot = new TeamsBot(conversationState, userState, dialog);
+const bot = new TeamsBot();
 
 // Create HTTP server.
 const server = restify.createServer();
@@ -75,17 +59,6 @@ server.post("/api/messages", async (req, res) => {
         await bot.run(context);
     })
     .catch((err) => {
-        // Error message including "412" means it is waiting for user's consent, which is a normal process of SSO, sholdn't throw this error.
-        if (!err.message.includes("412")) {
-          throw err;
-        }
+        throw new Error(err);
     });
 });
-
-server.get(
-    "/auth-*.html",
-    restify.plugins.serveStatic({
-      directory: path.join(__dirname, "public"),
-    })
-  );
-  

@@ -31,11 +31,14 @@ import {
     getSharedTodoListData,
     handleTodoListAction,
     handleNewItemAction,
-    createAuthResponse,
+} from "./api/handleData"
+import {
     convertTimeString,
     repalceHtmlToText
-} from "./api/handleData"
-
+} from "./utils/utils"
+import {
+    createAuthResponse
+} from "./service/botService"
 // const AdaptiveCardsTools = require("@microsoft/adaptivecards-tools").AdaptiveCards
 
 export class TeamsBot extends TeamsActivityHandler {

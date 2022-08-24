@@ -1,116 +1,9 @@
 import { Request, TYPES } from "tedious";
-import { TabResponse } from "botbuilder";
 import dbRun from "./databaseClient";
-import graphRun from "./graphClient";
+import { getUserDetailsFromGraph} from "./graphClient";
+import { User, TodoItem } from "./constant";
+import { convertTimeString } from "../utils/utils"
 
-export function repalceHtmlToText(str: string) {
-    str = str.replace(/<\/?.+?>/g, "");
-    str = str.replace(/&nbsp;/g, "");
-    return str;
-}
-
-function convertInt2String(timeInt: number) {
-    var res: string;
-    if (timeInt < 10) {
-        res = "0" + timeInt;
-    } else {
-        res = timeInt.toString();
-    }
-    return res;
-}
-
-function getTimezone(time: Date) {
-    const bias = Math.abs(time.getTimezoneOffset() / 60);
-    var timezone: string = convertInt2String(bias) + ":00";
-
-    if (bias == 0) {
-        timezone = "Z";
-    } else if (bias > 0) {
-        timezone = "-" + timezone;
-    } else {
-        timezone = "+" + timezone;
-    }
-    
-    return timezone;
-}
-
-export function convertTimeString(time: Date) {
-    /**
-     * Adaptive Cards offers DATE() and TIME() formatting functions to automatically localize the time on the target device.
-     * Date/Time function rules: 1.CASE SENSITIVE, 2.NO SPACES, 3.STRICT RFC 3389 FORMATTING, 4.MUST BE a valid date and time
-     * Valid formats:
-     * 2017-02-14T06:08:00Z
-     * 2017-02-14T06:08:00-07:00
-     * 2017-02-14T06:08:00+07:00
-     */
-
-    var res: string;
-    const year = time.getFullYear();
-    const month = convertInt2String(time.getMonth());
-    const date = convertInt2String(time.getDate());
-    const hour = convertInt2String(time.getHours());
-    const minute = convertInt2String(time.getMinutes());
-    const second = convertInt2String(time.getSeconds());
-    res = `${year}-${month}-${date}T${hour}:${minute}:${second}${getTimezone(time)}`;
-
-    return res;
-}
-
-export interface User {
-    userName: string;
-    aadObjectId: string;
-    profileImage: string;
-}
-
-export interface TodoItem {
-    taskId?: number;
-    dueDate?: string;
-    currentStatus?: string;
-    taskContent?: string;
-    creator?: User;
-    viewers?: User[];
-}
-
-export function createAuthResponse(signInLink) {
-    console.log("Create Auth response")
-    const res: TabResponse = {
-            tab: {
-                type: "auth",
-                // type: "silentAuth",
-                suggestedActions: {
-                    actions: [
-                        {
-                            type: "openUrl",
-                            value: signInLink,
-                            title: "Sign in to this app"
-                        }
-                    ]
-                }
-            }
-    };
-    return res;
-};
-
-export async function getUserDetails(aadObjectId: string, token: string) {
-    console.log("Reading User Details From MS Graph.");
-    const user: User = {
-        userName: "",
-        aadObjectId: aadObjectId,
-        profileImage: ""
-    };
-    
-    try {
-        const resp = await graphRun(aadObjectId, token);
-
-        user.userName = resp.profile.displayName;
-        user.aadObjectId = resp.profile.id;
-        user.profileImage = resp.profileImage;
-
-    } catch (err) {
-        console.log(err);
-    }
-    return user;
-}
 
 interface TodoListResponse {
     title: string;
@@ -138,12 +31,12 @@ export async function getTodoListData(aadObjectId: string) {
     try {
         const resp = await dbRun(request);
 
-        for (let i:number = 0; i < resp.body.length; ++i) {
+        for (let i:number = 0; i < resp.length; ++i) {
             const task = {
-                taskId: resp.body[i].taskId,
-                dueDate: convertTimeString(resp.body[i].dueDate),
-                currentStatus: resp.body[i].currentStatus,
-                taskContent: resp.body[i].taskContent
+                taskId: resp[i].taskId,
+                dueDate: convertTimeString(resp[i].dueDate),
+                currentStatus: resp[i].currentStatus,
+                taskContent: resp[i].taskContent
             }
             todoListResp.tasks.push(task);
         }
@@ -175,8 +68,8 @@ export async function getSharedTodoListData(aadObjectId: string, token: string) 
     try {
         const resp = await dbRun(request);
 
-        sharedTodoListResp.tasks = await Promise.all(resp.body.map(async con => {
-            let creator = await getUserDetails(con.creatorId, token);
+        sharedTodoListResp.tasks = await Promise.all(resp.map(async con => {
+            let creator = await getUserDetailsFromGraph(con.creatorId, token);
             return {
                 taskId: con.taskId,
                 dueDate: convertTimeString(con.dueDate),
@@ -222,20 +115,20 @@ export async function getTodoItemData(taskId: number, token: string, isViewer: b
     try {
         const resp = await dbRun(request);
 
-        const creator = await getUserDetails(resp.body[0].creatorId, token);
+        const creator = await getUserDetailsFromGraph(resp[0].creatorId, token);
         todoItemResp.task = {
-            taskId: resp.body[0].taskId,
-            dueDate: convertTimeString(resp.body[0].dueDate),
-            currentStatus: resp.body[0].currentStatus,
-            taskContent: resp.body[0].taskContent,
+            taskId: resp[0].taskId,
+            dueDate: convertTimeString(resp[0].dueDate),
+            currentStatus: resp[0].currentStatus,
+            taskContent: resp[0].taskContent,
             creator: creator,
             viewers: []
         }
         if (isViewer) {
             todoItemResp.title = "TodoItem";
-            const viewers: User[] = await Promise.all(resp.body.map(async con => {
+            const viewers: User[] = await Promise.all(resp.map(async con => {
                 if (con.viewerId != null ) {
-                    let viewer =  await getUserDetails(con.viewerId, token);
+                    let viewer =  await getUserDetailsFromGraph(con.viewerId, token);
                     return viewer;
                 }
                 return undefined;
@@ -322,7 +215,6 @@ function addTodoItem(aadObjectId: string, data: TodoItem) {
     request.addParameter("userId", TYPES.UniqueIdentifier, aadObjectId);
     
     return request;
-    // await dbRun(request);
 }
 
 function updateTodoItem(data: TodoItem) {

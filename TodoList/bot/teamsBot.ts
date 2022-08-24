@@ -5,26 +5,29 @@ import {
     CardFactory,
     TurnContext,
     BotFrameworkAdapter,
-    ConversationState,
-    UserState
 } from "botbuilder";
 import { ComponentDialog } from "botbuilder-dialogs";
 import {
-    TabRequest, TabSubmit, TabResponse,
-    MessagingExtensionAction,
+    TabRequest,
+    TabSubmit, 
+    TabResponse,
+    TaskModuleRequest,
+    TaskModuleResponse,
+    TaskModuleTaskInfo,
+    MessagingExtensionAction, 
     MessagingExtensionActionResponse,
 } from "botbuilder-core";
 import rawWelcomeCard from "./adaptiveCards/welcome.json";
 // import { AdaptiveCards } from "@microsoft/adaptivecards-tools";
 import * as ACData from "adaptivecards-templating";
-import rawheadingCard from "./adaptiveCards/heading.json"
-import rawtodoListCard from "./adaptiveCards/todoList.json"
-import rawtodoItemCard from "./adaptiveCards/todoItem.json"
-import rawsharedTodoListCard from "./adaptiveCards/sharedTodoList.json"
-import rawsharedTodoItemCard from "./adaptiveCards/sharedTodoItem.json"
-import rawsignOutCard from "./adaptiveCards/signOut.json"
-import rawnewItemCard from "./adaptiveCards/newItem.json"
-import rawMEstatusCard from "./adaptiveCards/MEStatus.json"
+import rawHeadingCard from "./adaptiveCards/heading.json"
+import rawTodoListCard from "./adaptiveCards/todoList.json"
+import rawTodoItemCard from "./adaptiveCards/todoItem.json"
+import rawSharedTodoListCard from "./adaptiveCards/sharedTodoList.json"
+import rawSharedTodoItemCard from "./adaptiveCards/sharedTodoItem.json"
+import rawSignOutCard from "./adaptiveCards/signOut.json"
+import rawNewItemCard from "./adaptiveCards/newItem.json"
+import rawActionStatusCard from "./adaptiveCards/actionStatus.json"
 import {
     getTodoListData,
     getTodoItemData,
@@ -73,57 +76,75 @@ export class TeamsBot extends TeamsActivityHandler {
 
     // Message extension Code
     async handleTeamsMessagingExtensionFetchTask(context: TurnContext, action: MessagingExtensionAction) {
-        const time = convertTimeString(new Date());;
-        const newItemTemplate = new ACData.Template(rawnewItemCard);
-        var content:string = repalceHtmlToText(action.messagePayload.body.content);
-
-        const newItemPayload = newItemTemplate.expand({
-            $root: {content: content, time: time}
-        });
-
+        console.log("handleTeamsMessagingExtensionFetchTask", JSON.stringify(action, null, 2));
         const MEActionResp: MessagingExtensionActionResponse = {
             task: {
                 type: "continue",
-                value: {
-                    card: CardFactory.adaptiveCard(newItemPayload),
-                    width: 400
-                },
+                value: {},
             },
         };
+        
+        const taskInfo: TaskModuleTaskInfo = {
+            width: 400
+        }
+        switch (action.commandId) {
+            case "createTodo": {
+                const time = convertTimeString(new Date());;
+                const newItemTemplate = new ACData.Template(rawNewItemCard);
+                var content:string = repalceHtmlToText(action.messagePayload.body.content);
 
+                const newItemPayload = newItemTemplate.expand({
+                    $root: {content: content, time: time}
+                });
+                taskInfo.card = CardFactory.adaptiveCard(newItemPayload);
+                break;
+            }
+        }
+
+        MEActionResp.task.value = taskInfo;
         return MEActionResp;
     }
 
     // Handle submits from Messaging Extension.
     async handleTeamsMessagingExtensionSubmitAction(context: TurnContext, action: MessagingExtensionAction) {
+        console.log("handleTeamsMessagingExtensionSubmitAction", JSON.stringify(action, null, 2));
+        const MEActionResp: MessagingExtensionActionResponse = {
+            task: {
+                type: "continue",
+                value: {},
+            },
+        };
+
+        const taskInfo: TaskModuleTaskInfo = {
+            width: 300,
+            height: 100
+        }
+
         const user = {
             userId: context.activity.from.aadObjectId,
             userName: context.activity.from.name
         };
+        
+        switch (action.commandId) {
+            case "createTodo": {
+                var content: string;
+                try {
+                    await handleNewItemAction(user.userId, action.data);
+                    content = "Success! Please check \"My Todos\" Tab"
+                } catch (error) {
+                    content = "Fail. Please check and have a retry."
+                }
 
-        var content: string;
-        try {
-            await handleNewItemAction(user.userId, action.data);
-            content = "Success! Please check \"My Todos\" Tab"
-        } catch (error) {
-            content = "Fail. Please check and have a retry."
+                const actionStatusTemplate = new ACData.Template(rawActionStatusCard);
+                const actionStatusPayload = actionStatusTemplate.expand({
+                    $root: {content: content}
+                });
+                taskInfo.card = CardFactory.adaptiveCard(actionStatusPayload);
+                break;
+            }
         }
-
-        const MEstatusTemplate = new ACData.Template(rawMEstatusCard);
-        const MEstatusPayload = MEstatusTemplate.expand({
-            $root: {content: content}
-        });
-
-        const MEActionResp: MessagingExtensionActionResponse = {
-            task: {
-                type: "continue",
-                value: {
-                    card: CardFactory.adaptiveCard(MEstatusPayload),
-                    width: 300
-                },
-            },
-        };
-
+        
+        MEActionResp.task.value = taskInfo;
         return MEActionResp;
     }
 
@@ -165,7 +186,7 @@ export class TeamsBot extends TeamsActivityHandler {
             userName: context.activity.from.name
         };
         const time = convertTimeString(new Date());;
-        const headingTemplate = new ACData.Template(rawheadingCard);
+        const headingTemplate = new ACData.Template(rawHeadingCard);
         const headingPayload = headingTemplate.expand({
             $root: {enquirer: user, time: time}
         });
@@ -175,7 +196,7 @@ export class TeamsBot extends TeamsActivityHandler {
                 const todoListData = await getTodoListData(user.userId);
                 todoListData.time = time;
                 // Create a Template instance from the template payload
-                const todoListTemplate = new ACData.Template(rawtodoListCard);
+                const todoListTemplate = new ACData.Template(rawTodoListCard);
                 // Expand the template with your `$root` data object.
                 // This binds it to the data and produces the final Adaptive Card payload
                 const todoListPayload = todoListTemplate.expand({
@@ -186,7 +207,7 @@ export class TeamsBot extends TeamsActivityHandler {
             }
             case "SharedwithMe": {
                 const sharedTodoListData = await getSharedTodoListData(user.userId, tokenResponse.token);
-                const sharedTodoListTemplate = new ACData.Template(rawsharedTodoListCard);
+                const sharedTodoListTemplate = new ACData.Template(rawSharedTodoListCard);
                 const sharedTodoListPayload = sharedTodoListTemplate.expand({
                     $root: sharedTodoListData
                 });
@@ -225,7 +246,7 @@ export class TeamsBot extends TeamsActivityHandler {
         if (tabSubmit.data.action == "signout") {
             await (<BotFrameworkAdapter> context.adapter).signOutUser(context, process.env.ConnectionName);
             // Generating and returning submit response.
-            tabSubmitResp.tab.value.cards = [{"card": rawsignOutCard}]
+            tabSubmitResp.tab.value.cards = [{"card": rawSignOutCard}]
             return tabSubmitResp;
         }
 
@@ -235,7 +256,7 @@ export class TeamsBot extends TeamsActivityHandler {
         };
         const time = convertTimeString(new Date());
 
-        const headingTemplate = new ACData.Template(rawheadingCard);
+        const headingTemplate = new ACData.Template(rawHeadingCard);
         const headingPayload = headingTemplate.expand({
             $root: {enquirer: user, time: time}
         });
@@ -249,7 +270,7 @@ export class TeamsBot extends TeamsActivityHandler {
                 }
                 const todoListData = await getTodoListData(user.userId);
                 todoListData.time = time;
-                const todoListTemplate = new ACData.Template(rawtodoListCard);
+                const todoListTemplate = new ACData.Template(rawTodoListCard);
                 const todoListPayload = todoListTemplate.expand({
                     $root: todoListData
                 });
@@ -260,7 +281,7 @@ export class TeamsBot extends TeamsActivityHandler {
                 // }
                 if (tabSubmit.data.action == "show" || tabSubmit.data.action == "share") {
                     const todoItemData = await getTodoItemData(<number> tabSubmit.data.taskId, tokenResponse.token, true);
-                    const todoItemTemplate = new ACData.Template(rawtodoItemCard);
+                    const todoItemTemplate = new ACData.Template(rawTodoItemCard);
                     const todoItemPayload = todoItemTemplate.expand({
                         $root: todoItemData
                     });
@@ -271,7 +292,7 @@ export class TeamsBot extends TeamsActivityHandler {
             }
             case "SharedwithMe": {
                 const sharedTodoListData = await getSharedTodoListData(user.userId, tokenResponse.token);
-                const sharedTodoListTemplate = new ACData.Template(rawsharedTodoListCard);
+                const sharedTodoListTemplate = new ACData.Template(rawSharedTodoListCard);
                 const sharedTodoListPayload = sharedTodoListTemplate.expand({
                     $root: sharedTodoListData
                 });
@@ -279,7 +300,7 @@ export class TeamsBot extends TeamsActivityHandler {
 
                 if (tabSubmit.data.action == "show") {
                     const sharedTodoItemData = await getTodoItemData(<number> tabSubmit.data.taskId, tokenResponse.token, false);
-                    const sharedTodoItemTemplate = new ACData.Template(rawsharedTodoItemCard);
+                    const sharedTodoItemTemplate = new ACData.Template(rawSharedTodoItemCard);
                     const sharedTodoItemPayload = sharedTodoItemTemplate.expand({
                         $root: sharedTodoItemData
                     });
@@ -291,4 +312,71 @@ export class TeamsBot extends TeamsActivityHandler {
         return tabSubmitResp;
     }
 
+    // Fetch Task Module From Adaptive Cards Tab
+    async handleTeamsTaskModuleFetch(context: TurnContext, taskModuleRequest: TaskModuleRequest) {
+        console.log("handleTeamsTaskModuleFetch", JSON.stringify(taskModuleRequest, null, 2));
+        const taskModuleResp: TaskModuleResponse = {
+            task: {
+                type: "continue",
+                value: {},
+            },
+        };
+
+        const taskInfo: TaskModuleTaskInfo = {
+            width: 400
+        };
+
+        switch (taskModuleRequest.tabContext.tabEntityId) {
+            case "MyTodos": {
+                if (taskModuleRequest.data.action == "add") {
+                    const time = convertTimeString(new Date());;
+                    const newItemTemplate = new ACData.Template(rawNewItemCard);
+            
+                    const newItemPayload = newItemTemplate.expand({
+                        $root: {content: "", time: time}
+                    });
+                    taskInfo.card = CardFactory.adaptiveCard(newItemPayload);
+                }
+            }
+        }
+
+        taskModuleResp.task.value = taskInfo;
+        
+        return taskModuleResp;
+    }
+
+    // Handle Task Module From Adaptive Cards Tab
+    async handleTeamsTaskModuleSubmit(context: TurnContext, taskModuleRequest: TaskModuleRequest) {
+        console.log("handleTeamsTaskModuleSubmit", JSON.stringify(taskModuleRequest, null, 2));
+        const user = {
+            userId: context.activity.from.aadObjectId,
+            userName: context.activity.from.name
+        };
+
+        var content: string;
+        try {
+            await handleNewItemAction(user.userId, taskModuleRequest.data);
+            content = "Success! Please check \"My Todos\" Tab"
+        } catch (error) {
+            content = "Fail. Please check and have a retry."
+        }
+
+        const actionStatusTemplate = new ACData.Template(rawActionStatusCard);
+        const actionStatusPayload = actionStatusTemplate.expand({
+            $root: {content: content}
+        });
+
+        const taskModuleResp: TaskModuleResponse = {
+            task: {
+                type: "continue",
+                value: {
+                    card: CardFactory.adaptiveCard(actionStatusPayload),
+                    width: 300,
+                    height: 100
+                },
+            },
+        };
+
+        return taskModuleResp;
+    }
 }

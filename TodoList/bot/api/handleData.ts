@@ -147,7 +147,7 @@ export async function getTodoItemData(taskId: number, token: string, isViewer: b
 }
 
 export async function handleNewItemAction(aadObjectId: string, data: any) {
-    console.log("Handling the Action Of Message Extension.");
+    console.log("Handling the Action Of Task Module.");
     const task: TodoItem = {
         dueDate: data.addDate,
         taskContent: data.addContent

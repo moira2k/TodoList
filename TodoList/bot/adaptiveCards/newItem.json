@@ -6,7 +6,6 @@
             "type": "Action.Submit",
             "title": "Send",
             "data": {
-                "submitLocation": "messagingExtensionFetchTask",
                 "action": "add"
             }
         }
@@ -33,6 +32,7 @@
         {
             "type": "Input.Text",
             "value": "${content}",
+            "placeholder": "Please input the content of your new task.",
             "id": "addContent",
             "label": "Content",
             "isMultiline": true,

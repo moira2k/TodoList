@@ -1,4 +1,5 @@
 {
     "time": "2017-02-14T06:08:39Z",
-    "content": "test"
+    "content": "test",
+    "submitLocation": "messagingExtensionFetchTask",
 }

@@ -325,39 +325,14 @@
                     "type": "ActionSet",
                     "actions": [
                         {
-                            "type": "Action.ShowCard",
+                            "type": "Action.Submit",
                             "title": "New Item",
-                            "card": {
-                                "type": "AdaptiveCard",
-                                "actions": [
-                                    {
-                                        "type": "Action.Submit",
-                                        "title": "Confirm",
-                                        "data": {
-                                            "action": "add"
-                                        }
-                                    }
-                                ],
-                                "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
-                                "body": [
-                                    {
-                                        "type": "Input.Date",
-                                        "id": "addDate",
-                                        "label": "Date",
-                                        "value": "${formatDateTime(time, 'YYYY-MM-dd')}",
-                                        "isRequired": true
-                                    },
-                                    {
-                                        "type": "Input.Text",
-                                        "placeholder": "What will you do?",
-                                        "id": "addContent",
-                                        "label": "Content",
-                                        "isMultiline": true,
-                                        "isRequired": true
-                                    }
-                                ]
-                            },
-                            "style": "positive"
+                            "data": {
+                                "msteams": {
+                                    "type": "task/fetch"
+                                },
+                                "action": "add"
+                            }
                         }
                     ]
                 }

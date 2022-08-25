@@ -23,7 +23,7 @@ import rawSharedTodoItemCard from "../adaptiveCards/sharedTodoItem.json"
 import rawSignOutCard from "../adaptiveCards/signOut.json"
 import rawNewItemCard from "../adaptiveCards/newItem.json"
 import rawActionStatusCard from "../adaptiveCards/actionStatus.json"
-
+import rawViewersCard from "../adaptiveCards/viewers.json"
 
 // Tab Response
 export function createAuthResponse(signInLink: string) {
@@ -87,21 +87,7 @@ export async function createMyTodosResponse(context: TurnContext, IsFectchTodoIt
         },
     });
 
-    const todoListData = await getTodoListData(user.aadObjectId);
-    // Create a Template instance from the template payload
-    const todoListTemplate = new ACData.Template(rawTodoListCard);
-    // Expand the template with your `$root` data object.
-    // This binds it to the data and produces the final Adaptive Card payload
-    const todoListPayload = todoListTemplate.expand({
-        $root: {
-            tasks: todoListData,
-            time: time,
-        },
-    });
-    myTodosResp.tab.value.cards = [
-        {"card": headingPayload}, 
-        {"card": todoListPayload},
-    ];
+    myTodosResp.tab.value.cards = [{"card": headingPayload}];
 
     if (IsFectchTodoItem) {
         const todoItemData = await getTodoItemData(taskId, token, true);
@@ -113,12 +99,25 @@ export async function createMyTodosResponse(context: TurnContext, IsFectchTodoIt
             },
         });
         myTodosResp.tab.value.cards.push({"card": todoItemPayload});
+    } else {
+        const todoListData = await getTodoListData(user.aadObjectId);
+        // Create a Template instance from the template payload
+        const todoListTemplate = new ACData.Template(rawTodoListCard);
+        // Expand the template with your `$root` data object.
+        // This binds it to the data and produces the final Adaptive Card payload
+        const todoListPayload = todoListTemplate.expand({
+            $root: {
+                tasks: todoListData,
+                time: time,
+            },
+        });
+        myTodosResp.tab.value.cards.push({"card": todoListPayload});
     }
 
     return myTodosResp;
 }
 
-export async function createSharedwithMeResponse(context: TurnContext, token: string, IsFectchTodoItem: boolean, taskId?: number): Promise<TabResponse> {
+export async function createSharedwithMeResponse(context: TurnContext, token: string): Promise<TabResponse> {
     console.log("Create SharedwithMe Tab response");
     const sharedwithMeResp: TabResponse = {
         tab: {
@@ -153,14 +152,6 @@ export async function createSharedwithMeResponse(context: TurnContext, token: st
         {"card": sharedTodoListPayload},
     ];
 
-    if (IsFectchTodoItem) {
-        const sharedTodoItemData = await getTodoItemData(<number> taskId, token, false);
-        const sharedTodoItemTemplate = new ACData.Template(rawSharedTodoItemCard);
-        const sharedTodoItemPayload = sharedTodoItemTemplate.expand({
-            $root: {task: sharedTodoItemData},
-        });
-        sharedwithMeResp.tab.value.cards.push({"card": sharedTodoItemPayload});
-    }
     return sharedwithMeResp;
 }
 
@@ -190,7 +181,7 @@ export function createNewItemTaskInfo(content: string = ""): TaskModuleTaskInfo 
     const newItemPayload = newItemTemplate.expand({
         $root: {
             content: content,
-            time: time,
+            time: time
         },
     });
     taskInfo.card = CardFactory.adaptiveCard(newItemPayload);
@@ -236,7 +227,7 @@ export async function handleTodoListAction(aadObjectId: string, data: any): Prom
         case "add": {
             const task: TodoItem = {
                 dueDate: data.addDate,
-                taskContent: data.addContent
+                taskContent: data.addContent,
             }
             await addTodoItem(aadObjectId, task);
             break;
@@ -244,14 +235,14 @@ export async function handleTodoListAction(aadObjectId: string, data: any): Prom
         case "edit": {
             const task: TodoItem = {
                 taskId: data.taskId,
-                dueDate: data[`updateTime${data.id}`],
-                currentStatus: data[`updateStatus${data.id}`],
-                taskContent: data[`updateContent${data.id}`],
+                dueDate: data.dueDate,
+                currentStatus: data.currentStatus,
+                taskContent: data.taskContent,
             }
             await updateTodoItem(task);
             break;
         }
-        case "del": {
+        case "delete": {
             await deleteTodoItem(data.taskId);
             break;
         }

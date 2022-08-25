@@ -102,12 +102,13 @@
                                 {
                                     "type": "Image",
                                     "url": "https://todolist.blob.core.windows.net/adaptive-cards/exit.png?sp=r&st=2022-08-18T10:29:48Z&se=2022-11-30T18:29:48Z&spr=https&sv=2021-06-08&sr=c&sig=%2BYqszohKyR55ozKNZuKWYcn8Movulz%2Fx6L4mMvWffKs%3D",
-                                    "width": "25px",
+                                    "width": "35px",
                                     "horizontalAlignment": "Center"
                                 }
                             ],
                             "selectAction": {
                                 "type": "Action.Submit",
+                                "tooltip": "Sign Out",
                                 "data": {
                                     "action": "signout"
                                 }
@@ -115,8 +116,7 @@
                             "width": 5
                         }
                     ],
-                    "spacing": "None",
-                    "horizontalAlignment": "Left"
+                    "spacing": "None"
                 }
             ],
             "spacing": "None"

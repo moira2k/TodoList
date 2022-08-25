@@ -1,54 +1,209 @@
 {
-    "message": "success",
-    "enquirer": {
-        "userId": "undefined",
-        "userName": "Matt Hidinger",
-        "profileImage": "https://pbs.twimg.com/profile_images/3647943215/d7f12830b3c17a5a9e4afcc370e3a37e_400x400.jpeg"
-    },
-    "time": "2022-07-15T18:33:12+08:00",
-    "tasks": [
+    "type": "AdaptiveCard",
+    "body": [
         {
-            "taskId": "undefined",
-            "dueDate": "2022-07-21T18:33:12+08:00",
-            "CurrentStatus": "Not Started",
-            "taskContent": "a meeting with supplier representatives in Room602, Building01",
-            "creator": {
-                "userId": "undefined",
-                "userName": "Matt Hidinger",
-                "profileImage": "https://pbs.twimg.com/profile_images/3647943215/d7f12830b3c17a5a9e4afcc370e3a37e_400x400.jpeg"
-            },
-            "peoplePickerValue": "",
-            "viewers": [
+            "type": "Container",
+            "items": [
                 {
-                    "userId": "undifined",
-                    "userName": "Alice",
-                    "profileImage": "https://messagecardplayground.azurewebsites.net/assets/person_w1.png"
-                },
+                    "type": "ColumnSet",
+                    "columns": [
+                        {
+                            "type": "Column",
+                            "items": [
+                                {
+                                    "type": "TextBlock",
+                                    "size": "ExtraLarge",
+                                    "text": "**TO-DO LIST**",
+                                    "wrap": true,
+                                    "style": "heading"
+                                }
+                            ],
+                            "width": "stretch"
+                        }
+                    ]
+                }
+            ],
+            "spacing": "ExtraLarge"
+        },
+        {
+            "type": "Container",
+            "spacing": "Large",
+            "style": "emphasis",
+            "items": [
                 {
-                    "userId": "undifined",
-                    "userName": "Nicole",
-                    "profileImage": "https://messagecardplayground.azurewebsites.net/assets/person_w2.png"
+                    "type": "ColumnSet",
+                    "columns": [
+                        {
+                            "type": "Column",
+                            "items": [
+                                {
+                                    "type": "TextBlock",
+                                    "weight": "Bolder",
+                                    "text": "**DATE**",
+                                    "fontType": "Monospace",
+                                    "size": "Large",
+                                    "isSubtle": true
+                                }
+                            ],
+                            "width": 14
+                        },
+                        {
+                            "type": "Column",
+                            "items": [
+                                {
+                                    "type": "TextBlock",
+                                    "text": "**STATUS**",
+                                    "weight": "Bolder",
+                                    "fontType": "Monospace",
+                                    "size": "Large",
+                                    "isSubtle": true
+                                }
+                            ],
+                            "spacing": "Small",
+                            "width": 15
+                        },
+                        {
+                            "type": "Column",
+                            "items": [
+                                {
+                                    "type": "TextBlock",
+                                    "weight": "Bolder",
+                                    "text": "**CONTENT**",
+                                    "fontType": "Monospace",
+                                    "size": "Large",
+                                    "isSubtle": true
+                                }
+                            ],
+                            "width": 70,
+                            "spacing": "Small"
+                        }
+                    ]
+                }
+            ],
+            "bleed": true
+        },
+        {
+            "$data": "${tasks}",
+            "type": "Container",
+            "items": [
+                {
+                    "type": "ColumnSet",
+                    "columns": [
+                        {
+                            "type": "Column",
+                            "items": [
+                                {
+                                    "type": "TextBlock",
+                                    "text": "${formatDateTime(dueDate, 'YYYY-MM-dd')}",
+                                    "wrap": true
+                                }
+                            ],
+                            "selectAction": {
+                                "type": "Action.Submit",
+                                "tooltip": "click to show more about this to-do item",
+                                "data": {
+                                    "action": "show",
+                                    "id": "${$index}",
+                                    "taskId": "${taskId}"
+                                }
+                            },
+                            "verticalContentAlignment": "Center",
+                            "width": 12
+                        },
+                        {
+                            "type": "Column",
+                            "items": [
+                                {
+                                    "type": "TextBlock",
+                                    "text": "${CurrentStatus}",
+                                    "wrap": true
+                                }
+                            ],
+                            "selectAction": {
+                                "type": "Action.Submit",
+                                "tooltip": "click to show more about this to-do item",
+                                "data": {
+                                    "action": "show",
+                                    "id": "${$index}",
+                                    "taskId": "${taskId}"
+                                }
+                            },
+                            "width": 12,
+                            "verticalContentAlignment": "Center"
+                        },
+                        {
+                            "type": "Column",
+                            "spacing": "Large",
+                            "items": [
+                                {
+                                    "type": "TextBlock",
+                                    "text": "${taskContent}",
+                                    "wrap": true,
+                                    "color": "Accent",
+                                    "maxLines": 10,
+                                    "weight": "Bolder"
+                                }
+                            ],
+                            "selectAction": {
+                                "type": "Action.Submit",
+                                "tooltip": "click to show more about this to-do item",
+                                "data": {
+                                    "action": "show",
+                                    "id": "${$index}",
+                                    "taskId": "${taskId}"
+                                }
+                            },
+                            "width": 60,
+                            "verticalContentAlignment": "Center"
+                        },
+                        {
+                            "type": "Column",
+                            "spacing": "None",
+                            "verticalContentAlignment": "Center",
+                            "items": [
+                                {
+                                    "type": "Image",
+                                    "url": "https://todolist.blob.core.windows.net/adaptive-cards/bin.png?sp=r&st=2022-08-18T10:29:48Z&se=2022-11-30T18:29:48Z&spr=https&sv=2021-06-08&sr=c&sig=%2BYqszohKyR55ozKNZuKWYcn8Movulz%2Fx6L4mMvWffKs%3D",
+                                    "width": "20px",
+                                    "horizontalAlignment": "Center"
+                                }
+                            ],
+                            "selectAction": {
+                                "type": "Action.Submit",
+                                "data": {
+                                    "action": "del",
+                                    "id": "${$index}",
+                                    "taskId": "${taskId}"
+                                }
+                            },
+                            "width": 3
+                        }
+                    ]
                 }
             ]
         },
         {
-            "taskId": "undefined",
-            "dueDate": "2022-02-22T18:33:12+08:00",
-            "CurrentStatus": "Processing",
-            "taskContent": "Follow up orders from X Companies and remind shipments",
-            "creator": {
-                "userId": "undefined",
-                "userName": "Matt Hidinger",
-                "profileImage": "https://pbs.twimg.com/profile_images/3647943215/d7f12830b3c17a5a9e4afcc370e3a37e_400x400.jpeg"
-            },
-            "peoplePickerValue": "",
-            "viewers": [
+            "type": "Container",
+            "spacing": "Large",
+            "items": [
                 {
-                    "userId": "undifined",
-                    "userName": "Alice",
-                    "profileImage": "https://messagecardplayground.azurewebsites.net/assets/person_w1.png"
+                    "type": "ActionSet",
+                    "actions": [
+                        {
+                            "type": "Action.Submit",
+                            "title": "New Item",
+                            "data": {
+                                "msteams": {
+                                    "type": "task/fetch"
+                                },
+                                "action": "add"
+                            }
+                        }
+                    ]
                 }
             ]
         }
-    ]
+    ],
+    "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+    "version": "1.4"
 }

@@ -18,11 +18,52 @@
                                     "text": "**TO-DO ITEM**",
                                     "wrap": true,
                                     "style": "heading",
-                                    "color": "Default",
+                                    "color": "Accent",
                                     "weight": "Bolder"
                                 }
                             ],
                             "width": "stretch"
+                        },
+                        {
+                            "type": "Column",
+                            "verticalContentAlignment": "Center",
+                            "items": [
+                                {
+                                    "type": "Image",
+                                    "url": "https://todolist.blob.core.windows.net/adaptive-cards/return.png?sp=r&st=2022-08-18T10:29:48Z&se=2022-11-30T18:29:48Z&spr=https&sv=2021-06-08&sr=c&sig=%2BYqszohKyR55ozKNZuKWYcn8Movulz%2Fx6L4mMvWffKs%3D",
+                                    "width": "25px"
+                                }
+                            ],
+                            "selectAction": {
+                                "type": "Action.Submit",
+                                "tooltip": "click to return",
+                                "data": {
+                                    "action": "return"
+                                }
+                            },
+                            "width": "auto"
+                        },
+                        {
+                            "type": "Column",
+                            "verticalContentAlignment": "Center",
+                            "items": [
+                                {
+                                    "type": "TextBlock",
+                                    "text": "*return your to-do list*",
+                                    "isSubtle": true,
+                                    "wrap": true,
+                                    "horizontalAlignment": "Right"
+                                }
+                            ],
+                            "selectAction": {
+                                "type": "Action.Submit",
+                                "tooltip": "click to return",
+                                "data": {
+                                    "action": "return"
+                                }
+                            },
+                            "width": "130px",
+                            "spacing": "None"
                         }
                     ]
                 }
@@ -41,11 +82,11 @@
                                 {
                                     "type": "Image",
                                     "url": "${task.creator.profileImage}",
-                                    "width": "60px",
+                                    "width": "80px",
                                     "style": "Person"
                                 }
                             ],
-                            "width": "auto",
+                            "width": "100px",
                             "verticalContentAlignment": "Center"
                         },
                         {
@@ -60,7 +101,7 @@
                                 },
                                 {
                                     "type": "TextBlock",
-                                    "text": "Date",
+                                    "text": "Due Date",
                                     "wrap": true,
                                     "weight": "Bolder",
                                     "height": "stretch",
@@ -101,8 +142,8 @@
                                     "id": "currentStatus",
                                     "choices": [
                                         {
-                                            "title": "Not Started",
-                                            "value": "Not Started"
+                                            "title": "Unstarted",
+                                            "value": "Unstarted"
                                         },
                                         {
                                             "title": "Processing",
@@ -119,24 +160,6 @@
                             "width": "stretch",
                             "verticalContentAlignment": "Bottom",
                             "spacing": "ExtraLarge"
-                        },
-                        {
-                            "type": "Column",
-                            "items": [
-                                {
-                                    "type": "ActionSet",
-                                    "actions": [
-                                        {
-                                            "type": "Action.Submit",
-                                            "title": "Edit"
-                                        }
-                                    ],
-                                    "horizontalAlignment": "Center"
-                                }
-                            ],
-                            "width": "stretch",
-                            "verticalContentAlignment": "Center",
-                            "height": "stretch"
                         }
                     ]
                 }
@@ -158,109 +181,24 @@
                     "id": "taskContent",
                     "value": "${task.taskContent}",
                     "isMultiline": true
+                },
+                {
+                    "type": "ActionSet",
+                    "actions": [
+                        {
+                            "type": "Action.Submit",
+                            "title": "Update",
+                            "tooltip": "click to update the to-do item",
+                            "data": {
+                                "action": "edit",
+                                "taskId": "${task.taskId}"
+                            }
+                        }
+                    ],
+                    "height": "stretch"
                 }
             ],
             "spacing": "ExtraLarge"
-        },
-        {
-            "type": "Container",
-            "items": [
-                {
-                    "type": "ColumnSet",
-                    "columns": [
-                        {
-                            "type": "Column",
-                            "items": [
-                                {
-                                    "type": "TextBlock",
-                                    "text": "Viewers",
-                                    "wrap": true,
-                                    "fontType": "Default",
-                                    "weight": "Bolder",
-                                    "height": "stretch"
-                                }
-                            ],
-                            "width": "stretch"
-                        },
-                        {
-                            "type": "Column",
-                            "spacing": "None",
-                            "selectAction": {
-                                "type": "Action.ToggleVisibility",
-                                "title": "expand",
-                                "targetElements": [
-                                    "cardContent",
-                                    "chevronDown",
-                                    "chevronUp"
-                                ]
-                            },
-                            "verticalContentAlignment": "Center",
-                            "items": [
-                                {
-                                    "type": "Image",
-                                    "id": "chevronDown",
-                                    "url": "https://adaptivecards.io/content/down.png",
-                                    "width": "20px",
-                                    "altText": "Details collapsed"
-                                },
-                                {
-                                    "type": "Image",
-                                    "id": "chevronUp",
-                                    "url": "https://adaptivecards.io/content/up.png",
-                                    "width": "20px",
-                                    "altText": "Details expanded",
-                                    "isVisible": false
-                                }
-                            ],
-                            "width": "auto"
-                        }
-                    ]
-                },
-                {
-                    "type": "Container",
-                    "id": "cardContent",
-                    "isVisible": false,
-                    "items": [
-                        {
-                            "$data": "${task.viewers}",
-                            "type": "Container",
-                            "items": [
-                                {
-                                    "type": "ColumnSet",
-                                    "columns": [
-                                        {
-                                            "type": "Column",
-                                            "items": [
-                                                {
-                                                    "type": "Image",
-                                                    "url": "${profileImage}",
-                                                    "width": "30px",
-                                                    "style": "Person",
-                                                    "horizontalAlignment": "Center"
-                                                }
-                                            ],
-                                            "width": 2,
-                                            "verticalContentAlignment": "Center"
-                                        },
-                                        {
-                                            "type": "Column",
-                                            "items": [
-                                                {
-                                                    "type": "TextBlock",
-                                                    "text": "${userName}",
-                                                    "wrap": true
-                                                }
-                                            ],
-                                            "width": 8,
-                                            "verticalContentAlignment": "Center"
-                                        }
-                                    ]
-                                }
-                            ]
-                        }
-                    ]
-                }
-            ]
         },
         {
             "type": "Container",
@@ -269,7 +207,7 @@
             "items": [
                 {
                     "type": "TextBlock",
-                    "text": "Share with :",
+                    "text": "Share With",
                     "wrap": true,
                     "fontType": "Default",
                     "weight": "Bolder",
@@ -290,13 +228,15 @@
                     "actions": [
                         {
                             "type": "Action.Submit",
-                            "title": "Send",
+                            "title": "Share",
+                            "tooltip": "click to share the to-do item with other peopler",
                             "data": {
                                 "action": "share",
                                 "taskId": "${task.taskId}"
                             }
                         }
-                    ]
+                    ],
+                    "height": "stretch"
                 }
             ]
         }

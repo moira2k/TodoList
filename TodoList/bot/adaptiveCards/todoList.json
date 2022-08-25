@@ -101,6 +101,15 @@
                                     "wrap": true
                                 }
                             ],
+                            "selectAction": {
+                                "type": "Action.Submit",
+                                "tooltip": "click to show more about this to-do item",
+                                "data": {
+                                    "action": "show",
+                                    "id": "${$index}",
+                                    "taskId": "${taskId}"
+                                }
+                            },
                             "width": 7,
                             "verticalContentAlignment": "Center"
                         },
@@ -113,6 +122,15 @@
                                     "wrap": true
                                 }
                             ],
+                            "selectAction": {
+                                "type": "Action.Submit",
+                                "tooltip": "click to show more about this to-do item",
+                                "data": {
+                                    "action": "show",
+                                    "id": "${$index}",
+                                    "taskId": "${taskId}"
+                                }
+                            },
                             "width": 13,
                             "verticalContentAlignment": "Center"
                         },
@@ -130,62 +148,17 @@
                                     "weight": "Bolder"
                                 }
                             ],
-                            "width": 60,
-                            "verticalContentAlignment": "Center"
-                        },
-                        {
-                            "type": "Column",
-                            "spacing": "None",
-                            "verticalContentAlignment": "Center",
-                            "items": [
-                                {
-                                    "type": "Image",
-                                    "url": "https://todolist.blob.core.windows.net/adaptive-cards/ellipsis.png?sp=r&st=2022-08-18T10:29:48Z&se=2022-11-30T18:29:48Z&spr=https&sv=2021-06-08&sr=c&sig=%2BYqszohKyR55ozKNZuKWYcn8Movulz%2Fx6L4mMvWffKs%3D",
-                                    "width": "15px",
-                                    "horizontalAlignment": "Center"
-                                }
-                            ],
                             "selectAction": {
                                 "type": "Action.Submit",
+                                "tooltip": "click to show more about this to-do item",
                                 "data": {
                                     "action": "show",
                                     "id": "${$index}",
                                     "taskId": "${taskId}"
                                 }
                             },
-                            "width": 3
-                        },
-                        {
-                            "type": "Column",
-                            "spacing": "None",
-                            "selectAction": {
-                                "type": "Action.ToggleVisibility",
-                                "title": "expand",
-                                "targetElements": [
-                                    "cardContent${$index}",
-                                    "chevronDown${$index}",
-                                    "chevronUp${$index}"
-                                ]
-                            },
-                            "verticalContentAlignment": "Center",
-                            "items": [
-                                {
-                                    "type": "Image",
-                                    "id": "chevronDown${$index}",
-                                    "url": "https://adaptivecards.io/content/down.png",
-                                    "width": "20px",
-                                    "altText": "Details collapsed"
-                                },
-                                {
-                                    "type": "Image",
-                                    "id": "chevronUp${$index}",
-                                    "url": "https://adaptivecards.io/content/up.png",
-                                    "width": "20px",
-                                    "altText": "Details expanded",
-                                    "isVisible": false
-                                }
-                            ],
-                            "width": "auto"
+                            "width": 60,
+                            "verticalContentAlignment": "Center"
                         },
                         {
                             "type": "Column",
@@ -202,115 +175,12 @@
                             "selectAction": {
                                 "type": "Action.Submit",
                                 "data": {
-                                    "action": "del",
+                                    "action": "delete",
                                     "id": "${$index}",
                                     "taskId": "${taskId}"
                                 }
                             },
                             "width": 3
-                        }
-                    ]
-                },
-                {
-                    "type": "Container",
-                    "id": "cardContent${$index}",
-                    "isVisible": false,
-                    "items": [
-                        {
-                            "type": "Container",
-                            "items": [
-                                {
-                                    "type": "TextBlock",
-                                    "text": "*Modify the above to-do item:*",
-                                    "isSubtle": true,
-                                    "wrap": true,
-                                    "horizontalAlignment": "Left",
-                                    "weight": "Lighter"
-                                },
-                                {
-                                    "type": "Container",
-                                    "items": [
-                                        {
-                                            "type": "ColumnSet",
-                                            "columns": [
-                                                {
-                                                    "type": "Column",
-                                                    "items": [
-                                                        {
-                                                            "type": "Input.Date",
-                                                            "id": "updateTime${$index}",
-                                                            "value": "${formatDateTime(dueDate, 'YYYY-MM-dd')}"
-                                                        }
-                                                    ],
-                                                    "width": 50
-                                                },
-                                                {
-                                                    "type": "Column",
-                                                    "items": [
-                                                        {
-                                                            "type": "Input.ChoiceSet",
-                                                            "id": "updateStatus${$index}",
-                                                            "choices": [
-                                                                {
-                                                                    "title": "Not Started",
-                                                                    "value": "Not Started"
-                                                                },
-                                                                {
-                                                                    "title": "Processing",
-                                                                    "value": "Processing"
-                                                                },
-                                                                {
-                                                                    "title": "Finished",
-                                                                    "value": "Finished"
-                                                                }
-                                                            ],
-                                                            "value": "${CurrentStatus}"
-                                                        }
-                                                    ],
-                                                    "width": 50
-                                                }
-                                            ]
-                                        },
-                                        {
-                                            "type": "Input.Text",
-                                            "id": "updateContent${$index}",
-                                            "isMultiline": true,
-                                            "value": "${taskContent}"
-                                        }
-                                    ]
-                                }
-                            ]
-                        },
-                        {
-                            "type": "Container",
-                            "items": [
-                                {
-                                    "type": "ColumnSet",
-                                    "columns": [
-                                        {
-                                            "type": "Column",
-                                            "items": [
-                                                {
-                                                    "type": "ActionSet",
-                                                    "actions": [
-                                                        {
-                                                            "type": "Action.Submit",
-                                                            "title": "Confirm",
-                                                            "data": {
-                                                                "action": "edit",
-                                                                "id": "${$index}",
-                                                                "taskId": "${taskId}"
-                                                            }
-                                                        }
-                                                    ]
-                                                }
-                                            ],
-                                            "width": "auto"
-                                        }
-                                    ],
-                                    "minHeight": "0px"
-                                }
-                            ]
                         }
                     ]
                 }
@@ -324,14 +194,40 @@
                     "type": "ActionSet",
                     "actions": [
                         {
-                            "type": "Action.Submit",
+                            "type": "Action.ShowCard",
                             "title": "New Item",
-                            "data": {
-                                "msteams": {
-                                    "type": "task/fetch"
-                                },
-                                "action": "add"
-                            }
+                            "tooltip": "create a to-do item",
+                            "card": {
+                                "type": "AdaptiveCard",
+                                "actions": [
+                                    {
+                                        "type": "Action.Submit",
+                                        "title": "Confirm",
+                                        "data": {
+                                            "action": "add"
+                                        }
+                                    }
+                                ],
+                                "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+                                "body": [
+                                    {
+                                        "type": "Input.Date",
+                                        "id": "addDate",
+                                        "label": "Date",
+                                        "value": "${formatDateTime(time, 'YYYY-MM-dd')}",
+                                        "isRequired": true
+                                    },
+                                    {
+                                        "type": "Input.Text",
+                                        "placeholder": "What will you do?",
+                                        "id": "addContent",
+                                        "label": "Content",
+                                        "isMultiline": true,
+                                        "isRequired": true
+                                    }
+                                ]
+                            },
+                            "style": "positive"
                         }
                     ]
                 }

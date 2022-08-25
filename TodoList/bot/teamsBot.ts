@@ -35,7 +35,7 @@ export class TeamsBot extends TeamsActivityHandler {
     }
 
     checkFectchTodoItem(action: string): boolean {
-        const actions = ["show", "share"];
+        const actions = ["show", "share", "edit"];
         return actions.includes(action) ? true : false;
     }
 
@@ -71,7 +71,7 @@ export class TeamsBot extends TeamsActivityHandler {
                 break;
             }
             case "SharedwithMe": {
-                tabResp = await createSharedwithMeResponse(context, tokenResponse.token, false);
+                tabResp = await createSharedwithMeResponse(context, tokenResponse.token);
                 break;
             }
         }
@@ -110,14 +110,6 @@ export class TeamsBot extends TeamsActivityHandler {
                     this.checkFectchTodoItem(<string> tabSubmit.data.action),
                     <number> tabSubmit.data.taskId,
                     tokenResponse.token);
-                break;
-            }
-            case "SharedwithMe": {
-                tabResp = await createSharedwithMeResponse(
-                    context,
-                    tokenResponse.token,
-                    this.checkFectchTodoItem(<string> tabSubmit.data.action),
-                    <number> tabSubmit.data.taskId);
                 break;
             }
         }

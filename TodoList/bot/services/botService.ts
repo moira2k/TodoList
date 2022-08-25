@@ -1,12 +1,16 @@
-import { CardFactory, TabResponse, TaskModuleTaskInfo } from "botbuilder";
+import { CardFactory, TabResponse, TaskModuleTaskInfo, TurnContext } from "botbuilder";
 import * as ACData from "adaptivecards-templating";
+import { User } from "../dataModule/user";
+import { TodoItem } from "../dataModule/todoItem";
 import {
     getTodoListData,
     getTodoItemData,
     getSharedTodoListData,
-    handleTodoListAction,
-    handleNewItemAction,
-} from "../api/handleData"
+    addTodoItem,
+    updateTodoItem,
+    deleteTodoItem,
+    shareTodoItem
+} from "../clients/todoClient"
 import {
     convertTimeString,
     repalceHtmlToText
@@ -19,12 +23,11 @@ import rawSharedTodoItemCard from "../adaptiveCards/sharedTodoItem.json"
 import rawSignOutCard from "../adaptiveCards/signOut.json"
 import rawNewItemCard from "../adaptiveCards/newItem.json"
 import rawActionStatusCard from "../adaptiveCards/actionStatus.json"
-import { User } from "../api/constant";
 
 
 // Tab Response
 export function createAuthResponse(signInLink: string) {
-    console.log("Create Auth response")
+    console.log("Create Auth response");
     const authResp: TabResponse = {
             tab: {
                 type: "auth",
@@ -43,7 +46,7 @@ export function createAuthResponse(signInLink: string) {
 }
 
 export function createSignOutResponse() {
-    console.log("Create Sign Out response")
+    console.log("Create Sign Out response");
     const signOutResp: TabResponse = {
             tab: {
                 type: "continue",
@@ -59,7 +62,8 @@ export function createSignOutResponse() {
     return signOutResp;
 }
 
-export async function createMyTodosResponse(user: User, IsFectchTodoItem: boolean, taskId?: number, token?: string): Promise<TabResponse> {
+export async function createMyTodosResponse(context: TurnContext, IsFectchTodoItem: boolean, taskId?: number, token?: string): Promise<TabResponse> {
+    console.log("Create MyTodos Tab response");
     const myTodosResp: TabResponse = {
         tab: {
             type: "continue",
@@ -68,6 +72,12 @@ export async function createMyTodosResponse(user: User, IsFectchTodoItem: boolea
             },
         },
     };
+    
+    const user: User = {
+        aadObjectId: context.activity.from.aadObjectId,
+        userName: context.activity.from.name
+    };
+
     const time = convertTimeString(new Date());;
     const headingTemplate = new ACData.Template(rawHeadingCard);
     const headingPayload = headingTemplate.expand({
@@ -108,7 +118,8 @@ export async function createMyTodosResponse(user: User, IsFectchTodoItem: boolea
     return myTodosResp;
 }
 
-export async function createSharedwithMeResponse(user: User, token: string, IsFectchTodoItem: boolean, taskId?: number): Promise<TabResponse> {
+export async function createSharedwithMeResponse(context: TurnContext, token: string, IsFectchTodoItem: boolean, taskId?: number): Promise<TabResponse> {
+    console.log("Create SharedwithMe Tab response");
     const sharedwithMeResp: TabResponse = {
         tab: {
             type: "continue",
@@ -116,6 +127,11 @@ export async function createSharedwithMeResponse(user: User, token: string, IsFe
                 cards: [],
             },
         },
+    };
+
+    const user: User = {
+        aadObjectId: context.activity.from.aadObjectId,
+        userName: context.activity.from.name
     };
 
     const time = convertTimeString(new Date());;
@@ -149,12 +165,26 @@ export async function createSharedwithMeResponse(user: User, token: string, IsFe
 }
 
 // Task Module Task Info
+export function createTabFetchTaskInfo(data: any): TaskModuleTaskInfo {
+    console.log("Create TabFetchTaskInfo response");
+    let taskInfo: TaskModuleTaskInfo;
+    switch (data.action) {
+        case "add": {
+            taskInfo = createNewItemTaskInfo();
+            break;
+        }
+    }
+    return taskInfo;
+}
+
 export function createNewItemTaskInfo(content: string = ""): TaskModuleTaskInfo {
+    console.log("Create NewItem TaskInfo response");
     const taskInfo: TaskModuleTaskInfo = {
         width: 400,
     }
     const time = convertTimeString(new Date());;
     const newItemTemplate = new ACData.Template(rawNewItemCard);
+    // the type of message content is html
     var content:string = repalceHtmlToText(content);
 
     const newItemPayload = newItemTemplate.expand({
@@ -168,6 +198,7 @@ export function createNewItemTaskInfo(content: string = ""): TaskModuleTaskInfo 
 }
 
 export function createActionStatusTaskInfo(content: string = ""): TaskModuleTaskInfo {
+    console.log("Create ActionStatus TaskInfo response");
     const taskInfo: TaskModuleTaskInfo = {
         width: 300,
         height: 100,
@@ -180,4 +211,53 @@ export function createActionStatusTaskInfo(content: string = ""): TaskModuleTask
     });
     taskInfo.card = CardFactory.adaptiveCard(actionStatusPayload);
     return taskInfo;
+}
+
+// handle the action
+export async function handleNewItemAction(aadObjectId: string, data: any): Promise<void> {
+    console.log("Handling the Action Of Task Module.");
+
+    switch (data.action) {
+        case "add": {
+            const task: TodoItem = {
+                dueDate: data.addDate,
+                taskContent: data.addContent
+            }
+            await addTodoItem(aadObjectId, task);
+            break;
+        }
+    }
+}
+
+export async function handleTodoListAction(aadObjectId: string, data: any): Promise<void> {
+    console.log("Handling the Action Of MyTab.");
+
+    switch (data.action) {
+        case "add": {
+            const task: TodoItem = {
+                dueDate: data.addDate,
+                taskContent: data.addContent
+            }
+            await addTodoItem(aadObjectId, task);
+            break;
+        }
+        case "edit": {
+            const task: TodoItem = {
+                taskId: data.taskId,
+                dueDate: data[`updateTime${data.id}`],
+                currentStatus: data[`updateStatus${data.id}`],
+                taskContent: data[`updateContent${data.id}`],
+            }
+            await updateTodoItem(task);
+            break;
+        }
+        case "del": {
+            await deleteTodoItem(data.taskId);
+            break;
+        }
+        case "share": {
+            await shareTodoItem(data.taskId, data.sharedUsers);
+            break;
+        }
+    }
 }

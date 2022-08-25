@@ -1,6 +1,7 @@
 import { Connection, Request } from "tedious";
 import { TeamsFx, getTediousConnectionConfig } from "@microsoft/teamsfx";
 
+
 export default async function dbRun(request: Request): Promise<Array<any>> {
     let connection: Connection;
     try {

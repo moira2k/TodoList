@@ -1,8 +1,9 @@
 import { Request, TYPES } from "tedious";
-import { User, TodoItem } from "./constant";
+import { User } from "../dataModule/user";
+import { TodoItem } from "../dataModule/todoItem";
 import dbRun from "./databaseClient";
-import { getUserDetailsFromGraph} from "./graphClient";
-import { convertTimeString } from "../utils/utils"
+import { getUserDetailsFromGraph } from "./graphClient";
+import { convertTimeString } from "../utils/utils";
 
 
 export async function getTodoListData(aadObjectId: string): Promise<Array<TodoItem>> {
@@ -121,66 +122,7 @@ export async function getTodoItemData(taskId: number, token: string, isViewer: b
     return todoItem;
 }
 
-export async function handleNewItemAction(aadObjectId: string, data: any): Promise<void> {
-    console.log("Handling the Action Of Task Module.");
-    const task: TodoItem = {
-        dueDate: data.addDate,
-        taskContent: data.addContent
-    }
-
-    const request = addTodoItem(aadObjectId, task);
-    
-    try {
-        await dbRun(request);
-
-    } catch (err) {
-        console.log(err);
-    }
-}
-
-export async function handleTodoListAction(aadObjectId: string, data: any): Promise<void> {
-    console.log("Handling the Action Of MyTab.");
-    if (data.action == "show")
-        return;
-    
-    let request: Request;
-    switch (data.action) {
-        case "add": {
-            const task: TodoItem = {
-                dueDate: data.addDate,
-                taskContent: data.addContent
-            }
-            request = addTodoItem(aadObjectId, task);
-            break;
-        }
-        case "edit": {
-            const task: TodoItem = {
-                taskId: data.taskId,
-                dueDate: data[`updateTime${data.id}`],
-                currentStatus: data[`updateStatus${data.id}`],
-                taskContent: data[`updateContent${data.id}`],
-            }
-            request = updateTodoItem(task);
-            break;
-        }
-        case "del": {
-            request = deleteTodoItem(data.taskId);
-            break;
-        }
-        case "share": {
-            request = shareTodoItem(data.taskId, data.sharedUsers);
-            break;
-        }
-    }
-    try {
-        await dbRun(request);
-
-    } catch (err) {
-        console.log(err);
-    }
-}
-
-function addTodoItem(aadObjectId: string, data: TodoItem): Request {
+export async function addTodoItem(aadObjectId: string, data: TodoItem): Promise<void> {
     const query = `INSERT INTO Todo.Tasks (dueDate, taskContent, creatorId) VALUES (@date, @content, @userId)`;
     const request = new Request(query, (err) => {
         if (err) {
@@ -192,10 +134,15 @@ function addTodoItem(aadObjectId: string, data: TodoItem): Request {
     request.addParameter("content", TYPES.NVarChar, data.taskContent);
     request.addParameter("userId", TYPES.UniqueIdentifier, aadObjectId);
     
-    return request;
+    try {
+        await dbRun(request);
+
+    } catch (err) {
+        console.log(err);
+    };
 }
 
-function updateTodoItem(data: TodoItem): Request {
+export async function updateTodoItem(data: TodoItem): Promise<void> {
     const query = `UPDATE Todo.Tasks SET dueDate = @date, currentStatus = @status, taskContent = @content WHERE taskId = @taskId`;
     const request = new Request(query, (err) => {
         if (err) {
@@ -208,10 +155,15 @@ function updateTodoItem(data: TodoItem): Request {
     request.addParameter("content", TYPES.NVarChar, data.taskContent);
     request.addParameter("taskId", TYPES.Int, data.taskId);
 
-    return request;
+    try {
+        await dbRun(request);
+
+    } catch (err) {
+        console.log(err);
+    };
 }
 
-function deleteTodoItem(taskId: number): Request {
+export async function deleteTodoItem(taskId: number): Promise<void> {
     const query = `DELETE FROM Todo.Tasks WHERE taskId = @taskId`;
     const request = new Request(query, (err) => {
         if (err) {
@@ -221,10 +173,15 @@ function deleteTodoItem(taskId: number): Request {
     
     request.addParameter("taskId", TYPES.Int, taskId);
 
-    return request;
+    try {
+        await dbRun(request);
+
+    } catch (err) {
+        console.log(err);
+    };
 }
 
-function shareTodoItem(taskId: number, rawSharedUsers: string): Request {
+export async function shareTodoItem(taskId: number, rawSharedUsers: string): Promise<void> {
     let query: string = "";
     const sharedUsers = rawSharedUsers.split(',');
 
@@ -244,5 +201,10 @@ function shareTodoItem(taskId: number, rawSharedUsers: string): Request {
         request.addParameter(`userId${i}`, TYPES.UniqueIdentifier, sharedUsers[i]);
     }
 
-    return request;
+    try {
+        await dbRun(request);
+
+    } catch (err) {
+        console.log(err);
+    };
 }

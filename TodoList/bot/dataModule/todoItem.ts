@@ -1,8 +1,5 @@
-export interface User {
-    aadObjectId: string;
-    userName: string;
-    profileImage?: string;
-}
+import { User } from "./user";
+
 
 export interface TodoItem {
     taskId?: number;

@@ -1,7 +1,7 @@
 export interface User {
-    userName: string;
     aadObjectId: string;
-    profileImage: string;
+    userName: string;
+    profileImage?: string;
 }
 
 export interface TodoItem {

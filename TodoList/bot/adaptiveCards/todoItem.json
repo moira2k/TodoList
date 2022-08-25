@@ -3,6 +3,7 @@
     "body": [
         {
             "type": "Container",
+            "bleed": true,
             "style": "emphasis",
             "items": [
                 {
@@ -13,13 +14,11 @@
                             "items": [
                                 {
                                     "type": "TextBlock",
-                                    "size": "Large",
-                                    "color": "Accent",
-                                    "style": "heading",
-                                    "spacing": "ExtraLarge",
-                                    "height": "stretch",
+                                    "size": "ExtraLarge",
                                     "text": "**TO-DO ITEM**",
                                     "wrap": true,
+                                    "style": "heading",
+                                    "color": "Default",
                                     "weight": "Bolder"
                                 }
                             ],
@@ -28,11 +27,10 @@
                     ]
                 }
             ],
-            "bleed": true
+            "spacing": "ExtraLarge"
         },
         {
             "type": "Container",
-            "spacing": "Large",
             "items": [
                 {
                     "type": "ColumnSet",
@@ -47,149 +45,214 @@
                                     "style": "Person"
                                 }
                             ],
-                            "width": "auto"
+                            "width": "auto",
+                            "verticalContentAlignment": "Center"
                         },
                         {
                             "type": "Column",
                             "items": [
                                 {
-                                    "type": "FactSet",
-                                    "facts": [
+                                    "type": "TextBlock",
+                                    "text": "User Name",
+                                    "wrap": true,
+                                    "weight": "Bolder",
+                                    "height": "stretch"
+                                },
+                                {
+                                    "type": "TextBlock",
+                                    "text": "Date",
+                                    "wrap": true,
+                                    "weight": "Bolder",
+                                    "height": "stretch",
+                                    "spacing": "Small"
+                                },
+                                {
+                                    "type": "TextBlock",
+                                    "text": "Task Status",
+                                    "wrap": true,
+                                    "weight": "Bolder",
+                                    "height": "stretch",
+                                    "spacing": "Small"
+                                }
+                            ],
+                            "width": "auto",
+                            "verticalContentAlignment": "Top",
+                            "spacing": "ExtraLarge",
+                            "height": "stretch"
+                        },
+                        {
+                            "type": "Column",
+                            "items": [
+                                {
+                                    "type": "TextBlock",
+                                    "id": "userName",
+                                    "text": "${task.creator.userName}",
+                                    "wrap": true,
+                                    "height": "stretch",
+                                    "spacing": "Medium"
+                                },
+                                {
+                                    "type": "Input.Date",
+                                    "id": "dueDate",
+                                    "value": "${formatDateTime(task.dueDate, 'YYYY-MM-dd')}"
+                                },
+                                {
+                                    "type": "Input.ChoiceSet",
+                                    "id": "currentStatus",
+                                    "choices": [
                                         {
-                                            "title": "User Name",
-                                            "value": "${task.creator.userName}"
+                                            "title": "Not Started",
+                                            "value": "Not Started"
                                         },
                                         {
-                                            "title": "Date",
-                                            "value": "${formatDateTime(task.dueDate, 'ddddd, MMMM d, YYYY')}"
+                                            "title": "Processing",
+                                            "value": "Processing"
                                         },
                                         {
-                                            "title": "Task Status",
-                                            "value": "${task.CurrentStatus}"
+                                            "title": "Finished",
+                                            "value": "Finished"
                                         }
-                                    ]
+                                    ],
+                                    "value": "${task.currentStatus}"
                                 }
                             ],
                             "width": "stretch",
                             "verticalContentAlignment": "Bottom",
                             "spacing": "ExtraLarge"
+                        },
+                        {
+                            "type": "Column",
+                            "items": [
+                                {
+                                    "type": "ActionSet",
+                                    "actions": [
+                                        {
+                                            "type": "Action.Submit",
+                                            "title": "Edit"
+                                        }
+                                    ],
+                                    "horizontalAlignment": "Center"
+                                }
+                            ],
+                            "width": "stretch",
+                            "verticalContentAlignment": "Center",
+                            "height": "stretch"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "type": "Container",
+            "items": [
+                {
+                    "type": "TextBlock",
+                    "text": "Task Content",
+                    "wrap": true,
+                    "fontType": "Default",
+                    "weight": "Bolder",
+                    "height": "stretch"
+                },
+                {
+                    "type": "Input.Text",
+                    "id": "taskContent",
+                    "value": "${task.taskContent}",
+                    "isMultiline": true
+                }
+            ],
+            "spacing": "ExtraLarge"
+        },
+        {
+            "type": "Container",
+            "items": [
+                {
+                    "type": "ColumnSet",
+                    "columns": [
+                        {
+                            "type": "Column",
+                            "items": [
+                                {
+                                    "type": "TextBlock",
+                                    "text": "Viewers",
+                                    "wrap": true,
+                                    "fontType": "Default",
+                                    "weight": "Bolder",
+                                    "height": "stretch"
+                                }
+                            ],
+                            "width": "stretch"
+                        },
+                        {
+                            "type": "Column",
+                            "spacing": "None",
+                            "selectAction": {
+                                "type": "Action.ToggleVisibility",
+                                "title": "expand",
+                                "targetElements": [
+                                    "cardContent",
+                                    "chevronDown",
+                                    "chevronUp"
+                                ]
+                            },
+                            "verticalContentAlignment": "Center",
+                            "items": [
+                                {
+                                    "type": "Image",
+                                    "id": "chevronDown",
+                                    "url": "https://adaptivecards.io/content/down.png",
+                                    "width": "20px",
+                                    "altText": "Details collapsed"
+                                },
+                                {
+                                    "type": "Image",
+                                    "id": "chevronUp",
+                                    "url": "https://adaptivecards.io/content/up.png",
+                                    "width": "20px",
+                                    "altText": "Details expanded",
+                                    "isVisible": false
+                                }
+                            ],
+                            "width": "auto"
                         }
                     ]
                 },
                 {
                     "type": "Container",
+                    "id": "cardContent",
+                    "isVisible": false,
                     "items": [
                         {
-                            "type": "TextBlock",
-                            "text": "Task Content",
-                            "wrap": true,
-                            "fontType": "Default",
-                            "weight": "Bolder",
-                            "height": "stretch"
-                        },
-                        {
-                            "type": "TextBlock",
-                            "title": "Content",
-                            "text": "${task.taskContent}",
-                            "wrap": true,
-                            "spacing": "Small",
-                            "maxLines": 10
-                        }
-                    ],
-                    "spacing": "ExtraLarge"
-                },
-                {
-                    "type": "Container",
-                    "items": [
-                        {
-                            "type": "ColumnSet",
-                            "columns": [
-                                {
-                                    "type": "Column",
-                                    "items": [
-                                        {
-                                            "type": "TextBlock",
-                                            "text": "Viewers",
-                                            "wrap": true,
-                                            "fontType": "Default",
-                                            "weight": "Bolder",
-                                            "height": "stretch"
-                                        }
-                                    ]
-                                },
-                                {
-                                    "type": "Column",
-                                    "spacing": "None",
-                                    "selectAction": {
-                                        "type": "Action.ToggleVisibility",
-                                        "title": "expand",
-                                        "targetElements": [
-                                            "cardContent",
-                                            "chevronDown",
-                                            "chevronUp"
-                                        ]
-                                    },
-                                    "verticalContentAlignment": "Center",
-                                    "items": [
-                                        {
-                                            "type": "Image",
-                                            "id": "chevronDown",
-                                            "url": "https://adaptivecards.io/content/down.png",
-                                            "width": "20px",
-                                            "altText": "Details collapsed"
-                                        },
-                                        {
-                                            "type": "Image",
-                                            "id": "chevronUp",
-                                            "url": "https://adaptivecards.io/content/up.png",
-                                            "width": "20px",
-                                            "altText": "Details expanded",
-                                            "isVisible": false
-                                        }
-                                    ],
-                                    "width": "auto"
-                                }
-                            ]
-                        },
-                        {
+                            "$data": "${task.viewers}",
                             "type": "Container",
-                            "id": "cardContent",
-                            "isVisible": false,
                             "items": [
                                 {
-                                    "$data": "${task.viewers}",
-                                    "type": "Container",
-                                    "items": [
+                                    "type": "ColumnSet",
+                                    "columns": [
                                         {
-                                            "type": "ColumnSet",
-                                            "columns": [
+                                            "type": "Column",
+                                            "items": [
                                                 {
-                                                    "type": "Column",
-                                                    "items": [
-                                                        {
-                                                            "type": "Image",
-                                                            "url": "${profileImage}",
-                                                            "width": "30px",
-                                                            "style": "Person",
-                                                            "horizontalAlignment": "Center"
-                                                        }
-                                                    ],
-                                                    "width": 2,
-                                                    "verticalContentAlignment": "Center"
-                                                },
-                                                {
-                                                    "type": "Column",
-                                                    "items": [
-                                                        {
-                                                            "type": "TextBlock",
-                                                            "text": "${userName}",
-                                                            "wrap": true
-                                                        }
-                                                    ],
-                                                    "width": 8,
-                                                    "verticalContentAlignment": "Center"
+                                                    "type": "Image",
+                                                    "url": "${profileImage}",
+                                                    "width": "30px",
+                                                    "style": "Person",
+                                                    "horizontalAlignment": "Center"
                                                 }
-                                            ]
+                                            ],
+                                            "width": 2,
+                                            "verticalContentAlignment": "Center"
+                                        },
+                                        {
+                                            "type": "Column",
+                                            "items": [
+                                                {
+                                                    "type": "TextBlock",
+                                                    "text": "${userName}",
+                                                    "wrap": true
+                                                }
+                                            ],
+                                            "width": 8,
+                                            "verticalContentAlignment": "Center"
                                         }
                                     ]
                                 }
@@ -214,7 +277,6 @@
                 },
                 {
                     "type": "Input.ChoiceSet",
-                    "choices": [],
                     "choices.data": {
                         "type": "Data.Query",
                         "dataset": "graph.microsoft.com/users"

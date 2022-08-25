@@ -15,8 +15,7 @@
                                     "size": "ExtraLarge",
                                     "text": "**TO-DO LIST**",
                                     "wrap": true,
-                                    "style": "heading",
-                                    "horizontalAlignment": "Left"
+                                    "style": "heading"
                                 }
                             ],
                             "width": "stretch"

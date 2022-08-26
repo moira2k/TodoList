@@ -13,12 +13,12 @@
                             "items": [
                                 {
                                     "type": "TextBlock",
-                                    "size": "ExtraLarge",
+                                    "size": "Large",
                                     "color": "Accent",
                                     "style": "heading",
                                     "spacing": "ExtraLarge",
                                     "height": "stretch",
-                                    "text": "**To-do Item**",
+                                    "text": "**TO-DO ITEM**",
                                     "wrap": true,
                                     "weight": "Bolder"
                                 }
@@ -57,15 +57,15 @@
                                     "facts": [
                                         {
                                             "title": "User Name",
-                                            "value": "${task.creator.name}"
+                                            "value": "${task.creator.userName}"
                                         },
                                         {
                                             "title": "Date",
-                                            "value": "${formatDateTime(task.taskTime, 'ddddd, MMMM d, YYYY')}"
+                                            "value": "${formatDateTime(task.dueDate, 'ddddd, MMMM d, YYYY')}"
                                         },
                                         {
                                             "title": "Task Status",
-                                            "value": "${task.taskStatus}"
+                                            "value": "${task.CurrentStatus}"
                                         }
                                     ]
                                 }
@@ -102,45 +102,94 @@
                     "type": "Container",
                     "items": [
                         {
-                            "type": "TextBlock",
-                            "text": "Participants",
-                            "wrap": true,
-                            "fontType": "Default",
-                            "weight": "Bolder",
-                            "height": "stretch"
-                        },
-                        {
-                            "$data": "${task.participants}",
-                            "type": "Container",
-                            "items": [
+                            "type": "ColumnSet",
+                            "columns": [
                                 {
-                                    "type": "ColumnSet",
-                                    "columns": [
+                                    "type": "Column",
+                                    "items": [
                                         {
-                                            "type": "Column",
-                                            "items": [
-                                                {
-                                                    "type": "Image",
-                                                    "url": "${profileImage}",
-                                                    "width": "30px",
-                                                    "style": "Person",
-                                                    "horizontalAlignment": "Center"
-                                                }
-                                            ],
-                                            "width": 2,
-                                            "verticalContentAlignment": "Center"
+                                            "type": "TextBlock",
+                                            "text": "Viewers",
+                                            "wrap": true,
+                                            "fontType": "Default",
+                                            "weight": "Bolder",
+                                            "height": "stretch"
+                                        }
+                                    ]
+                                },
+                                {
+                                    "type": "Column",
+                                    "spacing": "None",
+                                    "selectAction": {
+                                        "type": "Action.ToggleVisibility",
+                                        "title": "expand",
+                                        "targetElements": [
+                                            "cardContent",
+                                            "chevronDown",
+                                            "chevronUp"
+                                        ]
+                                    },
+                                    "verticalContentAlignment": "Center",
+                                    "items": [
+                                        {
+                                            "type": "Image",
+                                            "id": "chevronDown",
+                                            "url": "https://adaptivecards.io/content/down.png",
+                                            "width": "20px",
+                                            "altText": "Details collapsed"
                                         },
                                         {
-                                            "type": "Column",
-                                            "items": [
+                                            "type": "Image",
+                                            "id": "chevronUp",
+                                            "url": "https://adaptivecards.io/content/up.png",
+                                            "width": "20px",
+                                            "altText": "Details expanded",
+                                            "isVisible": false
+                                        }
+                                    ],
+                                    "width": "auto"
+                                }
+                            ]
+                        },
+                        {
+                            "type": "Container",
+                            "id": "cardContent",
+                            "isVisible": false,
+                            "items": [
+                                {
+                                    "$data": "${task.viewers}",
+                                    "type": "Container",
+                                    "items": [
+                                        {
+                                            "type": "ColumnSet",
+                                            "columns": [
                                                 {
-                                                    "type": "TextBlock",
-                                                    "text": "${name}",
-                                                    "wrap": true
+                                                    "type": "Column",
+                                                    "items": [
+                                                        {
+                                                            "type": "Image",
+                                                            "url": "${profileImage}",
+                                                            "width": "30px",
+                                                            "style": "Person",
+                                                            "horizontalAlignment": "Center"
+                                                        }
+                                                    ],
+                                                    "width": 2,
+                                                    "verticalContentAlignment": "Center"
+                                                },
+                                                {
+                                                    "type": "Column",
+                                                    "items": [
+                                                        {
+                                                            "type": "TextBlock",
+                                                            "text": "${userName}",
+                                                            "wrap": true
+                                                        }
+                                                    ],
+                                                    "width": 8,
+                                                    "verticalContentAlignment": "Center"
                                                 }
-                                            ],
-                                            "width": 8,
-                                            "verticalContentAlignment": "Center"
+                                            ]
                                         }
                                     ]
                                 }
@@ -164,16 +213,26 @@
                     "height": "stretch"
                 },
                 {
-                    "type": "Input.Text",
-                    "id": "sharedUser",
-                    "placeholder": "People Pick"
+                    "type": "Input.ChoiceSet",
+                    "choices": [],
+                    "choices.data": {
+                        "type": "Data.Query",
+                        "dataset": "graph.microsoft.com/users"
+                    },
+                    "id": "sharedUsers",
+                    "isMultiSelect": true,
+                    "value": "${task.peoplePickerValue}"
                 },
                 {
                     "type": "ActionSet",
                     "actions": [
                         {
                             "type": "Action.Submit",
-                            "title": "Send"
+                            "title": "Send",
+                            "data": {
+                                "action": "share",
+                                "taskId": "${task.taskId}"
+                            }
                         }
                     ]
                 }
@@ -181,6 +240,5 @@
         }
     ],
     "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
-    "version": "1.4",
-    "fallbackText": "This card requires Adaptive Cards v1.2 support to be rendered properly."
+    "version": "1.4"
 }

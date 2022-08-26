@@ -7,13 +7,18 @@
         "name": "fx-solution-azure",
         "version": "1.0.0",
         "hostType": "Azure",
-        "azureResources": [],
+        "azureResources": [
+            "sql"
+        ],
         "capabilities": [
-            "Bot"
+            "Bot",
+            "BotSSO"
         ],
         "activeResourcePlugins": [
             "fx-resource-identity",
+            "fx-resource-azure-sql",
             "fx-resource-bot",
+            "fx-resource-aad-app-for-teams",
             "fx-resource-local-debug",
             "fx-resource-appstudio",
             "fx-resource-cicd",
@@ -26,5 +31,6 @@
             "host-type": "app-service",
             "capabilities": []
         }
-    }
+    },
+    "defaultFunctionName": "todos"
 }

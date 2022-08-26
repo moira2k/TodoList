@@ -4,33 +4,52 @@
         "subscriptionId": "1756abc0-3554-4341-8d6a-46674962ea19",
         "subscriptionName": "Teams Cloud - Dev Test with TTL = 3 Days",
         "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
-        "needCreateResourceGroup": true,
-        "resourceGroupName": "todo_list-dev-rg",
-        "location": "East Asia",
-        "resourceNameSuffix": "ba6324",
+        "needCreateResourceGroup": false,
+        "resourceGroupName": "hk-todo-test-rg",
+        "location": "East US",
+        "resourceNameSuffix": "a52813",
         "provisionSucceeded": true
     },
     "fx-resource-appstudio": {
         "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
-        "teamsAppId": "4110181f-4064-4085-a497-0eeff1137eb3",
-        "teamsAppUpdatedAt": 1658128360469
+        "teamsAppId": "71793c36-c35b-46c0-aa1a-acc137832384",
+        "teamsAppUpdatedAt": 1660112693835
     },
     "fx-resource-identity": {
-        "identityName": "todolistdev552ad5",
-        "identityResourceId": "/subscriptions/1756abc0-3554-4341-8d6a-46674962ea19/resourceGroups/todo_list-dev-rg/providers/Microsoft.ManagedIdentity/userAssignedIdentities/todolistdev552ad5",
-        "identityClientId": "c6c6cda0-70e1-435c-a2ae-dd06da3cee8d"
+        "identityName": "todolistdev552ad6",
+        "identityResourceId": "/subscriptions/1756abc0-3554-4341-8d6a-46674962ea19/resourceGroups/hk-todo-test-rg/providers/Microsoft.ManagedIdentity/userAssignedIdentities/todolistdev552ad6",
+        "identityClientId": "9ddeeafd-b6a6-40a3-9a14-e606576575a2"
+    },
+    "fx-resource-azure-sql": {
+        "admin": "azureuser",
+        "sqlResourceId": "/subscriptions/1756abc0-3554-4341-8d6a-46674962ea19/resourceGroups/hk-todo-test-rg/providers/Microsoft.Sql/servers/todolistdev552ad6",
+        "sqlEndpoint": "todolistdev552ad6.database.windows.net",
+        "databaseName": "todolistdev552ad6"
     },
     "fx-resource-bot": {
-        "botId": "b956abe3-83fa-4fbb-87d2-dd752045bc53",
+        "botId": "16ff94bf-8db3-4fb6-8a39-b473f8a78f65",
         "botPassword": "{{fx-resource-bot.botPassword}}",
-        "objectId": "8ec11903-f607-42b1-a4fa-73f807de98b4",
+        "objectId": "1b9b97ef-47ca-4cdc-a477-9b5c56c79979",
         "skuName": "B1",
-        "siteName": "todolistdev552ad5bot",
-        "validDomain": "todolistdev552ad5bot.azurewebsites.net",
-        "appServicePlanName": "todolistdev552ad5bot",
-        "resourceId": "/subscriptions/1756abc0-3554-4341-8d6a-46674962ea19/resourceGroups/todo_list-dev-rg/providers/Microsoft.Web/sites/todolistdev552ad5bot",
-        "siteEndpoint": "https://todolistdev552ad5bot.azurewebsites.net"
+        "siteName": "todolistdev552ad6bot",
+        "validDomain": "todolistdev552ad6bot.azurewebsites.net",
+        "appServicePlanName": "todolistdev552ad6bot",
+        "resourceId": "/subscriptions/1756abc0-3554-4341-8d6a-46674962ea19/resourceGroups/hk-todo-test-rg/providers/Microsoft.Web/sites/todolistdev552ad6bot",
+        "siteEndpoint": "https://todolistdev552ad6bot.azurewebsites.net"
     },
+    "fx-resource-aad-app-for-teams": {
+        "clientId": "1731d965-4fcb-4eb6-be21-12ac43ea35ed",
+        "clientSecret": "{{fx-resource-aad-app-for-teams.clientSecret}}",
+        "objectId": "95f54305-05fd-47df-a0f3-189f06677961",
+        "oauth2PermissionScopeId": "0111263a-0bd8-498d-ab73-54e5f5c211e5",
+        "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+        "oauthHost": "https://login.microsoftonline.com",
+        "oauthAuthority": "https://login.microsoftonline.com/72f988bf-86f1-41af-91ab-2d7cd011db47",
+        "applicationIdUris": "api://botid-16ff94bf-8db3-4fb6-8a39-b473f8a78f65",
+        "botId": "16ff94bf-8db3-4fb6-8a39-b473f8a78f65",
+        "botEndpoint": "https://todolistdev552ad6bot.azurewebsites.net"
+    },
+    "fx-resource-function": {},
     "fx-resource-cicd": {},
     "fx-resource-api-connector": {}
 }

@@ -1,0 +1,106 @@
+{
+    "type": "AdaptiveCard",
+    "body": [
+        {
+            "type": "Container",
+            "style": "emphasis",
+            "items": [
+                {
+                    "type": "ColumnSet",
+                    "columns": [
+                        {
+                            "type": "Column",
+                            "items": [
+                                {
+                                    "type": "TextBlock",
+                                    "size": "Large",
+                                    "color": "Accent",
+                                    "style": "heading",
+                                    "spacing": "ExtraLarge",
+                                    "height": "stretch",
+                                    "text": "**TO-DO ITEM**",
+                                    "wrap": true,
+                                    "weight": "Bolder"
+                                }
+                            ],
+                            "width": "stretch"
+                        }
+                    ]
+                }
+            ],
+            "bleed": true
+        },
+        {
+            "type": "Container",
+            "spacing": "Large",
+            "items": [
+                {
+                    "type": "ColumnSet",
+                    "columns": [
+                        {
+                            "type": "Column",
+                            "items": [
+                                {
+                                    "type": "Image",
+                                    "url": "${task.creator.profileImage}",
+                                    "width": "60px",
+                                    "style": "Person"
+                                }
+                            ],
+                            "width": "auto"
+                        },
+                        {
+                            "type": "Column",
+                            "items": [
+                                {
+                                    "type": "FactSet",
+                                    "facts": [
+                                        {
+                                            "title": "User Name",
+                                            "value": "${task.creator.userName}"
+                                        },
+                                        {
+                                            "title": "Date",
+                                            "value": "${formatDateTime(task.dueDate, 'ddddd, MMMM d, YYYY')}"
+                                        },
+                                        {
+                                            "title": "Task Status",
+                                            "value": "${task.CurrentStatus}"
+                                        }
+                                    ]
+                                }
+                            ],
+                            "width": "stretch",
+                            "verticalContentAlignment": "Bottom",
+                            "spacing": "ExtraLarge"
+                        }
+                    ]
+                },
+                {
+                    "type": "Container",
+                    "items": [
+                        {
+                            "type": "TextBlock",
+                            "text": "Task Content",
+                            "wrap": true,
+                            "fontType": "Default",
+                            "weight": "Bolder",
+                            "height": "stretch"
+                        },
+                        {
+                            "type": "TextBlock",
+                            "title": "Content",
+                            "text": "${task.taskContent}",
+                            "wrap": true,
+                            "spacing": "Small",
+                            "maxLines": 10
+                        }
+                    ],
+                    "spacing": "ExtraLarge"
+                }
+            ]
+        }
+    ],
+    "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+    "version": "1.4"
+}

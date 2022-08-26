@@ -1,0 +1,29 @@
+{
+    "type": "AdaptiveCard",
+    "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+    "version": "1.4",
+    "body": [
+        {
+            "type": "Container",
+            "style": "emphasis",
+            "items": [
+                {
+                    "type": "TextBlock",
+                    "weight": "Bolder",
+                    "text": "Goodbye~ Sign out successful.",
+                    "wrap": true,
+                    "horizontalAlignment": "Center",
+                    "fontType": "Monospace"
+                },
+                {
+                    "type": "TextBlock",
+                    "weight": "Bolder",
+                    "text": "Please refresh to Sign in again.",
+                    "wrap": true,
+                    "horizontalAlignment": "Center",
+                    "fontType": "Monospace"
+                }
+            ]
+        }
+    ]
+}

@@ -1,7 +1,7 @@
 import { CardFactory, TabResponse, TaskModuleTaskInfo, TurnContext } from "botbuilder";
 import * as ACData from "adaptivecards-templating";
-import { User } from "../dataModule/user";
-import { TodoItem } from "../dataModule/todoItem";
+import { User } from "../dataModels/user";
+import { TodoItem } from "../dataModels/todoItem";
 import {
     getTodoListData,
     getTodoItemData,

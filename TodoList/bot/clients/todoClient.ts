@@ -1,6 +1,6 @@
 import { Request, TYPES } from "tedious";
-import { User } from "../dataModule/user";
-import { TodoItem } from "../dataModule/todoItem";
+import { User } from "../dataModels/user";
+import { TodoItem } from "../dataModels/todoItem";
 import dbRun from "./databaseClient";
 import { getUserDetailsFromGraph } from "./graphClient";
 import { convertTimeString } from "../utils/utils";

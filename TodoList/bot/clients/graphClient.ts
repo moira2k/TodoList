@@ -1,7 +1,7 @@
 // Import polyfills for fetch required by msgraph-sdk-javascript.
 import "isomorphic-fetch";
 import { Client, ResponseType }from "@microsoft/microsoft-graph-client"
-import { User } from "../dataModule/user";
+import { User } from "../dataModels/user";
 
 
 export async function getUserDetailsFromGraph(aadObjectId: string, token: string): Promise<User> {

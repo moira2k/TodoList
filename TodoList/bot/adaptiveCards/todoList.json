@@ -103,11 +103,12 @@
                             ],
                             "selectAction": {
                                 "type": "Action.Submit",
-                                "tooltip": "click to show more about this to-do item",
+                                "tooltip": "See details",
                                 "data": {
                                     "action": "show",
                                     "id": "${$index}",
-                                    "taskId": "${taskId}"
+                                    "taskId": "${taskId}",
+                                    "pageNow": "${$root.pageNow}"
                                 }
                             },
                             "width": 7,
@@ -124,11 +125,12 @@
                             ],
                             "selectAction": {
                                 "type": "Action.Submit",
-                                "tooltip": "click to show more about this to-do item",
+                                "tooltip": "See details",
                                 "data": {
                                     "action": "show",
                                     "id": "${$index}",
-                                    "taskId": "${taskId}"
+                                    "taskId": "${taskId}",
+                                    "pageNow": "${$root.pageNow}"
                                 }
                             },
                             "width": 13,
@@ -150,11 +152,12 @@
                             ],
                             "selectAction": {
                                 "type": "Action.Submit",
-                                "tooltip": "click to show more about this to-do item",
+                                "tooltip": "See details",
                                 "data": {
                                     "action": "show",
                                     "id": "${$index}",
-                                    "taskId": "${taskId}"
+                                    "taskId": "${taskId}",
+                                    "pageNow": "${$root.pageNow}"
                                 }
                             },
                             "width": 60,
@@ -174,15 +177,68 @@
                             ],
                             "selectAction": {
                                 "type": "Action.Submit",
+                                "tooltip": "Delete",
                                 "data": {
                                     "action": "delete",
                                     "id": "${$index}",
-                                    "taskId": "${taskId}"
+                                    "taskId": "${taskId}",
+                                    "pageNow": "${$root.pageNow}"
                                 }
                             },
                             "width": 3
                         }
                     ]
+                }
+            ]
+        },
+        {
+            "type": "TextBlock",
+            "text": "Total Number: ${taskNum}",
+            "wrap": true,
+            "fontType": "Monospace",
+            "weight": "Bolder",
+            "isSubtle": true,
+            "separator": true,
+            "spacing": "ExtraLarge",
+            "horizontalAlignment": "Right"
+        },
+        {
+            "type": "ColumnSet",
+            "columns": [
+                {
+                    "type": "Column",
+                    "width": 3,
+                    "items": [
+                        {
+                            "type": "TextBlock",
+                            "text": "Page **${pageNow}** of ${pageNum}",
+                            "wrap": true,
+                            "horizontalAlignment": "Center"
+                        }
+                    ],
+                    "verticalContentAlignment": "Center"
+                },
+                {
+                    "type": "Column",
+                    "items": [
+                        {
+                            "type": "Input.Text",
+                            "value": "${pageNow}",
+                            "id": "jumpedpage",
+                            "isRequired": true,
+                            "regex": "^[1-9][0-9]*$",
+                            "errorMessage": "This requires a valid number !",
+                            "inlineAction": {
+                                "type": "Action.Submit",
+                                "title": "Go",
+                                "data": {
+                                    "action": "go"
+                                }
+                            }
+                        }
+                    ],
+                    "width": 2,
+                    "verticalContentAlignment": "Center"
                 }
             ]
         },
@@ -196,7 +252,7 @@
                         {
                             "type": "Action.ShowCard",
                             "title": "New Item",
-                            "tooltip": "create a to-do item",
+                            "tooltip": "Create a to-do item",
                             "card": {
                                 "type": "AdaptiveCard",
                                 "actions": [
@@ -204,11 +260,11 @@
                                         "type": "Action.Submit",
                                         "title": "Confirm",
                                         "data": {
-                                            "action": "add"
+                                            "action": "add",
+                                            "pageNow": "${pageNow}"
                                         }
                                     }
                                 ],
-                                "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
                                 "body": [
                                     {
                                         "type": "Input.Date",

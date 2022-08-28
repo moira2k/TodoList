@@ -7,11 +7,10 @@ import { convertTimeString } from "../utils/utils";
 
 
 export async function getTodoListData(aadObjectId: string): Promise<Array<TodoItem>> {
-    console.log("Reading Todo List From Azure SQL Database.");
     let todoList = new Array<TodoItem>();
 
     const query: string = `SELECT taskId, dueDate, currentStatus, taskContent, creatorId
-    FROM Todo.Tasks WHERE creatorId = @userId`;
+    FROM Todo.Tasks WHERE creatorId = @userId order by dueDate asc, taskId asc`;
     const request = new Request(query, (err) => {
         if (err) {
             throw new Error(err.message);
@@ -40,11 +39,11 @@ export async function getTodoListData(aadObjectId: string): Promise<Array<TodoIt
 }
 
 export async function getSharedTodoListData(aadObjectId: string, token: string): Promise<Array<TodoItem>> {
-    console.log("Reading Tasks Shared From Azure SQL Database.");
     let sharedTodoList = new Array<TodoItem>();
 
     const query: string = `SELECT Todo.Tasks.taskId, Todo.Tasks.dueDate, Todo.Tasks.currentStatus, Todo.Tasks.taskContent, Todo.Tasks.creatorId
-    FROM Todo.Tasks INNER JOIN (SELECT taskId FROM Todo.SharedItems WHERE userId = @userId) AS A ON Todo.Tasks.taskId = A.taskId`;
+    FROM Todo.Tasks INNER JOIN (SELECT taskId FROM Todo.SharedItems WHERE userId = @userId) AS A ON Todo.Tasks.taskId = A.taskId 
+    order by Todo.Tasks.dueDate asc, Todo.Tasks.taskId asc`;
     const request = new Request(query, (err) => {
         if (err) {
             throw new Error(err.message);
@@ -74,7 +73,6 @@ export async function getSharedTodoListData(aadObjectId: string, token: string):
 }
 
 export async function getTodoItemData(taskId: number, token: string, isViewer: boolean = false): Promise<TodoItem> {
-    console.log("Reading Todo Item From Azure SQL Database.");
     let todoItem: TodoItem;
 
     const query: string = `SELECT Task.taskId, Task.dueDate, Task.currentStatus, Task.taskContent, creatorId , A.userId AS viewerId

@@ -5,12 +5,10 @@
     "body": [
         {
             "type": "TextBlock",
-            "text": "${content}.",
+            "text": "${content}",
             "wrap": true,
             "size": "Large",
-            "color": "Accent",
-            "weight": "Bolder",
-            "fontType": "Monospace"
+            "weight": "Bolder"
         }
     ]
 }

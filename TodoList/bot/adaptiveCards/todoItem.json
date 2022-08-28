@@ -36,9 +36,10 @@
                             ],
                             "selectAction": {
                                 "type": "Action.Submit",
-                                "tooltip": "click to return",
+                                "tooltip": "Go back",
                                 "data": {
-                                    "action": "return"
+                                    "action": "return",
+                                    "pageNow": "${pageNow}"
                                 }
                             },
                             "width": "auto"
@@ -57,9 +58,10 @@
                             ],
                             "selectAction": {
                                 "type": "Action.Submit",
-                                "tooltip": "click to return",
+                                "tooltip": "Go back",
                                 "data": {
-                                    "action": "return"
+                                    "action": "return",
+                                    "pageNow": "${pageNow}"
                                 }
                             },
                             "width": "130px",
@@ -188,10 +190,11 @@
                         {
                             "type": "Action.Submit",
                             "title": "Update",
-                            "tooltip": "click to update the to-do item",
+                            "tooltip": "Submit changes",
                             "data": {
                                 "action": "edit",
-                                "taskId": "${task.taskId}"
+                                "taskId": "${task.taskId}",
+                                "pageNow": "${pageNow}"
                             }
                         }
                     ],
@@ -228,11 +231,25 @@
                     "actions": [
                         {
                             "type": "Action.Submit",
+                            "title": "Show Viewers",
+                            "tooltip": "See viewers",
+                            "data": {
+                                "action": "showViewers",
+                                "taskId": "${task.taskId}",
+                                "pageNow": "${pageNow}",
+                                "msteams": {
+                                    "type": "task/fetch"
+                                }
+                            }
+                        },
+                        {
+                            "type": "Action.Submit",
                             "title": "Share",
-                            "tooltip": "click to share the to-do item with other peopler",
+                            "tooltip": "Share with others",
                             "data": {
                                 "action": "share",
-                                "taskId": "${task.taskId}"
+                                "taskId": "${task.taskId}",
+                                "pageNow": "${pageNow}"
                             }
                         }
                     ],

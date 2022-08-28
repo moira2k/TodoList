@@ -4,6 +4,13 @@
     "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
     "body": [
         {
+            "type": "TextBlock",
+            "text": "This task has been shared with as follow:",
+            "wrap": true,
+            "size": "Large",
+            "weight": "Bolder"
+        },
+        {
             "$data": "${task.viewers}",
             "type": "Container",
             "items": [
@@ -14,14 +21,12 @@
                             "type": "Column",
                             "items": [
                                 {
-                                    "type": "Image",
-                                    "url": "${profileImage}",
-                                    "width": "30px",
-                                    "style": "Person",
-                                    "horizontalAlignment": "Center"
+                                    "type": "TextBlock",
+                                    "text": "${userName}",
+                                    "wrap": true
                                 }
                             ],
-                            "width": 2,
+                            "width": 6,
                             "verticalContentAlignment": "Center"
                         },
                         {
@@ -29,11 +34,11 @@
                             "items": [
                                 {
                                     "type": "TextBlock",
-                                    "text": "${userName}",
+                                    "text": "**email:** ${mail}",
                                     "wrap": true
                                 }
                             ],
-                            "width": 8,
+                            "width": 16,
                             "verticalContentAlignment": "Center"
                         }
                     ]

@@ -46,7 +46,7 @@
                                     "isSubtle": true
                                 }
                             ],
-                            "width": 8
+                            "width": 15
                         },
                         {
                             "type": "Column",
@@ -61,8 +61,7 @@
                                     "isSubtle": true
                                 }
                             ],
-                            "spacing": "Small",
-                            "width": 15
+                            "width": 16
                         },
                         {
                             "type": "Column",
@@ -77,8 +76,7 @@
                                     "isSubtle": true
                                 }
                             ],
-                            "width": 70,
-                            "spacing": "Small"
+                            "width": 65
                         }
                     ]
                 }
@@ -97,7 +95,7 @@
                             "items": [
                                 {
                                     "type": "TextBlock",
-                                    "text": "${formatDateTime(dueDate, 'MM-dd')}",
+                                    "text": "${formatDateTime(dueDate, 'YYYY-MM-dd')}",
                                     "wrap": true
                                 }
                             ],
@@ -111,7 +109,7 @@
                                     "pageNow": "${$root.pageNow}"
                                 }
                             },
-                            "width": 7,
+                            "width": 15,
                             "verticalContentAlignment": "Center"
                         },
                         {
@@ -133,12 +131,11 @@
                                     "pageNow": "${$root.pageNow}"
                                 }
                             },
-                            "width": 13,
+                            "width": 16,
                             "verticalContentAlignment": "Center"
                         },
                         {
                             "type": "Column",
-                            "spacing": "Large",
                             "items": [
                                 {
                                     "type": "TextBlock",
@@ -160,7 +157,7 @@
                                     "pageNow": "${$root.pageNow}"
                                 }
                             },
-                            "width": 60,
+                            "width": 61,
                             "verticalContentAlignment": "Center"
                         },
                         {
@@ -278,6 +275,7 @@
                                         "placeholder": "What will you do?",
                                         "id": "addContent",
                                         "label": "Content",
+                                        "maxLength": 256,
                                         "isMultiline": true,
                                         "isRequired": true
                                     }

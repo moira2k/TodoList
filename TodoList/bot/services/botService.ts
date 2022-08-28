@@ -105,7 +105,7 @@ export async function createMyTodosResponse(context: TurnContext, pageNow: numbe
         myTodosResp.tab.value.cards.push({"card": todoItemPayload});
     } else {
         const todoListData = await getTodoListData(user.aadObjectId);
-        const pageNum: number = Math.ceil(todoListData.length / 10);
+        const pageNum: number = Math.max(1, Math.ceil(todoListData.length / 10));
         pageNow = Math.min(pageNow, pageNum);
         // Create a Template instance from the template payload
         const todoListTemplate = new ACData.Template(rawTodoListCard);
@@ -153,7 +153,7 @@ export async function createSharedwithMeResponse(context: TurnContext, pageNow: 
     });
 
     const sharedTodoListData = await getSharedTodoListData(user.aadObjectId, token);
-    const pageNum: number = Math.ceil(sharedTodoListData.length / 10);
+    const pageNum: number = Math.max(1, Math.ceil(sharedTodoListData.length / 10));
     pageNow = Math.min(pageNow, pageNum);
 
     const sharedTodoListTemplate = new ACData.Template(rawSharedTodoListCard);

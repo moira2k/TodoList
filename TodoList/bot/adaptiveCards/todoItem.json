@@ -182,6 +182,7 @@
                     "type": "Input.Text",
                     "id": "taskContent",
                     "value": "${task.taskContent}",
+                    "maxLength": 256,
                     "isMultiline": true
                 },
                 {

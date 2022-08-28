@@ -34,6 +34,7 @@
             "value": "${content}",
             "placeholder": "Please input the content of your new task.",
             "id": "addContent",
+            "maxLength": 256,
             "label": "Content",
             "isMultiline": true,
             "isRequired": true

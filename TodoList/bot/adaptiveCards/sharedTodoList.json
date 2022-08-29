@@ -41,65 +41,63 @@
                     "columns": [
                         {
                             "type": "Column",
+                            "spacing": "None",
                             "items": [
                                 {
                                     "type": "TextBlock",
                                     "weight": "Bolder",
                                     "text": "**DATE**",
-                                    "horizontalAlignment": "Left",
                                     "fontType": "Monospace",
                                     "size": "Large",
                                     "isSubtle": true
                                 }
                             ],
-                            "width": 8
+                            "width": 12
                         },
                         {
                             "type": "Column",
+                            "spacing": "None",
                             "items": [
                                 {
                                     "type": "TextBlock",
                                     "text": "**STATUS**",
-                                    "horizontalAlignment": "Left",
                                     "weight": "Bolder",
                                     "fontType": "Monospace",
                                     "size": "Large",
                                     "isSubtle": true
                                 }
                             ],
-                            "spacing": "Small",
-                            "width": 14
+                            "width": 13
                         },
                         {
                             "type": "Column",
+                            "spacing": "None",
                             "items": [
                                 {
                                     "type": "TextBlock",
                                     "weight": "Bolder",
                                     "text": "**CONTENT**",
-                                    "horizontalAlignment": "Left",
                                     "fontType": "Monospace",
                                     "size": "Large",
                                     "isSubtle": true
                                 }
                             ],
-                            "width": 56,
-                            "spacing": "Small"
+                            "width": 55
                         },
                         {
                             "type": "Column",
+                            "spacing": "None",
                             "items": [
                                 {
                                     "type": "TextBlock",
                                     "weight": "Bolder",
                                     "text": "**OWNER**",
-                                    "horizontalAlignment": "Left",
                                     "fontType": "Monospace",
                                     "size": "Large",
                                     "isSubtle": true
                                 }
                             ],
-                            "width": 18
+                            "width": 14
                         }
                     ]
                 }
@@ -115,24 +113,25 @@
                     "columns": [
                         {
                             "type": "Column",
+                            "spacing": "None",
                             "items": [
                                 {
                                     "type": "TextBlock",
-                                    "text": "${formatDateTime(dueDate, 'MM-dd')}",
+                                    "text": "${formatDateTime(dueDate, 'YYYY-MM-dd')}",
                                     "wrap": true
                                 }
                             ],
-                            "width": 8,
+                            "width": 12,
                             "verticalContentAlignment": "Center"
                         },
                         {
                             "type": "Column",
+                            "spacing": "None",
                             "items": [
                                 {
                                     "type": "TextBlock",
                                     "text": "${CurrentStatus}",
-                                    "wrap": true,
-                                    "horizontalAlignment": "Left"
+                                    "wrap": true
                                 }
                             ],
                             "width": 13,
@@ -140,24 +139,23 @@
                         },
                         {
                             "type": "Column",
-                            "spacing": "Large",
+                            "spacing": "None",
                             "items": [
                                 {
                                     "type": "TextBlock",
                                     "text": "${taskContent}",
                                     "wrap": true,
-                                    "horizontalAlignment": "Left",
                                     "color": "Accent",
                                     "maxLines": 10,
                                     "weight": "Bolder"
                                 }
                             ],
-                            "width": 60,
-                            "verticalContentAlignment": "Center"
+                            "verticalContentAlignment": "Center",
+                            "width": 55
                         },
                         {
                             "type": "Column",
-                            "width": "auto",
+                            "spacing": "None",
                             "items": [
                                 {
                                     "type": "Image",
@@ -166,8 +164,8 @@
                                     "width": "40px"
                                 }
                             ],
-                            "spacing": "Small",
-                            "verticalContentAlignment": "Center"
+                            "verticalContentAlignment": "Center",
+                            "width": "auto"
                         },
                         {
                             "type": "Column",
@@ -181,30 +179,59 @@
                             "spacing": "Small",
                             "verticalContentAlignment": "Center",
                             "width": 10
-                        },
-                        {
-                            "type": "Column",
-                            "spacing": "None",
-                            "verticalContentAlignment": "Center",
-                            "items": [
-                                {
-                                    "type": "Image",
-                                    "url": "https://todolist.blob.core.windows.net/adaptive-cards/ellipsis.png?sp=r&st=2022-08-18T10:29:48Z&se=2022-11-30T18:29:48Z&spr=https&sv=2021-06-08&sr=c&sig=%2BYqszohKyR55ozKNZuKWYcn8Movulz%2Fx6L4mMvWffKs%3D",
-                                    "width": "15px",
-                                    "horizontalAlignment": "Center"
-                                }
-                            ],
-                            "selectAction": {
-                                "type": "Action.Submit",
-                                "data": {
-                                    "action": "show",
-                                    "id": "${$index}",
-                                    "taskId": "${taskId}"
-                                }
-                            },
-                            "width": 3
                         }
                     ]
+                }
+            ]
+        },
+        {
+            "type": "TextBlock",
+            "text": "Total Number: ${taskNum}",
+            "wrap": true,
+            "fontType": "Monospace",
+            "weight": "Bolder",
+            "isSubtle": true,
+            "separator": true,
+            "spacing": "ExtraLarge",
+            "horizontalAlignment": "Right"
+        },
+        {
+            "type": "ColumnSet",
+            "columns": [
+                {
+                    "type": "Column",
+                    "width": 3,
+                    "items": [
+                        {
+                            "type": "TextBlock",
+                            "text": "Page **${pageNow}** of ${pageNum}",
+                            "wrap": true,
+                            "horizontalAlignment": "Center"
+                        }
+                    ],
+                    "verticalContentAlignment": "Center"
+                },
+                {
+                    "type": "Column",
+                    "items": [
+                        {
+                            "type": "Input.Text",
+                            "value": "${pageNow}",
+                            "id": "jumpedpage",
+                            "isRequired": true,
+                            "regex": "^[1-9][0-9]*$",
+                            "errorMessage": "This requires a valid number !",
+                            "inlineAction": {
+                                "type": "Action.Submit",
+                                "title": "Go",
+                                "data": {
+                                    "action": "go"
+                                }
+                            }
+                        }
+                    ],
+                    "width": 2,
+                    "verticalContentAlignment": "Center"
                 }
             ]
         }

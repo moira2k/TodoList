@@ -14,6 +14,7 @@ import {
     TaskModuleTaskInfo,
     MessagingExtensionAction, 
     MessagingExtensionActionResponse,
+    InvokeResponse,
 } from "botbuilder-core";
 import {
     createAuthResponse,
@@ -22,7 +23,8 @@ import {
     createSharedwithMeResponse,
     createNewItemTaskInfo,
     createActionStatusTaskInfo,
-    handleTodoListAction,
+    handleMyTodosAction,
+    handleSharedwithMeAction,
     handleNewItemAction,
     createTabFetchTaskInfo
 } from "./services/botService";
@@ -35,13 +37,11 @@ export class TeamsBot extends TeamsActivityHandler {
     }
 
     checkFectchTodoItem(action: string): boolean {
-        const actions = ["show", "share"];
+        const actions = ["show", "share", "edit"];
         return actions.includes(action) ? true : false;
     }
 
-    // Fetch Adaptive Card to render to a tab.
-    async handleTeamsTabFetch(context: TurnContext, tabRequest: TabRequest): Promise<TabResponse> {
-        console.log("Trying To Fetch Tab Content");
+    async getUserToken(context: TurnContext) {
         // When the Bot Service Auth flow completes, context will contain a magic code used for verification.
         const magicCode =
         context.activity.value && context.activity.value.state
@@ -53,6 +53,15 @@ export class TeamsBot extends TeamsActivityHandler {
             process.env.ConnectionName,
             magicCode
         );
+        return tokenResponse;
+    }
+
+    // Fetch Adaptive Card to render to a tab.
+    async handleTeamsTabFetch(context: TurnContext, tabRequest: TabRequest): Promise<TabResponse> {
+        console.log("Trying To Fetch Tab Content.");
+
+        const tokenResponse = await this.getUserToken(context);
+
         if (!tokenResponse || !tokenResponse.token) {
             // Token is not available, hence we need to send back the auth response
             const signInLink = await (<BotFrameworkAdapter> context.adapter).getSignInLink(
@@ -67,11 +76,11 @@ export class TeamsBot extends TeamsActivityHandler {
         
         switch (tabRequest.tabContext.tabEntityId) {
             case "MyTodos": {
-                tabResp = await createMyTodosResponse(context, false);
+                tabResp = await createMyTodosResponse(context, 1, false);
                 break;
             }
             case "SharedwithMe": {
-                tabResp = await createSharedwithMeResponse(context, tokenResponse.token, false);
+                tabResp = await createSharedwithMeResponse(context, 1, tokenResponse.token);
                 break;
             }
         }
@@ -81,18 +90,9 @@ export class TeamsBot extends TeamsActivityHandler {
 
     // Handle submits from Adaptive Card.
     async handleTeamsTabSubmit(context: TurnContext, tabSubmit: TabSubmit): Promise<TabResponse> {
-        console.log("Trying To Submit Tab Content");
+        console.log("Trying To Submit Tab Content.");
 
-        // authentication
-        const magicCode =
-        context.activity.value && context.activity.value.state
-            ? context.activity.value.state
-            : "";
-        const tokenResponse = await (<BotFrameworkAdapter> context.adapter).getUserToken(
-            context,
-            process.env.ConnectionName,
-            magicCode
-        );
+        const tokenResponse = await this.getUserToken(context);
 
         let tabResp: TabResponse;
         
@@ -104,20 +104,18 @@ export class TeamsBot extends TeamsActivityHandler {
 
         switch (tabSubmit.tabContext.tabEntityId) {
             case "MyTodos": {
-                await handleTodoListAction(context.activity.from.aadObjectId, tabSubmit.data);
+                const pageNow: number = await handleMyTodosAction(context.activity.from.aadObjectId, tabSubmit.data);
                 tabResp = await createMyTodosResponse(
                     context,
+                    pageNow,
                     this.checkFectchTodoItem(<string> tabSubmit.data.action),
                     <number> tabSubmit.data.taskId,
                     tokenResponse.token);
                 break;
             }
             case "SharedwithMe": {
-                tabResp = await createSharedwithMeResponse(
-                    context,
-                    tokenResponse.token,
-                    this.checkFectchTodoItem(<string> tabSubmit.data.action),
-                    <number> tabSubmit.data.taskId);
+                const pageNow: number = handleSharedwithMeAction(tabSubmit.data);
+                tabResp = await createSharedwithMeResponse(context, pageNow, tokenResponse.token);
                 break;
             }
         }
@@ -127,7 +125,7 @@ export class TeamsBot extends TeamsActivityHandler {
 
     // Message extension Code
     async handleTeamsMessagingExtensionFetchTask(context: TurnContext, action: MessagingExtensionAction): Promise<MessagingExtensionActionResponse> {
-        console.log("Trying To Fetch Task Module From Messaging Extension");
+        console.log("Trying To Fetch Task Module From Messaging Extension.");
 
         const MEActionResp: MessagingExtensionActionResponse = {
             task: {
@@ -152,7 +150,7 @@ export class TeamsBot extends TeamsActivityHandler {
 
     // Handle submits from Messaging Extension.
     async handleTeamsMessagingExtensionSubmitAction(context: TurnContext, action: MessagingExtensionAction): Promise<MessagingExtensionActionResponse> {
-        console.log("Trying To Submit Task Module From Messaging Extension");
+        console.log("Trying To Submit Task Module From Messaging Extension.");
 
         const MEActionResp: MessagingExtensionActionResponse = {
             task: {
@@ -168,7 +166,7 @@ export class TeamsBot extends TeamsActivityHandler {
                 var content: string;
                 try {
                     await handleNewItemAction(context.activity.from.aadObjectId, action.data);
-                    content = "Success! Please check \"My Todos\" Tab";
+                    content = "Success! Please go back to \"My Todos\" Tab.";
                 } catch (error) {
                     content = "Fail. Please check and have a retry.";
                 }
@@ -184,7 +182,7 @@ export class TeamsBot extends TeamsActivityHandler {
 
     // Fetch Task Module From Adaptive Cards Tab
     async handleTeamsTaskModuleFetch(context: TurnContext, taskModuleRequest: TaskModuleRequest): Promise<TaskModuleResponse> {
-        console.log("Trying To Fetch Task Module From Adaptive Cards Tab");
+        console.log("Trying To Fetch Task Module From Adaptive Cards Tab.");
 
         const taskModuleResp: TaskModuleResponse = {
             task: {
@@ -193,14 +191,16 @@ export class TeamsBot extends TeamsActivityHandler {
             },
         };
 
+        const tokenResponse = await this.getUserToken(context);
+
         let taskInfo: TaskModuleTaskInfo;
 
         switch (taskModuleRequest.tabContext.tabEntityId) {
             case "MyTodos": {
-                taskInfo = createTabFetchTaskInfo(taskModuleRequest.data);
+                taskInfo = await createTabFetchTaskInfo(taskModuleRequest.data, tokenResponse.token);
+                break;
             }
         }
-
         taskModuleResp.task.value = taskInfo;
         
         return taskModuleResp;
@@ -208,7 +208,7 @@ export class TeamsBot extends TeamsActivityHandler {
 
     // Handle Task Module From Adaptive Cards Tab
     async handleTeamsTaskModuleSubmit(context: TurnContext, taskModuleRequest: TaskModuleRequest): Promise<TaskModuleResponse> {
-        console.log("Trying To Submit Task Module From Adaptive Cards Tab");
+        console.log("Trying To Submit Task Module From Adaptive Cards Tab.");
 
         const taskModuleResp: TaskModuleResponse = {
             task: {
@@ -224,7 +224,7 @@ export class TeamsBot extends TeamsActivityHandler {
                 var content: string;
                 try {
                     await handleNewItemAction(context.activity.from.aadObjectId, taskModuleRequest.data);
-                    content = "Success! Please refresh \"My Todos\" Tab";
+                    content = "Success! Please refresh \"My Todos\" Tab.";
                 } catch (error) {
                     content = "Fail. Please check and have a retry.";
                 }
@@ -232,9 +232,8 @@ export class TeamsBot extends TeamsActivityHandler {
                 break;
             }
         }
-
         taskModuleResp.task.value = taskInfo;
-        
+
         return taskModuleResp;
     }
 }

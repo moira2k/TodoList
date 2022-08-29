@@ -12,6 +12,7 @@ export async function getUserDetailsFromGraph(aadObjectId: string, token: string
     const user: User = {
         userName: "",
         aadObjectId: aadObjectId,
+        mail: "",
         profileImage: ""
     };
     
@@ -26,6 +27,7 @@ export async function getUserDetailsFromGraph(aadObjectId: string, token: string
         const profile = await graphClient.api(`/users/${aadObjectId}`).get();
         user.userName = profile.displayName;
         user.aadObjectId = profile.id;
+        user.mail = profile.mail;
 
         const photoBinary = await graphClient.api(`/users/${aadObjectId}/photos/48x48/$value`).responseType(ResponseType.ARRAYBUFFER).get();
         const buffer = Buffer.from(photoBinary);

@@ -11,8 +11,7 @@
             "sql"
         ],
         "capabilities": [
-            "Bot",
-            "BotSSO"
+            "Bot"
         ],
         "activeResourcePlugins": [
             "fx-resource-identity",

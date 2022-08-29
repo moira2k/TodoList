@@ -13,12 +13,12 @@
     "fx-resource-appstudio": {
         "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
         "teamsAppId": "600ec5f4-e4ff-4b6e-901d-457be712cd2a",
-        "teamsAppUpdatedAt": 1660816775440
+        "teamsAppUpdatedAt": 1661697436895
     },
     "fx-resource-identity": {
         "identityName": "todolistclou59d2ae",
         "identityResourceId": "/subscriptions/1756abc0-3554-4341-8d6a-46674962ea19/resourceGroups/todolist-cloudTest-rg/providers/Microsoft.ManagedIdentity/userAssignedIdentities/todolistclou59d2ae",
-        "identityClientId": "841bd131-16aa-42ee-8e4d-a94ed53775cd"
+        "identityClientId": "dd977533-d9ce-4af7-b240-52190fd96d8f"
     },
     "fx-resource-azure-sql": {
         "admin": "azureuser",

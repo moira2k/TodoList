@@ -9,26 +9,15 @@
                     "style": "emphasis",
                     "items": [
                         {
-                            "type": "ColumnSet",
-                            "columns": [
-                                {
-                                    "type": "Column",
-                                    "items": [
-                                        {
-                                            "type": "TextBlock",
-                                            "color": "Accent",
-                                            "weight": "Bolder",
-                                            "text": "-- *Keep early hours and enjoy yourself.*",
-                                            "style": "heading",
-                                            "fontType": "Monospace",
-                                            "isSubtle": true,
-                                            "size": "Medium",
-                                            "horizontalAlignment": "Right"
-                                        }
-                                    ],
-                                    "width": "stretch"
-                                }
-                            ]
+                            "type": "TextBlock",
+                            "color": "Accent",
+                            "weight": "Bolder",
+                            "text": "-- *Keep early hours and enjoy yourself.*",
+                            "style": "heading",
+                            "fontType": "Monospace",
+                            "isSubtle": true,
+                            "horizontalAlignment": "Right",
+                            "size": "Medium"
                         }
                     ],
                     "bleed": true
@@ -38,9 +27,7 @@
                     "columns": [
                         {
                             "type": "Column",
-                            "width": 50,
-                            "spacing": "None",
-                            "verticalContentAlignment": "Center",
+                            "width": 10,
                             "items": [
                                 {
                                     "type": "RichTextBlock",
@@ -102,8 +89,7 @@
                                 {
                                     "type": "Image",
                                     "url": "https://todolist.blob.core.windows.net/adaptive-cards/exit.png?sp=r&st=2022-08-18T10:29:48Z&se=2022-11-30T18:29:48Z&spr=https&sv=2021-06-08&sr=c&sig=%2BYqszohKyR55ozKNZuKWYcn8Movulz%2Fx6L4mMvWffKs%3D",
-                                    "width": "35px",
-                                    "horizontalAlignment": "Center"
+                                    "width": "35px"
                                 }
                             ],
                             "selectAction": {
@@ -113,13 +99,12 @@
                                     "action": "signout"
                                 }
                             },
-                            "width": 5
+                            "width": 1
                         }
                     ],
                     "spacing": "None"
                 }
-            ],
-            "spacing": "None"
+            ]
         }
     ],
     "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",

@@ -2,185 +2,167 @@
     "type": "AdaptiveCard",
     "body": [
         {
-            "type": "Container",
-            "items": [
-                {
-                    "type": "ColumnSet",
-                    "columns": [
-                        {
-                            "type": "Column",
-                            "items": [
-                                {
-                                    "type": "TextBlock",
-                                    "size": "ExtraLarge",
-                                    "text": "**TO-DO LIST**",
-                                    "wrap": true,
-                                    "style": "heading"
-                                },
-                                {
-                                    "type": "TextBlock",
-                                    "size": "Large",
-                                    "text": "**Shared with me**",
-                                    "wrap": true,
-                                    "color": "Attention"
-                                }
-                            ],
-                            "width": "stretch"
-                        }
-                    ]
-                }
-            ]
+            "type": "TextBlock",
+            "size": "ExtraLarge",
+            "text": "**TO-DO LIST**",
+            "wrap": true,
+            "style": "heading"
         },
         {
-            "type": "Container",
-            "spacing": "Large",
+            "type": "TextBlock",
+            "text": "***Shared with me***",
+            "wrap": true,
+            "color": "Attention",
+            "size": "Large",
+            "horizontalAlignment": "Left",
+            "spacing": "None"
+        },
+        {
+            "type": "ColumnSet",
             "style": "emphasis",
-            "items": [
+            "bleed": true,
+            "columns": [
                 {
-                    "type": "ColumnSet",
-                    "columns": [
+                    "type": "Column",
+                    "items": [
                         {
-                            "type": "Column",
-                            "spacing": "None",
-                            "items": [
-                                {
-                                    "type": "TextBlock",
-                                    "weight": "Bolder",
-                                    "text": "**DATE**",
-                                    "fontType": "Monospace",
-                                    "size": "Large",
-                                    "isSubtle": true
-                                }
-                            ],
-                            "width": 12
-                        },
-                        {
-                            "type": "Column",
-                            "spacing": "None",
-                            "items": [
-                                {
-                                    "type": "TextBlock",
-                                    "text": "**STATUS**",
-                                    "weight": "Bolder",
-                                    "fontType": "Monospace",
-                                    "size": "Large",
-                                    "isSubtle": true
-                                }
-                            ],
-                            "width": 13
-                        },
-                        {
-                            "type": "Column",
-                            "spacing": "None",
-                            "items": [
-                                {
-                                    "type": "TextBlock",
-                                    "weight": "Bolder",
-                                    "text": "**CONTENT**",
-                                    "fontType": "Monospace",
-                                    "size": "Large",
-                                    "isSubtle": true
-                                }
-                            ],
-                            "width": 55
-                        },
-                        {
-                            "type": "Column",
-                            "spacing": "None",
-                            "items": [
-                                {
-                                    "type": "TextBlock",
-                                    "weight": "Bolder",
-                                    "text": "**OWNER**",
-                                    "fontType": "Monospace",
-                                    "size": "Large",
-                                    "isSubtle": true
-                                }
-                            ],
-                            "width": 14
+                            "type": "TextBlock",
+                            "weight": "Bolder",
+                            "text": "**DATE**",
+                            "fontType": "Monospace",
+                            "size": "Large",
+                            "isSubtle": true
                         }
-                    ]
+                    ],
+                    "width": 10
+                },
+                {
+                    "type": "Column",
+                    "items": [
+                        {
+                            "type": "TextBlock",
+                            "text": "**STATUS**",
+                            "weight": "Bolder",
+                            "fontType": "Monospace",
+                            "size": "Large",
+                            "isSubtle": true
+                        }
+                    ],
+                    "width": 13
+                },
+                {
+                    "type": "Column",
+                    "items": [
+                        {
+                            "type": "TextBlock",
+                            "weight": "Bolder",
+                            "text": "**CONTENT**",
+                            "fontType": "Monospace",
+                            "size": "Large",
+                            "isSubtle": true
+                        }
+                    ],
+                    "width": 50
+                },
+                {
+                    "type": "Column",
+                    "items": [
+                        {
+                            "type": "TextBlock",
+                            "weight": "Bolder",
+                            "text": "**OWNER**",
+                            "fontType": "Monospace",
+                            "size": "Large",
+                            "isSubtle": true
+                        }
+                    ],
+                    "width": 25
                 }
             ],
-            "bleed": true
+            "spacing": "ExtraLarge"
         },
         {
+            "type": "ColumnSet",
             "$data": "${tasks}",
-            "type": "Container",
-            "items": [
+            "columns": [
                 {
-                    "type": "ColumnSet",
-                    "columns": [
+                    "type": "Column",
+                    "items": [
                         {
-                            "type": "Column",
-                            "spacing": "None",
-                            "items": [
-                                {
-                                    "type": "TextBlock",
-                                    "text": "${formatDateTime(dueDate, 'YYYY-MM-dd')}",
-                                    "wrap": true
-                                }
-                            ],
-                            "width": 12,
-                            "verticalContentAlignment": "Center"
-                        },
-                        {
-                            "type": "Column",
-                            "spacing": "None",
-                            "items": [
-                                {
-                                    "type": "TextBlock",
-                                    "text": "${CurrentStatus}",
-                                    "wrap": true
-                                }
-                            ],
-                            "width": 13,
-                            "verticalContentAlignment": "Center"
-                        },
-                        {
-                            "type": "Column",
-                            "spacing": "None",
-                            "items": [
-                                {
-                                    "type": "TextBlock",
-                                    "text": "${taskContent}",
-                                    "wrap": true,
-                                    "color": "Accent",
-                                    "maxLines": 10,
-                                    "weight": "Bolder"
-                                }
-                            ],
-                            "verticalContentAlignment": "Center",
-                            "width": 55
-                        },
-                        {
-                            "type": "Column",
-                            "spacing": "None",
-                            "items": [
-                                {
-                                    "type": "Image",
-                                    "style": "Person",
-                                    "url": "${creator.profileImage}",
-                                    "width": "40px"
-                                }
-                            ],
-                            "verticalContentAlignment": "Center",
-                            "width": "auto"
-                        },
-                        {
-                            "type": "Column",
-                            "items": [
-                                {
-                                    "type": "TextBlock",
-                                    "text": "${creator.userName}",
-                                    "wrap": true
-                                }
-                            ],
-                            "spacing": "Small",
-                            "verticalContentAlignment": "Center",
-                            "width": 10
+                            "type": "TextBlock",
+                            "text": "${formatDateTime(dueDate, 'YYYY-MM-dd')}",
+                            "wrap": true
                         }
-                    ]
+                    ],
+                    "width": 10,
+                    "verticalContentAlignment": "Center"
+                },
+                {
+                    "type": "Column",
+                    "items": [
+                        {
+                            "type": "TextBlock",
+                            "text": "${CurrentStatus}",
+                            "wrap": true
+                        }
+                    ],
+                    "width": 13,
+                    "verticalContentAlignment": "Center"
+                },
+                {
+                    "type": "Column",
+                    "items": [
+                        {
+                            "type": "TextBlock",
+                            "text": "${taskContent}",
+                            "wrap": true,
+                            "color": "Accent",
+                            "maxLines": 10,
+                            "weight": "Bolder"
+                        }
+                    ],
+                    "verticalContentAlignment": "Center",
+                    "width": 50
+                },
+                {
+                    "type": "Column",
+                    "items": [
+                        {
+                            "type": "Container",
+                            "items": [
+                                {
+                                    "type": "ColumnSet",
+                                    "columns": [
+                                        {
+                                            "type": "Column",
+                                            "items": [
+                                                {
+                                                    "type": "Image",
+                                                    "style": "Person",
+                                                    "url": "${creator.profileImage}",
+                                                    "width": "45px"
+                                                }
+                                            ],
+                                            "width": "auto"
+                                        },
+                                        {
+                                            "type": "Column",
+                                            "items": [
+                                                {
+                                                    "type": "TextBlock",
+                                                    "text": "${creator.userName}",
+                                                    "wrap": true
+                                                }
+                                            ],
+                                            "width": "stretch"
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    ],
+                    "width": 25,
+                    "verticalContentAlignment": "Center"
                 }
             ]
         },

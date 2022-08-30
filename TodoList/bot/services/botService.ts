@@ -122,7 +122,7 @@ export async function createMyTodosResponse(context: TurnContext, pageNow: numbe
         });
         myTodosResp.tab.value.cards.push({"card": todoListPayload});
     }
-
+    console.log("myTodosResp", JSON.stringify(myTodosResp, null, 2).length);
     return myTodosResp;
 }
 
@@ -169,7 +169,7 @@ export async function createSharedwithMeResponse(context: TurnContext, pageNow: 
         {"card": headingPayload}, 
         {"card": sharedTodoListPayload},
     ];
-
+    console.log("sharedwithMeResp", JSON.stringify(sharedwithMeResp, null, 2).length);
     return sharedwithMeResp;
 }
 
@@ -246,6 +246,7 @@ export async function createTaskViewersTaskInfo(taskId: number, token: string): 
         return createActionStatusTaskInfo("No viewer now.");
     }
 }
+
 // handle the action
 export async function handleNewItemAction(aadObjectId: string, data: any): Promise<void> {
     console.log("Handling the Action Of Task Module.");

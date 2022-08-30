@@ -225,7 +225,7 @@
                     },
                     "id": "sharedUsers",
                     "isMultiSelect": true,
-                    "value": "${task.peoplePickerValue}"
+                    "value": "293e2e1f-8167-44bf-b03f-74a48abf4ad3"
                 },
                 {
                     "type": "ActionSet",

@@ -165,7 +165,18 @@
                         }
                     ]
                 }
-            ]
+            ],
+            "selectAction":{
+                "type": "Action.Submit",
+                "tooltip": "See details",
+                "data": {
+                    "action": "showMess",
+                    "taskId": "${taskId}",
+                    "msteams": {
+                        "type": "task/fetch"
+                    }
+                }
+            }
         },
         {
             "type": "TextBlock",

@@ -23,6 +23,8 @@ import rawSignOutCard from "../adaptiveCards/signOut.json"
 import rawNewItemCard from "../adaptiveCards/newItem.json"
 import rawActionStatusCard from "../adaptiveCards/actionStatus.json"
 import rawTaskViewersCard from "../adaptiveCards/taskViewers.json"
+import rawTodoMessCard from "../adaptiveCards/todoMess.json"
+
 
 // Tab Response
 export function createAuthResponse(signInLink: string) {
@@ -173,13 +175,26 @@ export async function createSharedwithMeResponse(context: TurnContext, pageNow: 
 }
 
 // Task Module Task Info
-export async function createTabFetchTaskInfo(data: any, token: string): Promise<TaskModuleTaskInfo> {
-    console.log("Create TabFetchTaskInfo response.");
+export async function createMyTodosFetchTaskInfo(data: any, token: string): Promise<TaskModuleTaskInfo> {
+    console.log("Create MyTodos Fetch TaskInfo response.");
 
     let taskInfo: TaskModuleTaskInfo;
     switch (data.action) {
         case "showViewers": {
             taskInfo = await createTaskViewersTaskInfo(data.taskId, token);
+            break;
+        }
+    }
+    return taskInfo;
+}
+
+export async function createSharedwithMeFetchTaskInfo(data: any, token: string): Promise<TaskModuleTaskInfo> {
+    console.log("Create SharedwithMe Fetch TaskInfo response.");
+
+    let taskInfo: TaskModuleTaskInfo;
+    switch (data.action) {
+        case "showMess": {
+            taskInfo = await createTodoMessTaskInfo(data.taskId, token);
             break;
         }
     }
@@ -226,7 +241,7 @@ export function createActionStatusTaskInfo(content: string = ""): TaskModuleTask
 }
 
 export async function createTaskViewersTaskInfo(taskId: number, token: string): Promise<TaskModuleTaskInfo> {
-    console.log("Create ActionStatus TaskInfo response.");
+    console.log("Create TaskViewers TaskInfo response.");
 
     const taskInfo: TaskModuleTaskInfo = {
         width: 400,
@@ -244,6 +259,25 @@ export async function createTaskViewersTaskInfo(taskId: number, token: string): 
     } else {
         return createActionStatusTaskInfo("No viewer now.");
     }
+}
+
+export async function createTodoMessTaskInfo(taskId: number, token: string): Promise<TaskModuleTaskInfo> {
+    console.log("Create TodoMess TaskInfo response.");
+
+    const taskInfo: TaskModuleTaskInfo = {
+        width: 400,
+    }
+
+    const todoItemData = await getTodoItemData(taskId, token, false);
+
+    const todoMessTemplate = new ACData.Template(rawTodoMessCard);
+    const todoMessPayload = todoMessTemplate.expand({
+        $root: {
+            task: todoItemData,
+        },
+    });
+    taskInfo.card = CardFactory.adaptiveCard(todoMessPayload);
+    return taskInfo;
 }
 
 // handle the action

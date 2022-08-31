@@ -290,6 +290,14 @@ export async function handleMyTodosAction(aadObjectId: string, data: any): Promi
             pageNow = data.jumpedpage;
             break;
         }
+        case "previous": {
+            pageNow = data.pageNow - 1;
+            break;
+        }
+        case "next": {
+            pageNow = data.pageNow + 1;
+            break;
+        }
         // located in to-do item
         case "edit": {
             const task: TodoItem = {
@@ -323,6 +331,14 @@ export function handleSharedwithMeAction(data: any): number {
     switch (data.action) {
         case "go": {
             pageNow = data.jumpedpage
+            break;
+        }
+        case "previous": {
+            pageNow = data.pageNow - 1;
+            break;
+        }
+        case "next": {
+            pageNow = data.pageNow + 1;
             break;
         }
     }

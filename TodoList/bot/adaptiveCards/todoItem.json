@@ -2,188 +2,247 @@
     "type": "AdaptiveCard",
     "body": [
         {
-            "type": "Container",
-            "bleed": true,
+            "type": "ColumnSet",
             "style": "emphasis",
-            "items": [
+            "bleed": true,
+            "columns": [
                 {
-                    "type": "ColumnSet",
-                    "columns": [
+                    "type": "Column",
+                    "items": [
                         {
-                            "type": "Column",
-                            "items": [
-                                {
-                                    "type": "TextBlock",
-                                    "size": "ExtraLarge",
-                                    "text": "**TO-DO ITEM**",
-                                    "wrap": true,
-                                    "style": "heading",
-                                    "color": "Accent",
-                                    "weight": "Bolder"
-                                }
-                            ],
-                            "width": "stretch"
-                        },
-                        {
-                            "type": "Column",
-                            "verticalContentAlignment": "Center",
-                            "items": [
-                                {
-                                    "type": "Image",
-                                    "url": "https://todolist.blob.core.windows.net/adaptive-cards/return.png?sp=r&st=2022-08-18T10:29:48Z&se=2022-11-30T18:29:48Z&spr=https&sv=2021-06-08&sr=c&sig=%2BYqszohKyR55ozKNZuKWYcn8Movulz%2Fx6L4mMvWffKs%3D",
-                                    "width": "25px"
-                                }
-                            ],
-                            "selectAction": {
-                                "type": "Action.Submit",
-                                "tooltip": "Go back",
-                                "data": {
-                                    "action": "return",
-                                    "pageNow": "${pageNow}"
-                                }
-                            },
-                            "width": "auto"
-                        },
-                        {
-                            "type": "Column",
-                            "verticalContentAlignment": "Center",
-                            "items": [
-                                {
-                                    "type": "TextBlock",
-                                    "text": "*return your to-do list*",
-                                    "isSubtle": true,
-                                    "wrap": true,
-                                    "horizontalAlignment": "Right"
-                                }
-                            ],
-                            "selectAction": {
-                                "type": "Action.Submit",
-                                "tooltip": "Go back",
-                                "data": {
-                                    "action": "return",
-                                    "pageNow": "${pageNow}"
-                                }
-                            },
-                            "width": "130px",
-                            "spacing": "None"
+                            "type": "TextBlock",
+                            "size": "ExtraLarge",
+                            "text": "**TO-DO ITEM**",
+                            "wrap": true,
+                            "style": "heading",
+                            "color": "Accent",
+                            "weight": "Bolder"
                         }
-                    ]
+                    ],
+                    "width": "stretch"
+                },
+                {
+                    "type": "Column",
+                    "verticalContentAlignment": "Center",
+                    "items": [
+                        {
+                            "type": "Image",
+                            "url": "https://todolist.blob.core.windows.net/adaptive-cards/return.png?sp=r&st=2022-08-18T10:29:48Z&se=2022-11-30T18:29:48Z&spr=https&sv=2021-06-08&sr=c&sig=%2BYqszohKyR55ozKNZuKWYcn8Movulz%2Fx6L4mMvWffKs%3D",
+                            "width": "20px"
+                        }
+                    ],
+                    "selectAction": {
+                        "type": "Action.Submit",
+                        "tooltip": "Go back",
+                        "data": {
+                            "action": "return",
+                            "pageNow": "${pageNow}"
+                        }
+                    },
+                    "width": "auto"
+                },
+                {
+                    "type": "Column",
+                    "verticalContentAlignment": "Center",
+                    "items": [
+                        {
+                            "type": "TextBlock",
+                            "text": "*return to-do list*",
+                            "isSubtle": true,
+                            "wrap": true
+                        }
+                    ],
+                    "selectAction": {
+                        "type": "Action.Submit",
+                        "tooltip": "Go back",
+                        "data": {
+                            "action": "return",
+                            "pageNow": "${pageNow}"
+                        }
+                    },
+                    "width": "auto",
+                    "spacing": "Small"
                 }
-            ],
-            "spacing": "ExtraLarge"
+            ]
         },
         {
-            "type": "Container",
-            "items": [
+            "type": "ColumnSet",
+            "columns": [
                 {
-                    "type": "ColumnSet",
-                    "columns": [
+                    "type": "Column",
+                    "verticalContentAlignment": "Center",
+                    "width": "auto",
+                    "items": [
                         {
-                            "type": "Column",
+                            "type": "Image",
+                            "url": "${task.creator.profileImage}",
+                            "width": "80px",
+                            "style": "Person"
+                        }
+                    ]
+                },
+                {
+                    "type": "Column",
+                    "width": "stretch",
+                    "spacing": "ExtraLarge",
+                    "items": [
+                        {
+                            "type": "Container",
                             "items": [
                                 {
-                                    "type": "Image",
-                                    "url": "${task.creator.profileImage}",
-                                    "width": "80px",
-                                    "style": "Person"
-                                }
-                            ],
-                            "width": "100px",
-                            "verticalContentAlignment": "Center"
-                        },
-                        {
-                            "type": "Column",
-                            "items": [
-                                {
-                                    "type": "TextBlock",
-                                    "text": "User Name",
-                                    "wrap": true,
-                                    "weight": "Bolder",
-                                    "height": "stretch"
-                                },
-                                {
-                                    "type": "TextBlock",
-                                    "text": "Due Date",
-                                    "wrap": true,
-                                    "weight": "Bolder",
-                                    "height": "stretch",
-                                    "spacing": "Small"
-                                },
-                                {
-                                    "type": "TextBlock",
-                                    "text": "Task Status",
-                                    "wrap": true,
-                                    "weight": "Bolder",
-                                    "height": "stretch",
-                                    "spacing": "Small"
-                                }
-                            ],
-                            "width": "auto",
-                            "verticalContentAlignment": "Top",
-                            "spacing": "ExtraLarge",
-                            "height": "stretch"
-                        },
-                        {
-                            "type": "Column",
-                            "items": [
-                                {
-                                    "type": "TextBlock",
-                                    "id": "userName",
-                                    "text": "${task.creator.userName}",
-                                    "wrap": true,
-                                    "height": "stretch",
-                                    "spacing": "Medium"
-                                },
-                                {
-                                    "type": "Input.Date",
-                                    "id": "dueDate",
-                                    "value": "${formatDateTime(task.dueDate, 'YYYY-MM-dd')}"
-                                },
-                                {
-                                    "type": "Input.ChoiceSet",
-                                    "id": "currentStatus",
-                                    "choices": [
+                                    "type": "ColumnSet",
+                                    "columns": [
                                         {
-                                            "title": "Unstarted",
-                                            "value": "Unstarted"
+                                            "type": "Column",
+                                            "items": [
+                                                {
+                                                    "type": "TextBlock",
+                                                    "text": "User Name",
+                                                    "wrap": true,
+                                                    "weight": "Bolder"
+                                                }
+                                            ],
+                                            "width": "100px"
                                         },
                                         {
-                                            "title": "Processing",
-                                            "value": "Processing"
-                                        },
-                                        {
-                                            "title": "Finished",
-                                            "value": "Finished"
+                                            "type": "Column",
+                                            "width": "stretch",
+                                            "items": [
+                                                {
+                                                    "type": "TextBlock",
+                                                    "text": "${task.creator.userName}",
+                                                    "wrap": true
+                                                }
+                                            ]
                                         }
-                                    ],
-                                    "value": "${task.currentStatus}"
+                                    ]
                                 }
-                            ],
-                            "width": "stretch",
-                            "verticalContentAlignment": "Bottom",
-                            "spacing": "ExtraLarge"
+                            ]
+                        },
+                        {
+                            "type": "Container",
+                            "verticalContentAlignment": "Center",
+                            "items": [
+                                {
+                                    "type": "ColumnSet",
+                                    "columns": [
+                                        {
+                                            "type": "Column",
+                                            "width": "100px",
+                                            "verticalContentAlignment": "Center",
+                                            "items": [
+                                                {
+                                                    "type": "TextBlock",
+                                                    "text": "Due Date",
+                                                    "wrap": true,
+                                                    "weight": "Bolder"
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "type": "Column",
+                                            "width": "stretch",
+                                            "items": [
+                                                {
+                                                    "type": "Input.Date",
+                                                    "id": "dueDate",
+                                                    "value": "${formatDateTime(task.dueDate, 'YYYY-MM-dd')}"
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "type": "Container",
+                            "verticalContentAlignment": "Center",
+                            "items": [
+                                {
+                                    "type": "ColumnSet",
+                                    "columns": [
+                                        {
+                                            "type": "Column",
+                                            "items": [
+                                                {
+                                                    "type": "TextBlock",
+                                                    "text": "Task State",
+                                                    "wrap": true,
+                                                    "weight": "Bolder"
+                                                }
+                                            ],
+                                            "width": "100px",
+                                            "minHeight": "9px",
+                                            "verticalContentAlignment": "Center"
+                                        },
+                                        {
+                                            "type": "Column",
+                                            "width": "stretch",
+                                            "items": [
+                                                {
+                                                    "type": "Input.ChoiceSet",
+                                                    "id": "currentStatus",
+                                                    "choices": [
+                                                        {
+                                                            "title": "New",
+                                                            "value": "New"
+                                                        },
+                                                        {
+                                                            "title": "Active",
+                                                            "value": "Active"
+                                                        },
+                                                        {
+                                                            "title": "Closed",
+                                                            "value": "Closed"
+                                                        }
+                                                    ],
+                                                    "value": "${task.currentStatus}"
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ]
                         }
                     ]
                 }
             ]
         },
         {
+            "type": "TextBlock",
+            "text": "Task Content",
+            "wrap": true,
+            "weight": "Bolder",
+            "height": "stretch",
+            "spacing": "ExtraLarge"
+        },
+        {
+            "type": "Input.Text",
+            "id": "taskContent",
+            "value": "${task.taskContent}",
+            "maxLength": 256,
+            "isMultiline": true
+        },
+        {
             "type": "Container",
+            "style": "emphasis",
+            "bleed": true,
             "items": [
                 {
                     "type": "TextBlock",
-                    "text": "Task Content",
+                    "text": "Share With",
                     "wrap": true,
-                    "fontType": "Default",
-                    "weight": "Bolder",
-                    "height": "stretch"
+                    "weight": "Bolder"
                 },
                 {
-                    "type": "Input.Text",
-                    "id": "taskContent",
-                    "value": "${task.taskContent}",
-                    "maxLength": 256,
-                    "isMultiline": true
+                    "type": "Input.ChoiceSet",
+                    "choices.data": {
+                        "type": "Data.Query",
+                        "dataset": "graph.microsoft.com/users"
+                    },
+                    "id": "sharedUsers",
+                    "isMultiSelect": true,
+                    "value": "${task.sharedwith}"
                 },
                 {
                     "type": "ActionSet",
@@ -197,51 +256,6 @@
                                 "taskId": "${task.taskId}",
                                 "pageNow": "${pageNow}"
                             }
-                        }
-                    ],
-                    "height": "stretch"
-                }
-            ],
-            "spacing": "ExtraLarge"
-        },
-        {
-            "type": "Container",
-            "style": "emphasis",
-            "bleed": true,
-            "items": [
-                {
-                    "type": "TextBlock",
-                    "text": "Share With",
-                    "wrap": true,
-                    "fontType": "Default",
-                    "weight": "Bolder",
-                    "height": "stretch"
-                },
-                {
-                    "type": "Input.ChoiceSet",
-                    "choices.data": {
-                        "type": "Data.Query",
-                        "dataset": "graph.microsoft.com/users"
-                    },
-                    "id": "sharedUsers",
-                    "isMultiSelect": true,
-                    "value": "293e2e1f-8167-44bf-b03f-74a48abf4ad3"
-                },
-                {
-                    "type": "ActionSet",
-                    "actions": [
-                        {
-                            "type": "Action.Submit",
-                            "title": "Show Viewers",
-                            "tooltip": "See viewers",
-                            "data": {
-                                "action": "showViewers",
-                                "taskId": "${task.taskId}",
-                                "pageNow": "${pageNow}",
-                                "msteams": {
-                                    "type": "task/fetch"
-                                }
-                            }
                         },
                         {
                             "type": "Action.Submit",
@@ -252,13 +266,25 @@
                                 "taskId": "${task.taskId}",
                                 "pageNow": "${pageNow}"
                             }
+                        },
+                        {
+                            "type": "Action.Submit",
+                            "title": "See Viewers",
+                            "tooltip": "See who can track the to-do",
+                            "data": {
+                                "action": "showViewers",
+                                "taskId": "${task.taskId}",
+                                "pageNow": "${pageNow}",
+                                "msteams": {
+                                    "type": "task/fetch"
+                                }
+                            }
                         }
-                    ],
-                    "height": "stretch"
+                    ]
                 }
             ]
         }
     ],
     "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
-    "version": "1.4"
+    "version": "1.5"
 }

@@ -236,4 +236,9 @@ export class TeamsBot extends TeamsActivityHandler {
 
         return taskModuleResp;
     }
+
+    async onInvokeActivity(context: TurnContext): Promise<InvokeResponse>{
+        console.log('onInvoke, ' + context.activity.name);
+        return await super.onInvokeActivity(context);
+    }
 }

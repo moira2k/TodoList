@@ -19,7 +19,6 @@ import rawHeadingCard from "../adaptiveCards/heading.json"
 import rawTodoListCard from "../adaptiveCards/todoList.json"
 import rawTodoItemCard from "../adaptiveCards/todoItem.json"
 import rawSharedTodoListCard from "../adaptiveCards/sharedTodoList.json"
-import rawSharedTodoItemCard from "../adaptiveCards/sharedTodoItem.json"
 import rawSignOutCard from "../adaptiveCards/signOut.json"
 import rawNewItemCard from "../adaptiveCards/newItem.json"
 import rawActionStatusCard from "../adaptiveCards/actionStatus.json"
@@ -122,7 +121,7 @@ export async function createMyTodosResponse(context: TurnContext, pageNow: numbe
         });
         myTodosResp.tab.value.cards.push({"card": todoListPayload});
     }
-    console.log("myTodosResp", JSON.stringify(myTodosResp, null, 2).length);
+    console.log(JSON.stringify(myTodosResp).length);
     return myTodosResp;
 }
 
@@ -169,7 +168,7 @@ export async function createSharedwithMeResponse(context: TurnContext, pageNow: 
         {"card": headingPayload}, 
         {"card": sharedTodoListPayload},
     ];
-    console.log("sharedwithMeResp", JSON.stringify(sharedwithMeResp, null, 2).length);
+    console.log(JSON.stringify(sharedwithMeResp).length)
     return sharedwithMeResp;
 }
 

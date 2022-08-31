@@ -10,7 +10,7 @@ export async function getTodoListData(aadObjectId: string): Promise<Array<TodoIt
     let todoList = new Array<TodoItem>();
 
     const query: string = `SELECT taskId, dueDate, currentStatus, taskContent, creatorId
-    FROM Todo.Tasks WHERE creatorId = @userId order by dueDate asc, taskId asc`;
+    FROM Todo.Tasks WHERE creatorId = @userId order by dueDate asc, charindex(currentStatus, 'New, Active, Closed') asc, taskId asc`;
     const request = new Request(query, (err) => {
         if (err) {
             throw new Error(err.message);
@@ -43,7 +43,7 @@ export async function getSharedTodoListData(aadObjectId: string, token: string):
 
     const query: string = `SELECT Todo.Tasks.taskId, Todo.Tasks.dueDate, Todo.Tasks.currentStatus, Todo.Tasks.taskContent, Todo.Tasks.creatorId
     FROM Todo.Tasks INNER JOIN (SELECT taskId FROM Todo.SharedItems WHERE userId = @userId) AS A ON Todo.Tasks.taskId = A.taskId 
-    order by Todo.Tasks.dueDate asc, Todo.Tasks.taskId asc`;
+    order by Todo.Tasks.dueDate asc, charindex(currentStatus, 'New, Active, Closed') asc, Todo.Tasks.taskId asc`;
     const request = new Request(query, (err) => {
         if (err) {
             throw new Error(err.message);
@@ -97,8 +97,20 @@ export async function getTodoItemData(taskId: number, token: string, isViewer: b
             currentStatus: resp[0].currentStatus,
             taskContent: resp[0].taskContent,
             creator: creator,
+            sharedwith: "",
             viewers: []
         }
+        
+        if (resp.length == 1 && resp[0].viewerId == null) {
+            return todoItem;
+        }
+
+        todoItem.sharedwith = resp[0].viewerId;
+        for (let i: number = 1; i < resp.length; ++i) {
+            todoItem.sharedwith = todoItem.sharedwith + "," + resp[i].viewerId;
+        }
+        todoItem.sharedwith = todoItem.sharedwith.toLowerCase();
+
         if (isViewer) {
             const viewers: User[] = await Promise.all(resp.map(async con => {
                 if (con.viewerId != null ) {
@@ -180,12 +192,16 @@ export async function deleteTodoItem(taskId: number): Promise<void> {
 }
 
 export async function shareTodoItem(taskId: number, rawSharedUsers: string): Promise<void> {
-    let query: string = "";
-    const sharedUsers = rawSharedUsers.split(',');
+    let query: string = "DELETE FROM Todo.SharedItems WHERE taskId = @taskId; ";
+    let sharedUsers: Array<string> = [];
 
-    for (let i: number = 0; i < sharedUsers.length; ++i) {
-        query = query + `INSERT INTO Todo.SharedItems(userId, taskId) 
-        SELECT @userId${i}, @taskId WHERE NOT EXISTS (SELECT * FROM Todo.SharedItems WHERE userId = @userId${i} AND taskId = @taskId); `;
+    if (rawSharedUsers && rawSharedUsers.length) {
+        sharedUsers = rawSharedUsers.split(',');
+
+        for (let i: number = 0; i < sharedUsers.length; ++i) {
+            query = query + `INSERT INTO Todo.SharedItems(userId, taskId) 
+            SELECT @userId${i}, @taskId WHERE NOT EXISTS (SELECT * FROM Todo.SharedItems WHERE userId = @userId${i} AND taskId = @taskId); `;
+        }
     }
 
     const request = new Request(query, (err) => {

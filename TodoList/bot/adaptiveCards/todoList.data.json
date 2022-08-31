@@ -7,13 +7,13 @@
         {
             "taskId": "undefined",
             "dueDate": "2017-02-21",
-            "CurrentStatus": "Not Started",
+            "currentStatus": "New",
             "taskContent": "a meeting with supplier representatives in Room602, Building01"
         },
         {
             "taskId": "undefined",
             "dueDate": "2017-02-22",
-            "CurrentStatus": "Processing",
+            "currentStatus": "Active",
             "taskContent": "Follow up orders from X Companies and remind shipments"
         }
     ]

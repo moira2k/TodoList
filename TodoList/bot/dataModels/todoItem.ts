@@ -7,6 +7,7 @@ export interface TodoItem {
     currentStatus?: string;
     taskContent?: string;
     creator?: User;
+    sharedwith?: string;
     viewers?: User[];
 }
 

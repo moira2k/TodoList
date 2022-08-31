@@ -3,31 +3,33 @@
     "body": [
         {
             "type": "Container",
+            "style": "emphasis",
+            "bleed": true,
             "items": [
                 {
-                    "type": "Container",
-                    "style": "emphasis",
-                    "items": [
-                        {
-                            "type": "TextBlock",
-                            "color": "Accent",
-                            "weight": "Bolder",
-                            "text": "-- *Keep early hours and enjoy yourself.*",
-                            "style": "heading",
-                            "fontType": "Monospace",
-                            "isSubtle": true,
-                            "horizontalAlignment": "Right",
-                            "size": "Medium"
-                        }
-                    ],
-                    "bleed": true
-                },
+                    "type": "TextBlock",
+                    "color": "Accent",
+                    "weight": "Bolder",
+                    "text": "*Enjoy today* (•‿•)",
+                    "fontType": "Monospace",
+                    "isSubtle": true,
+                    "horizontalAlignment": "Right",
+                    "size": "Medium",
+                    "wrap": true
+                }
+            ]
+        },
+        {
+            "type": "Container",
+            "items": [
                 {
                     "type": "ColumnSet",
+                    "bleed": true,
                     "columns": [
                         {
                             "type": "Column",
-                            "width": 10,
+                            "bleed": true,
+                            "width": "stretch",
                             "items": [
                                 {
                                     "type": "RichTextBlock",
@@ -61,6 +63,7 @@
                                 },
                                 {
                                     "type": "RichTextBlock",
+                                    "horizontalAlignment": "Center",
                                     "inlines": [
                                         {
                                             "type": "TextRun",
@@ -76,14 +79,14 @@
                                             "weight": "Bolder",
                                             "fontType": "Monospace"
                                         }
-                                    ],
-                                    "horizontalAlignment": "Center"
+                                    ]
                                 }
                             ]
                         },
                         {
                             "type": "Column",
-                            "spacing": "None",
+                            "width": "auto",
+                            "bleed": true,
                             "verticalContentAlignment": "Center",
                             "items": [
                                 {
@@ -98,15 +101,14 @@
                                 "data": {
                                     "action": "signout"
                                 }
-                            },
-                            "width": 1
+                            }
                         }
-                    ],
-                    "spacing": "None"
+                    ]
                 }
-            ]
+            ],
+            "bleed": true
         }
     ],
     "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
-    "version": "1.4"
+    "version": "1.5"
 }

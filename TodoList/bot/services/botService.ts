@@ -99,7 +99,6 @@ export async function createMyTodosResponse(context: TurnContext, pageNow: numbe
         const todoItemPayload = todoItemTemplate.expand({
             $root: {
                 task: todoItemData,
-                time: time,
                 pageNow: pageNow
             },
         });

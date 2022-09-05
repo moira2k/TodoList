@@ -132,7 +132,7 @@
                             "type": "TextBlock",
                             "text": "${task.currentStatus}",
                             "wrap": true,
-                            "color": "${if(currentStatus == 'New', 'dark', if(currentStatus == 'Active', 'warning', 'good'))}",
+                            "color": "${if(task.currentStatus == 'New', 'dark', if(task.currentStatus == 'Active', 'warning', 'good'))}",
                             "weight": "Bolder",
                             "isSubtle": true
                         }

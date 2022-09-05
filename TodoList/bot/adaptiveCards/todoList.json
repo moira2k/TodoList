@@ -73,7 +73,7 @@
                     ],
                     "selectAction": {
                         "type": "Action.Submit",
-                        "tooltip": "See details",
+                        "tooltip": "See detail",
                         "data": {
                             "action": "show",
                             "taskId": "${taskId}",
@@ -97,7 +97,7 @@
                     ],
                     "selectAction": {
                         "type": "Action.Submit",
-                        "tooltip": "See details",
+                        "tooltip": "See detail",
                         "data": {
                             "action": "show",
                             "taskId": "${taskId}",
@@ -130,7 +130,7 @@
                                             ],
                                             "selectAction": {
                                                 "type": "Action.Submit",
-                                                "tooltip": "See details",
+                                                "tooltip": "See detail",
                                                 "data": {
                                                     "action": "show",
                                                     "taskId": "${taskId}",

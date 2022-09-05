@@ -12,7 +12,7 @@
         },
         {
             "type": "ColumnSet",
-            "$data": "${task.viewers}",
+            "$data": "${taskViewers}",
             "columns": [
                 {
                     "type": "Column",

@@ -6,6 +6,7 @@ import {
     getTodoListData,
     getTodoItemData,
     getSharedTodoListData,
+    getTaskViewersData,
     addTodoItem,
     updateTodoItem,
     deleteTodoItem,
@@ -17,13 +18,13 @@ import {
 } from "../utils/utils"
 import rawHeadingCard from "../adaptiveCards/heading.json"
 import rawTodoListCard from "../adaptiveCards/todoList.json"
-import rawTodoItemCard from "../adaptiveCards/todoItem.json"
+import rawEditItemCard from "../adaptiveCards/editItem.json"
 import rawSharedTodoListCard from "../adaptiveCards/sharedTodoList.json"
 import rawSignOutCard from "../adaptiveCards/signOut.json"
 import rawNewItemCard from "../adaptiveCards/newItem.json"
 import rawActionStatusCard from "../adaptiveCards/actionStatus.json"
 import rawTaskViewersCard from "../adaptiveCards/taskViewers.json"
-import rawTodoMessCard from "../adaptiveCards/todoMess.json"
+import rawItemDetailCard from "../adaptiveCards/itemDetail.json"
 
 
 // Tab Response
@@ -94,15 +95,18 @@ export async function createMyTodosResponse(context: TurnContext, pageNow: numbe
     myTodosResp.tab.value.cards = [{"card": headingPayload}];
 
     if (IsFectchTodoItem) {
-        const todoItemData = await getTodoItemData(taskId, token, false);
-        const todoItemTemplate = new ACData.Template(rawTodoItemCard);
-        const todoItemPayload = todoItemTemplate.expand({
+        const todoItemData = await getTodoItemData(taskId, token);
+        const sharedwith: string = todoItemData.viewerIds.join(',').toLowerCase();
+
+        const editItemTemplate = new ACData.Template(rawEditItemCard);
+        const editItemPayload = editItemTemplate.expand({
             $root: {
                 task: todoItemData,
+                sharedwith: sharedwith,
                 pageNow: pageNow
             },
         });
-        myTodosResp.tab.value.cards.push({"card": todoItemPayload});
+        myTodosResp.tab.value.cards.push({"card": editItemPayload});
     } else {
         const todoListData = await getTodoListData(user.aadObjectId);
         const pageNum: number = Math.max(1, Math.ceil(todoListData.length / 10));
@@ -122,7 +126,7 @@ export async function createMyTodosResponse(context: TurnContext, pageNow: numbe
         });
         myTodosResp.tab.value.cards.push({"card": todoListPayload});
     }
-    console.log(JSON.stringify(myTodosResp).length);
+
     return myTodosResp;
 }
 
@@ -169,7 +173,6 @@ export async function createSharedwithMeResponse(context: TurnContext, pageNow: 
         {"card": headingPayload}, 
         {"card": sharedTodoListPayload},
     ];
-    console.log(JSON.stringify(sharedwithMeResp).length)
     return sharedwithMeResp;
 }
 
@@ -180,7 +183,7 @@ export async function createMyTodosFetchTaskInfo(data: any, token: string): Prom
     let taskInfo: TaskModuleTaskInfo;
     switch (data.action) {
         case "showViewers": {
-            taskInfo = await createTaskViewersTaskInfo(data.taskId, token);
+            taskInfo = await createTaskViewersTaskInfo(data.sharedwith, token);
             break;
         }
     }
@@ -192,11 +195,12 @@ export async function createSharedwithMeFetchTaskInfo(data: any, token: string):
 
     let taskInfo: TaskModuleTaskInfo;
     switch (data.action) {
-        case "showMess": {
-            taskInfo = await createTodoMessTaskInfo(data.taskId, token);
+        case "show": {
+            taskInfo = await createItemDetailTaskInfo(data.taskId, token);
             break;
         }
     }
+
     return taskInfo;
 }
 
@@ -239,18 +243,19 @@ export function createActionStatusTaskInfo(content: string = ""): TaskModuleTask
     return taskInfo;
 }
 
-export async function createTaskViewersTaskInfo(taskId: number, token: string): Promise<TaskModuleTaskInfo> {
+export async function createTaskViewersTaskInfo(sharedwith: string, token: string): Promise<TaskModuleTaskInfo> {
     console.log("Create TaskViewers TaskInfo response.");
 
     const taskInfo: TaskModuleTaskInfo = {
         width: 400,
     }
-    const todoItemData = await getTodoItemData(taskId, token, true);
-    if (todoItemData.viewers.length > 0) {
+    
+    if (sharedwith && sharedwith.length) {
+        const taskViewersData = await getTaskViewersData(sharedwith, token);
         const taskViewerTemplate = new ACData.Template(rawTaskViewersCard);
         const taskViewerPayload = taskViewerTemplate.expand({
             $root: {
-                task: todoItemData,
+                taskViewers: taskViewersData,
             },
         });
         taskInfo.card = CardFactory.adaptiveCard(taskViewerPayload);
@@ -260,22 +265,22 @@ export async function createTaskViewersTaskInfo(taskId: number, token: string): 
     }
 }
 
-export async function createTodoMessTaskInfo(taskId: number, token: string): Promise<TaskModuleTaskInfo> {
-    console.log("Create TodoMess TaskInfo response.");
+export async function createItemDetailTaskInfo(taskId: number, token: string): Promise<TaskModuleTaskInfo> {
+    console.log("Create ItemDetail TaskInfo response.");
 
     const taskInfo: TaskModuleTaskInfo = {
         width: 400,
     }
 
-    const todoItemData = await getTodoItemData(taskId, token, false);
+    const todoItemData = await getTodoItemData(taskId, token);
 
-    const todoMessTemplate = new ACData.Template(rawTodoMessCard);
-    const todoMessPayload = todoMessTemplate.expand({
+    const itemDetailTemplate = new ACData.Template(rawItemDetailCard);
+    const itemDetailPayload = itemDetailTemplate.expand({
         $root: {
             task: todoItemData,
         },
     });
-    taskInfo.card = CardFactory.adaptiveCard(todoMessPayload);
+    taskInfo.card = CardFactory.adaptiveCard(itemDetailPayload);
     return taskInfo;
 }
 

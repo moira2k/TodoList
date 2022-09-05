@@ -242,7 +242,7 @@
                     },
                     "id": "sharedUsers",
                     "isMultiSelect": true,
-                    "value": "${task.sharedwith}"
+                    "value": "${sharedwith}"
                 },
                 {
                     "type": "ActionSet",
@@ -273,8 +273,7 @@
                             "tooltip": "See who can track the to-do",
                             "data": {
                                 "action": "showViewers",
-                                "taskId": "${task.taskId}",
-                                "pageNow": "${pageNow}",
+                                "sharedwith": "${sharedwith}",
                                 "msteams": {
                                     "type": "task/fetch"
                                 }

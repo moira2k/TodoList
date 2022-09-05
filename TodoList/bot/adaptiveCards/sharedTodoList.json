@@ -168,9 +168,9 @@
             ],
             "selectAction":{
                 "type": "Action.Submit",
-                "tooltip": "See details",
+                "tooltip": "See detail",
                 "data": {
-                    "action": "showMess",
+                    "action": "show",
                     "taskId": "${taskId}",
                     "msteams": {
                         "type": "task/fetch"

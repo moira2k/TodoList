@@ -2,7 +2,7 @@ import { Request, TYPES } from "tedious";
 import { User } from "../dataModels/user";
 import { TodoItem } from "../dataModels/todoItem";
 import dbRun from "./databaseClient";
-import { getUserDetailsFromGraph } from "./graphClient";
+import { getUserDetailFromGraph } from "./graphClient";
 import { convertTimeString } from "../utils/utils";
 
 
@@ -55,7 +55,7 @@ export async function getSharedTodoListData(aadObjectId: string, token: string):
         const resp = await dbRun(request);
 
         sharedTodoList = await Promise.all(resp.map(async con => {
-            const creator = await getUserDetailsFromGraph(con.creatorId, token);
+            const creator = await getUserDetailFromGraph(con.creatorId, token, true);
             return {
                 taskId: con.taskId,
                 dueDate: convertTimeString(con.dueDate),
@@ -72,7 +72,7 @@ export async function getSharedTodoListData(aadObjectId: string, token: string):
     return sharedTodoList;
 }
 
-export async function getTodoItemData(taskId: number, token: string, isViewer: boolean = false): Promise<TodoItem> {
+export async function getTodoItemData(taskId: number, token: string): Promise<TodoItem> {
     let todoItem: TodoItem;
 
     const query: string = `SELECT Task.taskId, Task.dueDate, Task.currentStatus, Task.taskContent, creatorId , A.userId AS viewerId
@@ -90,46 +90,47 @@ export async function getTodoItemData(taskId: number, token: string, isViewer: b
     try {
         const resp = await dbRun(request);
 
-        const creator = await getUserDetailsFromGraph(resp[0].creatorId, token);
+        const creator = await getUserDetailFromGraph(resp[0].creatorId, token, true);
         todoItem = {
             taskId: resp[0].taskId,
             dueDate: convertTimeString(resp[0].dueDate),
             currentStatus: resp[0].currentStatus,
             taskContent: resp[0].taskContent,
             creator: creator,
-            sharedwith: "",
-            viewers: []
+            viewerIds: []
         }
         
-        if (resp.length == 1 && resp[0].viewerId == null) {
-            return todoItem;
+        for (let i: number = 0; i < resp.length; ++i) {
+            if (resp[i].viewerId != null )
+                todoItem.viewerIds.push(resp[i].viewerId);
         }
-
-        todoItem.sharedwith = resp[0].viewerId;
-        for (let i: number = 1; i < resp.length; ++i) {
-            todoItem.sharedwith = todoItem.sharedwith + "," + resp[i].viewerId;
-        }
-        todoItem.sharedwith = todoItem.sharedwith.toLowerCase();
-
-        if (isViewer) {
-            const viewers: User[] = await Promise.all(resp.map(async con => {
-                if (con.viewerId != null ) {
-                    const viewer =  await getUserDetailsFromGraph(con.viewerId, token);
-                    return viewer;
-                }
-                return undefined;
-            }));
-    
-            todoItem.viewers = viewers.filter(function(viewer) {
-                return viewer != undefined;
-            });
-        }
-
     } catch (err) {
         console.log(err);
     }
 
     return todoItem;
+}
+
+export async function getTaskViewersData(rawSharedUsers: string, token: string): Promise<Array<User>> {
+    let sharedUsers: Array<string> = [];
+    let taskViewers: Array<User> = [];
+
+    if (!rawSharedUsers || !rawSharedUsers.length) {
+        return taskViewers;
+    }
+
+    sharedUsers = rawSharedUsers.split(',');
+
+    try {
+        taskViewers = await Promise.all(sharedUsers.map(async viewerId => {
+            const viewer =  await getUserDetailFromGraph(viewerId, token, false);
+            return viewer;
+        }));
+    } catch (err) {
+        console.log(err);
+    }
+
+    return taskViewers;
 }
 
 export async function addTodoItem(aadObjectId: string, data: TodoItem): Promise<void> {

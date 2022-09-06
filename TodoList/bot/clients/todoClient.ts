@@ -2,7 +2,7 @@ import { Request, TYPES } from "tedious";
 import { User } from "../dataModels/user";
 import { TodoItem } from "../dataModels/todoItem";
 import dbRun from "./databaseClient";
-import { getUserDetailFromGraph } from "./graphClient";
+import { getUserFromGraph, getUserwithImageFromGraph } from "./graphClient";
 import { convertTimeString } from "../utils/utils";
 
 
@@ -55,7 +55,7 @@ export async function getSharedTodoListData(aadObjectId: string, token: string):
         const resp = await dbRun(request);
 
         sharedTodoList = await Promise.all(resp.map(async con => {
-            const creator = await getUserDetailFromGraph(con.creatorId, token, true);
+            const creator = await getUserwithImageFromGraph(con.creatorId, token);
             return {
                 taskId: con.taskId,
                 dueDate: convertTimeString(con.dueDate),
@@ -90,7 +90,7 @@ export async function getTodoItemData(taskId: number, token: string): Promise<To
     try {
         const resp = await dbRun(request);
 
-        const creator = await getUserDetailFromGraph(resp[0].creatorId, token, true);
+        const creator = await getUserwithImageFromGraph(resp[0].creatorId, token);
         todoItem = {
             taskId: resp[0].taskId,
             dueDate: convertTimeString(resp[0].dueDate),
@@ -123,7 +123,7 @@ export async function getTaskViewersData(rawSharedUsers: string, token: string):
 
     try {
         taskViewers = await Promise.all(sharedUsers.map(async viewerId => {
-            const viewer =  await getUserDetailFromGraph(viewerId, token, false);
+            const viewer =  await getUserFromGraph(viewerId, token);
             return viewer;
         }));
     } catch (err) {

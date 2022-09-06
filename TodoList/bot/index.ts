@@ -6,10 +6,7 @@ import * as restify from "restify";
 // See https://aka.ms/bot-services to learn more about the different parts of a bot.
 import { 
     BotFrameworkAdapter, 
-    TurnContext, 
-    MemoryStorage, 
-    UserState,
-    ConversationState,
+    TurnContext
 } from "botbuilder";
 
 import { TeamsBot } from "./teamsBot";

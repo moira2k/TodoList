@@ -26,7 +26,8 @@ import {
     handleMyTodosAction,
     handleSharedwithMeAction,
     handleNewItemAction,
-    createTabFetchTaskInfo
+    createMyTodosFetchTaskInfo,
+    createSharedwithMeFetchTaskInfo
 } from "./services/botService";
 
 
@@ -197,8 +198,11 @@ export class TeamsBot extends TeamsActivityHandler {
 
         switch (taskModuleRequest.tabContext.tabEntityId) {
             case "MyTodos": {
-                taskInfo = await createTabFetchTaskInfo(taskModuleRequest.data, tokenResponse.token);
+                taskInfo = await createMyTodosFetchTaskInfo(taskModuleRequest.data, tokenResponse.token);
                 break;
+            }
+            case "SharedwithMe": {
+                taskInfo = await createSharedwithMeFetchTaskInfo(taskModuleRequest.data, tokenResponse.token);
             }
         }
         taskModuleResp.task.value = taskInfo;

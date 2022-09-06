@@ -10,7 +10,7 @@ CREATE SCHEMA Todo;
 CREATE TABLE Todo.Tasks (
     taskId INT IDENTITY PRIMARY KEY,
     dueDate DATETIME NOT NULL,
-    currentStatus NVARCHAR(32) NOT NULL default 'Not Started',
+    currentStatus NVARCHAR(16) NOT NULL default 'New',
     taskContent NVARCHAR(256) NOT NULL,
     creatorId UNIQUEIDENTIFIER NOT NULL
 );

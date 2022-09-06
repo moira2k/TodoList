@@ -2,187 +2,181 @@
     "type": "AdaptiveCard",
     "body": [
         {
-            "type": "Container",
-            "items": [
+            "type": "TextBlock",
+            "size": "ExtraLarge",
+            "text": "**TO-DO LIST**",
+            "wrap": true,
+            "style": "heading"
+        },
+        {
+            "type": "TextBlock",
+            "text": "***Shared with me***",
+            "wrap": true,
+            "color": "Attention",
+            "size": "Large",
+            "spacing": "None"
+        },
+        {
+            "type": "ColumnSet",
+            "style": "emphasis",
+            "bleed": true,
+            "spacing": "ExtraLarge",
+            "columns": [
                 {
-                    "type": "ColumnSet",
-                    "columns": [
+                    "type": "Column",
+                    "width": "50px",
+                    "items": [
                         {
-                            "type": "Column",
-                            "items": [
-                                {
-                                    "type": "TextBlock",
-                                    "size": "ExtraLarge",
-                                    "text": "**TO-DO LIST**",
-                                    "wrap": true,
-                                    "style": "heading"
-                                },
-                                {
-                                    "type": "TextBlock",
-                                    "size": "Large",
-                                    "text": "**Shared with me**",
-                                    "wrap": true,
-                                    "color": "Attention"
-                                }
-                            ],
-                            "width": "stretch"
+                            "type": "TextBlock",
+                            "weight": "Bolder",
+                            "text": "**DATE**",
+                            "fontType": "Monospace",
+                            "size": "Large",
+                            "isSubtle": true
+                        }
+                    ]
+                },
+                {
+                    "type": "Column",
+                    "width": "60px",
+                    "items": [
+                        {
+                            "type": "TextBlock",
+                            "text": "**STATE**",
+                            "weight": "Bolder",
+                            "fontType": "Monospace",
+                            "size": "Large",
+                            "isSubtle": true
+                        }
+                    ]
+                },
+                {
+                    "type": "Column",
+                    "width": "stretch",
+                    "items": [
+                        {
+                            "type": "TextBlock",
+                            "weight": "Bolder",
+                            "text": "**CONTENT**",
+                            "fontType": "Monospace",
+                            "size": "Large",
+                            "isSubtle": true
+                        }
+                    ]
+                },
+                {
+                    "type": "Column",
+                    "width": "120px",
+                    "items": [
+                        {
+                            "type": "TextBlock",
+                            "weight": "Bolder",
+                            "text": "**OWNER**",
+                            "fontType": "Monospace",
+                            "size": "Large",
+                            "isSubtle": true
                         }
                     ]
                 }
             ]
         },
         {
-            "type": "Container",
-            "spacing": "Large",
-            "style": "emphasis",
-            "items": [
+            "type": "ColumnSet",
+            "$data": "${tasks}",
+            "columns": [
                 {
-                    "type": "ColumnSet",
-                    "columns": [
+                    "type": "Column",
+                    "width": "50px",
+                    "verticalContentAlignment": "Center",
+                    "items": [
                         {
-                            "type": "Column",
-                            "spacing": "None",
+                            "type": "TextBlock",
+                            "text": "${formatDateTime(dueDate, 'MM-dd')}",
+                            "wrap": true
+                        }
+                    ]
+                },
+                {
+                    "type": "Column",
+                    "width": "60px",
+                    "verticalContentAlignment": "Center",
+                    "items": [
+                        {
+                            "type": "TextBlock",
+                            "text": "${currentStatus}",
+                            "color": "${if(currentStatus == 'New', 'dark', if(currentStatus == 'Active', 'warning', 'good'))}",
+                            "wrap": true,
+                            "weight": "Bolder",
+                            "isSubtle": true
+                        }
+                    ]
+                },
+                {
+                    "type": "Column",
+                    "verticalContentAlignment": "Center",
+                    "width": "stretch",
+                    "items": [
+                        {
+                            "type": "TextBlock",
+                            "text": "${taskContent}",
+                            "wrap": true,
+                            "maxLines": 5
+                        }
+                    ]
+                },
+                {
+                    "type": "Column",
+                    "width": "120px",
+                    "verticalContentAlignment": "Center",
+                    "items": [
+                        {
+                            "type": "Container",
                             "items": [
                                 {
-                                    "type": "TextBlock",
-                                    "weight": "Bolder",
-                                    "text": "**DATE**",
-                                    "fontType": "Monospace",
-                                    "size": "Large",
-                                    "isSubtle": true
+                                    "type": "ColumnSet",
+                                    "columns": [
+                                        {
+                                            "type": "Column",
+                                            "items": [
+                                                {
+                                                    "type": "Image",
+                                                    "style": "Person",
+                                                    "url": "${creator.profileImage}",
+                                                    "width": "40px"
+                                                }
+                                            ],
+                                            "width": "auto"
+                                        },
+                                        {
+                                            "type": "Column",
+                                            "items": [
+                                                {
+                                                    "type": "TextBlock",
+                                                    "text": "${creator.userName}",
+                                                    "wrap": true
+                                                }
+                                            ],
+                                            "width": "stretch",
+                                            "spacing": "Small"
+                                        }
+                                    ]
                                 }
-                            ],
-                            "width": 12
-                        },
-                        {
-                            "type": "Column",
-                            "spacing": "None",
-                            "items": [
-                                {
-                                    "type": "TextBlock",
-                                    "text": "**STATUS**",
-                                    "weight": "Bolder",
-                                    "fontType": "Monospace",
-                                    "size": "Large",
-                                    "isSubtle": true
-                                }
-                            ],
-                            "width": 13
-                        },
-                        {
-                            "type": "Column",
-                            "spacing": "None",
-                            "items": [
-                                {
-                                    "type": "TextBlock",
-                                    "weight": "Bolder",
-                                    "text": "**CONTENT**",
-                                    "fontType": "Monospace",
-                                    "size": "Large",
-                                    "isSubtle": true
-                                }
-                            ],
-                            "width": 55
-                        },
-                        {
-                            "type": "Column",
-                            "spacing": "None",
-                            "items": [
-                                {
-                                    "type": "TextBlock",
-                                    "weight": "Bolder",
-                                    "text": "**OWNER**",
-                                    "fontType": "Monospace",
-                                    "size": "Large",
-                                    "isSubtle": true
-                                }
-                            ],
-                            "width": 14
+                            ]
                         }
                     ]
                 }
             ],
-            "bleed": true
-        },
-        {
-            "$data": "${tasks}",
-            "type": "Container",
-            "items": [
-                {
-                    "type": "ColumnSet",
-                    "columns": [
-                        {
-                            "type": "Column",
-                            "spacing": "None",
-                            "items": [
-                                {
-                                    "type": "TextBlock",
-                                    "text": "${formatDateTime(dueDate, 'YYYY-MM-dd')}",
-                                    "wrap": true
-                                }
-                            ],
-                            "width": 12,
-                            "verticalContentAlignment": "Center"
-                        },
-                        {
-                            "type": "Column",
-                            "spacing": "None",
-                            "items": [
-                                {
-                                    "type": "TextBlock",
-                                    "text": "${CurrentStatus}",
-                                    "wrap": true
-                                }
-                            ],
-                            "width": 13,
-                            "verticalContentAlignment": "Center"
-                        },
-                        {
-                            "type": "Column",
-                            "spacing": "None",
-                            "items": [
-                                {
-                                    "type": "TextBlock",
-                                    "text": "${taskContent}",
-                                    "wrap": true,
-                                    "color": "Accent",
-                                    "maxLines": 10,
-                                    "weight": "Bolder"
-                                }
-                            ],
-                            "verticalContentAlignment": "Center",
-                            "width": 55
-                        },
-                        {
-                            "type": "Column",
-                            "spacing": "None",
-                            "items": [
-                                {
-                                    "type": "Image",
-                                    "style": "Person",
-                                    "url": "${creator.profileImage}",
-                                    "width": "40px"
-                                }
-                            ],
-                            "verticalContentAlignment": "Center",
-                            "width": "auto"
-                        },
-                        {
-                            "type": "Column",
-                            "items": [
-                                {
-                                    "type": "TextBlock",
-                                    "text": "${creator.userName}",
-                                    "wrap": true
-                                }
-                            ],
-                            "spacing": "Small",
-                            "verticalContentAlignment": "Center",
-                            "width": 10
-                        }
-                    ]
+            "selectAction":{
+                "type": "Action.Submit",
+                "tooltip": "See detail",
+                "data": {
+                    "action": "show",
+                    "taskId": "${taskId}",
+                    "msteams": {
+                        "type": "task/fetch"
+                    }
                 }
-            ]
+            }
         },
         {
             "type": "TextBlock",
@@ -201,18 +195,76 @@
                 {
                     "type": "Column",
                     "width": 3,
+                    "verticalContentAlignment": "Center",
                     "items": [
                         {
-                            "type": "TextBlock",
-                            "text": "Page **${pageNow}** of ${pageNum}",
-                            "wrap": true,
-                            "horizontalAlignment": "Center"
+                            "type": "Container",
+                            "items": [
+                                {
+                                    "type": "ColumnSet",
+                                    "columns": [
+                                        {
+                                            "type": "Column",
+                                            "width": "stretch",
+                                            "items": [
+                                                {
+                                                    "type": "Image",
+                                                    "url": "https://todolist.blob.core.windows.net/adaptive-cards/back.png?sp=r&st=2022-08-18T10:29:48Z&se=2022-11-30T18:29:48Z&spr=https&sv=2021-06-08&sr=c&sig=%2BYqszohKyR55ozKNZuKWYcn8Movulz%2Fx6L4mMvWffKs%3D",
+                                                    "width": "20px",
+                                                    "horizontalAlignment": "Right",
+                                                    "$when": "${pageNow > 1}",
+                                                    "selectAction": {
+                                                        "type": "Action.Submit",
+                                                        "data": {
+                                                            "action": "previous",
+                                                            "pageNow": "${pageNow}"
+                                                        }
+                                                    }
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "type": "Column",
+                                            "width": "auto",
+                                            "verticalContentAlignment": "Center",
+                                            "items": [
+                                                {
+                                                    "type": "TextBlock",
+                                                    "text": "Page **${pageNow}** of ${pageNum}",
+                                                    "wrap": true,
+                                                    "horizontalAlignment": "Center"
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "type": "Column",
+                                            "width": "stretch",
+                                            "items": [
+                                                {
+                                                    "type": "Image",
+                                                    "url": "https://todolist.blob.core.windows.net/adaptive-cards/go.png?sp=r&st=2022-08-18T10:29:48Z&se=2022-11-30T18:29:48Z&spr=https&sv=2021-06-08&sr=c&sig=%2BYqszohKyR55ozKNZuKWYcn8Movulz%2Fx6L4mMvWffKs%3D",
+                                                    "width": "20px",
+                                                    "$when": "${pageNow < pageNum}",
+                                                    "selectAction": {
+                                                        "type": "Action.Submit",
+                                                        "data": {
+                                                            "action": "next",
+                                                            "pageNow": "${pageNow}"
+                                                        }
+                                                    }
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ]
                         }
-                    ],
-                    "verticalContentAlignment": "Center"
+                    ]
                 },
                 {
                     "type": "Column",
+                    "width": 2,
+                    "verticalContentAlignment": "Center",
                     "items": [
                         {
                             "type": "Input.Text",
@@ -229,9 +281,7 @@
                                 }
                             }
                         }
-                    ],
-                    "width": 2,
-                    "verticalContentAlignment": "Center"
+                    ]
                 }
             ]
         }

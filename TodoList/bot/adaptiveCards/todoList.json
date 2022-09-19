@@ -111,55 +111,50 @@
                     "type": "Column",
                     "items": [
                         {
-                            "type": "Container",
-                            "items": [
+                            "type": "ColumnSet",
+                            "columns": [
                                 {
-                                    "type": "ColumnSet",
-                                    "columns": [
+                                    "type": "Column",
+                                    "width": "stretch",
+                                    "verticalContentAlignment": "Center",
+                                    "items": [
                                         {
-                                            "type": "Column",
-                                            "width": "stretch",
-                                            "verticalContentAlignment": "Center",
-                                            "items": [
-                                                {
-                                                    "type": "TextBlock",
-                                                    "text": "${taskContent}",
-                                                    "wrap": true,
-                                                    "maxLines": 5
-                                                }
-                                            ],
-                                            "selectAction": {
-                                                "type": "Action.Submit",
-                                                "tooltip": "See detail",
-                                                "data": {
-                                                    "action": "show",
-                                                    "taskId": "${taskId}",
-                                                    "pageNow": "${$root.pageNow}"
-                                                }
-                                            }
-                                        },
-                                        {
-                                            "type": "Column",
-                                            "verticalContentAlignment": "Center",
-                                            "width": "auto",
-                                            "items": [
-                                                {
-                                                    "type": "Image",
-                                                    "url": "https://todolist.blob.core.windows.net/adaptive-cards/bin.png?sp=r&st=2022-08-18T10:29:48Z&se=2022-11-30T18:29:48Z&spr=https&sv=2021-06-08&sr=c&sig=%2BYqszohKyR55ozKNZuKWYcn8Movulz%2Fx6L4mMvWffKs%3D",
-                                                    "width": "20px"
-                                                }
-                                            ],
-                                            "selectAction": {
-                                                "type": "Action.Submit",
-                                                "tooltip": "Delete",
-                                                "data": {
-                                                    "action": "delete",
-                                                    "taskId": "${taskId}",
-                                                    "pageNow": "${$root.pageNow}"
-                                                }
-                                            }
+                                            "type": "TextBlock",
+                                            "text": "${taskContent}",
+                                            "wrap": true,
+                                            "maxLines": 5
                                         }
-                                    ]
+                                    ],
+                                    "selectAction": {
+                                        "type": "Action.Submit",
+                                        "tooltip": "See detail",
+                                        "data": {
+                                            "action": "show",
+                                            "taskId": "${taskId}",
+                                            "pageNow": "${$root.pageNow}"
+                                        }
+                                    }
+                                },
+                                {
+                                    "type": "Column",
+                                    "verticalContentAlignment": "Center",
+                                    "width": "auto",
+                                    "items": [
+                                        {
+                                            "type": "Image",
+                                            "url": "https://todolist.blob.core.windows.net/adaptive-cards/bin.png?sp=r&st=2022-08-18T10:29:48Z&se=2022-11-30T18:29:48Z&spr=https&sv=2021-06-08&sr=c&sig=%2BYqszohKyR55ozKNZuKWYcn8Movulz%2Fx6L4mMvWffKs%3D",
+                                            "width": "20px"
+                                        }
+                                    ],
+                                    "selectAction": {
+                                        "type": "Action.Submit",
+                                        "tooltip": "Delete",
+                                        "data": {
+                                            "action": "delete",
+                                            "taskId": "${taskId}",
+                                            "pageNow": "${$root.pageNow}"
+                                        }
+                                    }
                                 }
                             ]
                         }

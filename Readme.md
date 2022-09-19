@@ -4,12 +4,6 @@
 
 This App talks about the Teams tab Adaptive card with Node JS. This feature shown in this sample is in Public Developer Preview and is supported in desktop and mobile.
 
-## Key Features
-
-
-
-
-
 ## Prerequisite
 
 1. A Microsoft 365 account. If you do not have Microsoft 365 account, apply one from [Microsoft 365 developer program](https://developer.microsoft.com/en-us/microsoft-365/dev-program).
@@ -160,7 +154,7 @@ ConnectionName=<OAuth connection name>
 
 - This step is specific to Teams.
 
-  - **Copy** the `manifest.json` contained in the `./template/appPackage` folder and edit it. Replace your Microsoft App Id (that was created when you registered your bot earlier) *everywhere* you see the place holder string `<<YOUR-BOT-ID>>` (depending on the scenario the Microsoft App Id may occur multiple times in the `manifest.json`) also update the `<<DOMAIN-NAME>>` with the ngrok URL.
+  - **Copy** the `manifest.json` contained in the `./template/appPackage` folder and edit it. Replace your Microsoft App Id (that was created when you registered your bot earlier) *everywhere* you see the place holder string `<YOUR-BOT-ID>` (depending on the scenario the Microsoft App Id may occur multiple times in the `manifest.json`) also update the `<DOMAIN-NAME>` with the ngrok URL.
   - **Zip** up the contents of the `manifest` and the `resources` folder to create a `manifest.zip`
   - Upload the `manifest.zip` to Teams (in the Apps view click "Upload a custom app")
     - Go to Microsoft Teams. From the lower left corner, select Apps
